@@ -3,8 +3,8 @@
 %%% Choose a language %%%
 
 \newif\ifEN
-\ENtrue   % uncomment this for english
-%\ENfalse   % uncomment this for czech
+% \ENtrue   % uncomment this for english
+\ENfalse   % uncomment this for czech
 
 %%% Configuration of the title page %%%
 
@@ -36,21 +36,21 @@
 %%% Fill in your details %%%
 
 % (Note: \xxx is a "ToDo label" which makes the unfilled visible. Remove it.)
-\def\ThesisTitle{\xxx{Thesis title}}
-\def\ThesisAuthor{\xxx{Your Name Surname}}
-\def\YearSubmitted{\xxx{YEAR}}
+\def\ThesisTitle{Možnosti návrhového vzoru Entity-Component-System: případová studie}
+\def\ThesisAuthor{Petr Kotáb}
+\def\YearSubmitted{2024}
 
 % department assigned to the thesis
-\def\Department{\xxx{Name of the department}}
+\def\Department{Katedra softwaru a výuky informatiky}
 % Is it a department (katedra), or an institute (ústav)?
-\def\DeptType{\xxx{Department}}
+\def\DeptType{Katedra}
 
-\def\Supervisor{\xxx{Supername Supersurname}}
-\def\SupervisorsDepartment{\xxx{department}}
+\def\Supervisor{Mgr. Pavel Ježek, Ph.D.}
+\def\SupervisorsDepartment{Katedra distribuovaných a spolehlivých systémů}
 
 % Study programme and specialization
-\def\StudyProgramme{\xxx{study programme}}
-\def\StudyBranch{\xxx{study branch}}
+\def\StudyProgramme{Informatika }
+\def\StudyBranch{Počítačová grafika, vidění a vývoj her}
 
 \def\Dedication{%
 Dedication. \xxx{It is nice to say thanks to supervisors, friends, family, book authors and food providers.}
@@ -67,8 +67,12 @@ Dedication. \xxx{It is nice to say thanks to supervisors, friends, family, book 
 
 % 3 to 5 keywords (recommended), each enclosed in curly braces.
 % Keywords are useful for indexing and searching for the theses by topic.
-\def\Keywords{%
-\xxx{{key} {words}}
+\def\Keywords{
+    {návrhový vzor}
+    {Entity-Component-System}
+    {počítačové hry}
+    {simulace}
+    {případová studie}
 }
 
 % If your abstracts are long and do not fit in the infopage, you can make the
@@ -81,13 +85,17 @@ Dedication. \xxx{It is nice to say thanks to supervisors, friends, family, book 
 \ifEN\relax\else
 % If you are writing a czech thesis, you additionally need to fill in the
 % english translation of the metadata here!
-\def\ThesisTitleEN{\xxx{Thesis title in English}}
-\def\DepartmentEN{\xxx{Name of the department in English}}
-\def\DeptTypeEN{\xxx{Department}}
-\def\SupervisorsDepartmentEN{\xxx{Superdepartment}}
-\def\StudyProgrammeEN{\xxx{study programme}}
-\def\StudyBranchEN{\xxx{study branch}}
-\def\KeywordsEN{%
-\xxx{{key} {words}}
+\def\ThesisTitleEN{Exploring Options of Entity-Component-System Design Pattern: A Case Study}
+\def\DepartmentEN{Department of software and computer science education}
+\def\DeptTypeEN{Department}
+\def\SupervisorsDepartmentEN{Department of Distributed and Dependable Systems}
+\def\StudyProgrammeEN{Computer Science}
+\def\StudyBranchEN{Computer Graphics, Vision and Game Development}
+\def\KeywordsEN{
+    {design pattern}
+    {Entity-Component-System}
+    {computer games}
+    {simulation}
+    {case study}
 }
 \fi

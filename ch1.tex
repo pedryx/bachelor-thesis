@@ -1,3 +1,25 @@
+\chapter{Způsoby návrhu her}
+\section{Objektový návrh}
+Pojďme si pomocí objektového návrhu skusim navrhnout jednoduchou real time strategickou hru. Uděláme si tedy GameObject který bude předkem všech objektů ve scéně. Následně vytvoříme předka tohoto GameObject -- Pawn. Pawn bude představovat jednotku. Rozhodnem se že nyní implementujem jednotku válečníka, uděláme si tedy třídu Warrior dědicí od Pawn. Následně budem chtít jednotku lučišníka, můžem si tedy udělat Archer dědicí od Pawn. Pawn tedy obsahuje společný kod pro válečníka a lučišníka a vše zatím funguje dobře. Dále bychom rádi nějáké budovy, rozhodnem se tedy přidat věž. Ovšem samotná věž nědělá nic moc, budem chtít aby mohla chránit hráčovu základnu, přidáme tedy mechaniku střílení na naši věž. Ale mechanika střílení v naší hře již je, konkretně na našem lučišníkovi.
+
+Možný způsob jak toto vyřešit je duplicitní kod to ale necheme. Další způsob je přesunout společnou logiku na společného předka, můžeme tedy vytvořit společného předka od kterého bude dědit jak lučišník tak věž, to ale vede k nelogické a později poměrně složité objektové hiearchii. Dále můžem přesunout společný kod do GameObjekt, což ale zase vede k velkému nárustu vecí v našem GameObject a to může skončit tím, že náš GameObject obsahuje hrozně hodně vecí (tzv BlobObject).
+
+\xxx{Příklad návrhu příliš dlouhý?}\\
+\xxx{Více a logičtěji popsat proč dědičnost bad.}
+
+Jedním z principů kterých se ECS snaží držet je composition over inheritance. Tento princip nám říká, že je lepší každý objekt definovat pomocí komponent, namísto hiearchie dědičnosti. Pojdmě si ukázat ještě jeden přístup k návrhu her, který je zajímavý tím, že ho používá velká část moderních herních engine (např Unity) a sloužil také jako jakýsi mezikrok mezi objektovým návrhem a ECS.
+
+\xxx{Princip composition over inheritance byl již zmíněný v gang of four -- legendarní knížce o OOP a dá se říct, že příliš veliké a složité hiearchie dědičnosti jsou v OOP špatnou praktikou.}
+
+\section{Návrhový vzor Component}
+\section{ECS}
+\subsection{Výhody a nevýhody ECS}
+\subsection{Ukládání komponent}
+
+
+\xxx{Více čtení o nevýhodách OOP a Component pattern -- https://gameprogrammingpatterns.com/component.html}
+
+\iffalse
 \chapter{Important first chapter}
 \label{chap:refs}
 
@@ -65,3 +87,4 @@ Try to avoid overusing gerunds (verbs that end with `-ing'). It is convenient to
 
 \paragraph{Scientific writing resources}
 Consult the book by \citet{glasman2010science} for more useful details and recommended terminology for writing about the scientific research. Very pragmatically, the book by \citet{sparling1989english} describes many common mistakes that Czech and Slovak (and generally Slavic) writers make when writing English.
+\fi

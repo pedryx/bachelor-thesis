@@ -1,4 +1,45 @@
+\chapter{Uvod}
+Vytváření her je komplexní proces, který vyžaduje mnoho prototypování a iterací. Často se stává, že je potřeba změnit nemalou část již existujicího kódu. Z tohoto důvodu je klíčová vysoká flexibilita architektury herního kódu. Jedním ze způsobů, jak řešit tento problém, je použít návrhový vzor Entity-Component-System (ECS), který nejenže poskytuje vysokou flexibilitu, ale také vyniká výkonem. Jedním z cílů této práce bude zhodnotit výhody a nevýhody tohoto návrhového vzoru.
 
+Implementace ECS je poměrně obtížná a časově náročná činnost, a proto mnoho vývojařů raději použije již existující knihovnu poskytující ECS. Existuje však velké množství těchto knihoven, ale naštěstí existují projekty, které nám mohou pomoci s výběrem takové knihovny. Velká část z těchto projektů provádí výkonnostní porovnání těchto knihoven na základě jednoduchých testů, avšak v případě rozsáhlejšího projektu, jako je hra, mohou být výsledky odlišné. Dalším cílem této práce proto bude vytvořit rozsáhlejší projekt (hru), který nám nejen pomůže při zhodnocení výhod a nevýhod ECS, ale také umožní srovnávat různé knihovny implementujicí tento návrhový vzor.
+
+\section{Entity-Component-System}
+Abychom mohli pokračovat, musíme si nejprve říct, co vlastně ECS je. Jedná se o návrhový vzor, který lze použít při návrhu her. Hlavním prvkem je entita, která reprezentuje objekt v herní scéně (např. hráče, strom, vesnici). Každá entita je složena z komponent, které obsahují data. Dále tu jsou systémy, které řídí logiku různých mechanik (např. pohyb, vykreslování, kolize). Při vhodném uspořádání komponent v paměti nám tento návrhový vzor může nabídnout velmi vysoký výkon.
+
+\section{Existujicí ECS knihovny}
+
+
+chceme udelat hru
+existuje hodne ECS knihoven
+implementace se hodne lisi
+aby se dobre porovnavali bude potreba udelat abstract layer
+bude to tezke protoze knihovny se hodne lisi
+
+
+\iffalse
+
+% proc bude navrh takoveto hry obtizny
+
+\section{Existujicí ECS knihovny}
+Na platformě .NET existuje nemalé množství knihoven kteří nabízejí ECS, bohužel nemálo z nich není nejlíp navrženo, proto se jimi budeme zajímat. Na internetu lze také nalézt několik projektů, které se tyto knihovny snaží porovnávat, ale žádná neporovnává tyho knihovny na konrkrétní hře.
+
+\section{Cíle práce}
+Cílem této práce je udělat hru pomocí ECS, která bude nezávislá na konkrétní ECS knihovně. Následně na této hře budeme porovnátat relativní výkon jednotlivých ECS knihoven. Dále chceme zhodnotit výhody a nevýhody ECS.
+
+\xxx{Úvod je příliš krátký.}
+
+
+\fi
+
+
+
+
+
+
+
+
+
+\iffalse
 \chapwithtoc{Introduction}
 
 Introduction should answer the following questions, ideally in this order:
@@ -14,3 +55,4 @@ Expected length of the introduction is between 1--4 pages. Longer introductions 
 \todo{You may notice that this paragraph briefly shows different ``types'' of `quotes' in TeX, and the usage difference between a hyphen (-), en-dash (--) and em-dash (---).}
 
 It is very advisable to skim through a book about scientific English writing before starting the thesis. I can recommend `\citetitle{glasman2010science}' by \citet{glasman2010science}.
+\fi

@@ -1,35 +1,45 @@
-\chapter{Uvod}
-Vytváření her je komplexní proces, který vyžaduje mnoho prototypování a iterací. Často se stává, že je potřeba změnit nemalou část již existujicího kódu. Z tohoto důvodu je klíčová vysoká flexibilita architektury herního kódu. Jedním ze způsobů, jak řešit tento problém, je použít návrhový vzor Entity-Component-System (ECS), který nejenže poskytuje vysokou flexibilitu, ale také vyniká výkonem. Jedním z cílů této práce bude zhodnotit výhody a nevýhody tohoto návrhového vzoru.
+\chapter{Úvod}
+Vytváření her představuje komplexní proces, který zahrnuje mnoho fází prototypování a iterací. Často se dostáváme do situace, kdy je nezbytné výrazně upravit již existující kód. Z tohoto důvodu je klíčová vysoká flexibilita architektury kódu. Jeden z přístupů k řešení tohoto problému je využít návrhový vzor Component, který s sebou nese vysokou míru flexibility.
 
-Implementace ECS je poměrně obtížná a časově náročná činnost, a proto mnoho vývojařů raději použije již existující knihovnu poskytující ECS. Existuje však velké množství těchto knihoven, ale naštěstí existují projekty, které nám mohou pomoci s výběrem takové knihovny. Velká část z těchto projektů provádí výkonnostní porovnání těchto knihoven na základě jednoduchých testů, avšak v případě rozsáhlejšího projektu, jako je hra, mohou být výsledky odlišné. Dalším cílem této práce proto bude vytvořit rozsáhlejší projekt (hru), který nám nejen pomůže při zhodnocení výhod a nevýhod ECS, ale také umožní srovnávat různé knihovny implementujicí tento návrhový vzor.
+Nicméně v této práci se zaměříme na jiný přístup, konkrétně na návrhový vzor Entity-Component-System (ECS). Tento přístup nejenže poskytuje vysokou flexibilitu, ale také vyniká v oblasti výkonu. Mezi cíle této práce bude patřit prozkoumat možnosti, které tento návrhový vzor přináší, a ukázat výhody, které nám ECS může poskytnout v porovnání s návrhovým vzorem Component.
+
+Abychom mohli efektivně využívat návrhový vzor ECS, je nezbytné implementovat odpovídající infrastrukturu. Samotná implementace této infrastruktury představuje obtížnou a časově náročnou úlohu, což vede mnoho vývojářů k volbě již existujících knihoven implementujících infrastrukturu pro tento návrhový vzor. Existuje však velké množství těchto knihoven, ale naštěstí existují měření, která nám mohou pomoci s výběrem takové knihovny.
+
+Většina těchto měření provádí výkonnostní porovnání různých ECS knihoven prostřednictvím jednoduchých testů. Je třeba však zdůraznit, že v případě rozsáhlejšího projektu, jako je hra, se výsledky mohou lišit. Hlavním cílem této práce proto bude vytvoření rozsáhlejší hry, která nejenže napomůže plnit výše zmíněné cíle, ale také umožní srovnávat různé knihovny poskytující implementaci tohoto návrhového vzoru. Konkrétně budeme srovnávat knihovny pro programovací jazyk C\#, neboť se jedná o programovací jazyk běžně používaný pro hry a aplikace, a zajímá nás, jaká je situace těchto knihoven pro tento konkrétní programovací jazyk.
 
 \section{Entity-Component-System}
-Abychom mohli pokračovat, musíme si nejprve říct, co vlastně ECS je. Jedná se o návrhový vzor, který lze použít při návrhu her. Hlavním prvkem je entita, která reprezentuje objekt v herní scéně (např. hráče, strom, vesnici). Každá entita je složena z komponent, které obsahují data. Dále tu jsou systémy, které řídí logiku různých mechanik (např. pohyb, vykreslování, kolize). Při vhodném uspořádání komponent v paměti nám tento návrhový vzor může nabídnout velmi vysoký výkon.
+Entity-Component-System (ECS) je návrhový vzor často používaný při vývoji her. Jeho základními stavebními kameny jsou entity, komponenty a systémy.
+\begin{enumerate}
+    \item \textbf{Entita (Entity):} Reprezentuje objekt v herní scéně. Může to být cokoliv, od hráče po strom nebo zvíře.
+    \item \textbf{Komponenta (Component):} Entita je složena z komponent, které ji popisují. Komponenty obsahují pouze data a žádnou herní logiku. Například hráč může mít komponentu Control, která popisuje, jak se ovládá, strom může mít komponentu Resource, která popisuje, kolik dřeva hráč získá, pokud jej pokácí, a zvíře může mít komponentu PathFollow, která popisuje cestu, po které se pohybuje. Všechny tři entity mohou mít komponentu Appearance, která popisuje jak daný objekt vypadá.
+    \item \textbf{Systém (System):} Obsahuje herní logiku. Systémy pracují nad určitou množinou komponent. V každé iteraci vezmou všechny entity obsahující tuto množinu komponent a provedou nad nimi určité operace. Například:
+    \begin{itemize}
+        \item \textbf{InputSystem:} Pracuje nad entitami s komponenty Control a Position, řídí logiku jejich ovládání.
+        \item \textbf{PathMovementSystem:} Pracuje nad entitami s komponenty PathFollow a Movement, řídí logiku jejich pohybu po cestě.
+        \item \textbf{RenderSystem:} Pracuje nad entitami s komponentou Appearance a řídí logiku jejich vykreslení.
+    \end{itemize}
+\end{enumerate}
+Návrhový vzor ECS umožňuje oddělit data od logiky, což usnadňuje úpravy a rozšíření hry. Díky tomu je také efektivní z hlediska výkonu, což je klíčové pro hry, kde rychlost a flexibilita jsou nezbytné.
 
-\section{Existujicí ECS knihovny}
-
-
-chceme udelat hru
-existuje hodne ECS knihoven
-implementace se hodne lisi
-aby se dobre porovnavali bude potreba udelat abstract layer
-bude to tezke protoze knihovny se hodne lisi
-
-
-\iffalse
-
-% proc bude navrh takoveto hry obtizny
-
-\section{Existujicí ECS knihovny}
-Na platformě .NET existuje nemalé množství knihoven kteří nabízejí ECS, bohužel nemálo z nich není nejlíp navrženo, proto se jimi budeme zajímat. Na internetu lze také nalézt několik projektů, které se tyto knihovny snaží porovnávat, ale žádná neporovnává tyho knihovny na konrkrétní hře.
+\section{Abstrakční vrstva}
+Vzhledem k tomu, že plánujeme využít plánovanou hru k porovnávání různých ECS knihoven, je nezbytné navrhnout hru tak, aby fungovala nezávisle na konkrétní ECS knihovně. S ohledem na odlišné API jednotlivých ECS knihoven je nezbytné vytvořit abstrakční vrstvu pro ECS. Pro každou knihovnu, kterou budeme chtít porovnávat, poskytneme implementaci této vrstvy. Samotná hra poté pracuje s touto abstrakční vrstvou. Vytvoření takovéto vrstvy představuje náročný úkol, navzdory podobnosti rozhraní jednotlivých ECS knihoven. Významný rozdíl spočívá v rozhraní systémů, které se výrazně liší mezi jednotlivými knihovnami.
 
 \section{Cíle práce}
-Cílem této práce je udělat hru pomocí ECS, která bude nezávislá na konkrétní ECS knihovně. Následně na této hře budeme porovnátat relativní výkon jednotlivých ECS knihoven. Dále chceme zhodnotit výhody a nevýhody ECS.
+Pro shrnutí, tato práce bude mít následující cíle:
+\begin{enumerate}
+    \item[h1)] Vytvořit hru pomocí ECS, která bude nezávislá na konkrétní ECS knihovně.
+    \item[h2)] Pomocí vytvořené hry porovnat relativní výkon populárních ECS knihoven pro programovací jazyk C\#.
+\end{enumerate}
+S využitím této hry také budeme chtít:
+\begin{enumerate}
+    \item[v1)] Prozkoumat možnosti návrhového vzoru ECS.
+    \item[v2)] Ukázat výhody, které nám ECS může nabídnout oproti návrhovému vzoru Component.
+\end{enumerate}
 
-\xxx{Úvod je příliš krátký.}
 
 
-\fi
+
+
 
 
 

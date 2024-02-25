@@ -1,0 +1,25 @@
+% game code changes more often than code in other industries
+
+\chapter{Architektury her}
+Abychom lépe porozuměli problémům, které ECS řeší, je nezbytné nejprve prostudovat alternativní architektury pro vývoj her. Začneme popisem objektového návrhu a problémů spojených s dědičností. Následně se zaměříme na návrhový vzor Component, který se snaží řešit tuto problematiku, a proč komunikace mezi komponentami může být problematická. Dále provedeme podrobnější popis ECS a prozkoumáme, proč má tato architektura vysoký výkon a flexibilitu.
+\xxx{navrhovy vzor x architektura}
+
+\section{Objektový návrh}
+Za účelem detailnějšího porozumění problematiky dědičnosti si pomocí objektového návrhu navrhneme jednoduchou hru. Začneme implementací třídy GameObject, sloužící jako předek pro libovolný objekt ve scéně. Dále se rozhodnem do naší hry přidat jednotku lučištníka. Přidáváme tedy třídu Archer, která dědí od GameObject. Následně se rozhodujeme rozšířit naši hru o věž. Přidáváme tedy třídu Tower, dědicí od GameObject. Následně se rozhodnem, že chceme aby naše věž uměla střílet, proto pro třidu Tower implementujem střelbu. Ovšem střelbu jsme již určitě implementovali do třídy Archer, což nám nyní vytváří duplicitní kód.
+
+Jak tento problém vyřešit? Prvním přístupem je využití multiple inheritance. Pokud programovací jazyk povoluje multiple inheritance, umožňuje to jedné třídě mít více než jednoho předka. Vytvořením společného předka ShootableObject, který by obsahoval společný kód střelby jak pro věž tak pro lučišníka, by byl duplicitní kód eliminován. Ovšem s povolením multiple inheritance se může objevit tzv. diamond problem, kdy dochází k problémům při přístupu ke členům definovaným na společném předkovi, pokud třída dědí od dvou tříd s tímto společným předkem.
+
+Alternativním přístupem by mohlo být přesunutí logiky střelby do třídy GameObject, což však narušuje princip single responsibility, jenž uvádí, že každá třída by měla být odpovědná pouze za jednu funkcionalitu. Porušením tohoto principu by se v průběhu času mohlo projevit hromaděním logiky v této třídě, vedoucí k vytvoření obrovské třídy (tzv. Blob Object Problem).
+
+Další problém je, že náš návrh je příliš závislý na hierarchii dědičnosti (tzv. tight coupling), což omezuje náš design hry. V praxi to znamená, že např. není možné za běhu přidat objektu schopnost střílet. Řešením celé této situace je koncept Composition over Inheritance. Místo tradiční dědičnosti preferujeme rozdělení objektů na komponenty.
+
+\section{Návrhový vzor Component}
+
+\xxx{je zajimavy jelikoz ho pouzivaji popularni herni enginy}
+\xxx{komunikace mezi komponenty muze byt problematicka}
+\xxx{navadi ke spaghetti kodu?}
+
+\section{ECS}
+
+\xxx{detailni popis co to je ECS}
+\xxx{jake vyhody nam muze poskytnout ECS ve srovnanim s Component patternem}

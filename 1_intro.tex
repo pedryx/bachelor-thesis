@@ -1,0 +1,96 @@
+\chapter{Úvod}
+
+Vytváření her je komplexní proces, který zahrnuje mnoho fází, včetně prototypování a iterací. Často se ocitneme v situaci, kdy je nezbytné výrazně upravit již existující kód. Z tohoto důvodu je klíčová vysoká flexibilita architektury kódu. Jedním z přístupů k řešení tohoto problému je využití návrhového vzoru Component~\cite{nystrom2014game}, který poskytuje vysokou míru flexibility. Tento návrhový vzor je běžně používán v herních frameworcích a enginech, jako je například Unity (koncept MonoBehavior) nebo MonoGame (koncept GameComponent). 
+
+Nicméně existují pokročilejší přístupy, které mohou nabídnout lepší výhody. Jedním takovím je návrhový vzor Entity-Component-System~\cite{Caini_2019} (ECS). I přesto, že se v současné době nepoužíva tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme.
+
+\section{Entity-Component-System}
+ECS je návrhový vzor používaný při vývoji her. Jeho základními stavebními kameny jsou entity, komponenty a systémy.
+
+\begin{enumerate}
+    \item \textbf{Entita (Entity):} Reprezentuje objekt v herní scéně, může být cokoliv od hráče po strom nebo zvíře.
+    \item \textbf{Komponenta (Component):} Entita je složena z komponent, které ji popisují. Komponenty obsahují pouze data a žádnou herní logiku. Například hráč může mít komponentu Control, která popisuje, jak se ovládá, strom může mít komponentu Resource, která popisuje, kolik dřeva hráč získá, pokud jej pokácí, a zvíře může mít komponentu PathFollow, která popisuje cestu, po které se pohybuje. Všechny tři entity mohou mít komponenty Appearance, která popisuje, jak daný objekt vypadá, a Position, popisující, kde se daný objekt nachází v herní scéně. Dále hráč a zvíře mohou mít komponentu Movement, popisující jejich pohyb.
+    \item \textbf{Systém (System):} Obsahuje herní logiku. Systémy pracují nad určitou množinou komponent. V každé iteraci vezmou všechny entity obsahující tuto množinu komponent a provedou nad nimi určité operace. Například:
+    \begin{itemize}
+        \item \textbf{InputSystem:} Pracuje nad entitami s komponenty Control a Position, řídí logiku jejich ovládání.
+        \item \textbf{PathMovementSystem:} Pracuje nad entitami s komponenty PathFollow a Movement, řídí logiku jejich pohybu po cestě.
+        \item \textbf{RenderSystem:} Pracuje nad entitami s komponentou Appearance a řídí logiku jejich vykreslení.
+    \end{itemize}
+\end{enumerate}
+
+ECS nejenže poskytuje vysokou flexibilitu, ale také vyniká v oblasti výkonu \xxx{link?}. Mezi cíle této práce bude patřit prozkoumat možnosti, které tento návrhový vzor přináší, a ukázat výhody, které nám ECS může poskytnout v porovnání s návrhovým vzorem Component.
+
+\section{ECS knihovny}
+Aby bylo možné efektivně využívat návrhový vzor ECS, je nezbytné implementovat odpovídající infrastrukturu. Samotná implementace této infrastruktury představuje obtížnou a časově náročnou úlohu, což vede mnoho vývojářů k volbě již existujících knihoven implementujících infrastrukturu pro tento návrhový vzor.
+
+V této práci se budeme věnovat knihovnám pro programovací jazyk C\#, neboť se jedná o programovací jazyk běžně používaný pro hry a aplikace. I když se omezíme pouze na C\#, existuje velké množství těchto knihoven. Naštěstí existují následující projekty na platformě GitHub, které nám mohou pomoci při výběru vhodné knihovny:
+
+\begin{enumerate}
+    % (https://github.com/Chillu1/CSharpECSComparison)
+    \item \textbf{CSharpECSComparison:} Porovnává ECS knihovny na základě vlastností a závislostí.
+    % (https://github.com/Doraku/Ecs.CSharp.Benchmark)
+    \item \textbf{Ecs.CSharp.Benchmark:} Provádí měření výkonu ECS knihoven.
+\end{enumerate}
+\xxx{odkazy na projekty}
+
+CSharpECSComparison poskytuje dobrý přehled vlastností, schopností a závislostí jednotlivých ECS knihoven. Tento přehled je užitečný a může být nápomocný při výběru vhodné knihovny. Ovšem nedává nám žádné informace o výkonu jednotlivých knihoven.
+
+Na druhou stranu Ecs.CSharp.Benchmark provádí jednoduchá výkonnostní porovnání ECS knihoven. Výsledky těchto testů mohou být užitečné při výběru knihovny podle výkonu. Problém však může spočívat v tom, že tyto testy jsou příliš jednoduché. Každý test, který Ecs.CSharp.Benchmark provádí, pracuje pouze s velmi jednoduchými komponentami, kde každá komponenta obsahuje pouze jedno celé číslo. Testy jsou rozděleny do několika sad. První sada vytváří entity s těmito komponentami. Druhá sada spouští jednoduché systémy, které pouze sčítají výše zmíněná celá čísla na těchto komponentách.
+
+Jelikož jsou testy příliš jednoduché, v případě rozsáhlejšího projektu, jako je hra, by se výsledky mohly lišit. Jednotlivé entity mohou mít velké množství komponent, z nichž každá může být složitější. Systémy mohou být také mnohem komplexnější a provádět mnohem složitější úkoly než pouhé sčítání celých čísel.
+
+Jedním ze způsobů, jak by bylo možné lépe porovnat výkon jednotlivých ECS knihoven, by bylo vytvoření hry, na které by bylo možné jednotlivé knihovny porovnávat. Taková hra by musela být nezávislá na konkrétní ECS knihovně. Ideálně by měla simulovat větší svět s větším počtem entit, což by umožnilo lepší měření. Jeden z cílů této práce bude vytvoření takové hry.
+
+Poté, co budeme mít tuto hru k dispozici, bude možné napsat výkonnostní test, který nám změří výkon příslušné ECS knihovny na naší hře. Pomocí tohoto testu bude možné udělat relativní výkonnostní srovnání jednotlivých ECS knihoven. Dalším cílem této práce bude tedy porovnat relativní výkon známějších ECS knihoven pro programovací jazyk C\#.
+
+\xxx{hypoteza je takova ze poradi knihoven vyjde relativne stejne jako u jednoduchych testu}
+\\
+\xxx{pokud by nekdo udelal jinou hru, vysledky mohou byt stale jine, ale to plati skoro pro jakykoliv test (vcetne Ecs.CSharp.Benchmark), my se nesnazime udelat ultimatni merici nastroj, ale chceme poskytnout lepsi nastroj na vykonostni porovnavani}
+
+Zároveň takto vytvořená hra nám může pomoci při plnění výše zmíněných cílů. Konkrétně nám poskytne možnost provést průzkum možností návrhového vzoru ECS a ukázat výhody, které ECS může nabídnout oproti návrhovému vzoru Component.
+
+\section{Abstrakční vrstva}
+Vzhledem k tomu, že plánovanou hru budeme chtít využít k porovnávání různých ECS knihoven, je nezbytné navrhnout ji tak, aby fungovala nezávisle na konkrétní ECS knihovně. S ohledem na odlišné API jednotlivých ECS knihoven je nezbytné vytvořit abstrakční vrstvu pro ECS. Pro každou knihovnu, kterou budeme chtít porovnávat, poskytneme implementaci této vrstvy. Samotná hra poté pracuje s touto abstrakční vrstvou. Vytvoření takovéto vrstvy představuje náročný úkol, navzdory podobnosti rozhraní jednotlivých ECS knihoven. Významný rozdíl spočívá v rozhraní systémů, které se výrazně liší mezi jednotlivými knihovnami.
+
+\section{Cíle práce}
+Pro shrnutí, tato práce bude mít následující cíle:
+\begin{enumerate}
+    \item[h1)] Vytvořit hru pomocí ECS, která bude nezávislá na konkrétní ECS knihovně.
+    \item[h2)] Pomocí vytvořené hry porovnat relativní výkon populárních ECS knihoven pro programovací jazyk C\#.
+\end{enumerate}
+S využitím této hry také budeme chtít:
+\begin{enumerate}
+    \item[v1)] Prozkoumat možnosti návrhového vzoru ECS.
+    \item[v2)] Ukázat výhody, které nám ECS může nabídnout oproti návrhovému vzoru Component.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\iffalse
+\chapwithtoc{Introduction}
+
+Introduction should answer the following questions, ideally in this order:
+\begin{enumerate}
+\item What is the nature of the problem the thesis is addressing?
+\item What is the common approach for solving that problem now?
+\item How this thesis approaches the problem?
+\item What are the results? Did something improve?
+\item What can the reader expect in the individual chapters of the thesis?
+\end{enumerate}
+
+Expected length of the introduction is between 1--4 pages. Longer introductions may require sub-sectioning with appropriate headings --- use \texttt{\textbackslash{}section*} to avoid numbering (with section names like `Motivation' and `Related work'), but try to avoid lengthy discussion of anything specific. Any ``real science'' (definitions, theorems, methods, data) should go into other chapters.
+\todo{You may notice that this paragraph briefly shows different ``types'' of `quotes' in TeX, and the usage difference between a hyphen (-), en-dash (--) and em-dash (---).}
+
+It is very advisable to skim through a book about scientific English writing before starting the thesis. I can recommend `\citetitle{glasman2010science}' by \citet{glasman2010science}.
+\fi

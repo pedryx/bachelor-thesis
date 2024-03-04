@@ -1,21 +1,56 @@
 \chapter{Analýza měření}
+V této kapitole si rozebereme jaké existují přístupy k měření a na co při měření dbát ohled.
+
+\section{Problematika měření}
+Měření výkonu je komplexní proces, který by mohl být samostatnou prací sám o sobě.
+
+Benchmark.NET je populární framework pro platformu .NET, který lze použít k měření výkonu.
 
 \section{Přístupy k měření}
-\xxx{Delta time jedne iterace}
-\\
-\xxx{Delta time n iteracich}
-\\
-\xxx{Mel by byt rendering soucasti mereni}
-\\
-\xxx{Mereni prumerneho delta time jednotlivych ssytemu}
-\\
-\xxx{Mereni behem hrani}
+Nejprve je nutné si říct co to je vlastně game loop.
+
+Nejpřímočarejší způsob je změřit jak dlouho trvá jedna iterace.
+
+Lepší způsob by tedy bylo změřit n iterací a spočítat jejich průměr.
+
+Rendering může být časově naročnější proces, rozeberme si jestli by měl či neměl být součastí měření.
+
+Dalším způsobem jak měřit výkon, je změřit iterace jednotlivých systémů.
+% proc to nedelame
+
+Výkon je také možné měřit během hraní samotné hry.
+% proc to nedelame
+
+% \xxx{Delta time jedne iterace}
+% \\
+% \xxx{Delta time n iteracich}
+% \\
+% \xxx{Mel by byt rendering soucasti mereni}
+% \\
+% \xxx{Mereni prumerneho delta time jednotlivych ssytemu}
+% \\
+% \xxx{Mereni behem hrani}
 
 \section{Na co při měření neberem ohled?}
-\xxx{Paralelni queries}
-\\
-\xxx{Reaction systemy}
-\\
-\xxx{Pridavani/odebirani komponent za runtime - design prizpusoben}
-\\
-\xxx{jine vykonostni vylepseni specificke pro danou ECS knihovnu}
+Některé ECS knihovny pro získání lepšího výkonu používají paralelní queries.
+% co to je
+% nase hra je nepouziva protoze je z jednoduchosti navrzena single threaded
+
+Další častá optimalizace, co některé ECS knihovny nabízejí jsou reaction systémy.
+% co to je
+% nepouzivame to protoze to nemaji vsechny knihovny
+
+Jednotlivé ECS knihovny často používají další specifické výkonostní funkcionality.
+% mi je nepouzivame protoze je nemaji vsechny knihovny
+
+Další věc na kterou při měření neberem ohledy je přídávání a odebírání komponent.
+% sparse set muzou by zvyhodnene
+% nas herni design je prizpusoben tomu, ze to neovlivni mereni
+
+% \xxx{Paralelni queries}
+% \\
+% \xxx{Reaction systemy}
+% \\
+% \xxx{Pridavani/odebirani komponent za runtime - design prizpusoben}
+% \\
+% \xxx{jine vykonostni vylepseni specificke pro danou ECS knihovnu}

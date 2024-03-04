@@ -1,0 +1,103 @@
+\chapter{Analýza přistupu k implementaci}
+
+V této kapitole prozkoumáme přístupy k implementaci herních mechanik a rozeberm si proč jsme zvolili ty co jsme zvolili.
+
+\section{Volba frameworku/enginu}
+
+Prvně si řekněme co to vlastně je herní engine a herní framework.
+
+Nýní si rozeberem populární herní enginy a frameworky pro C\#.
+
+Proč jsme zvolili právě MonoGame?
+
+% \\
+% \xxx{Jake enginy/frameworky existujou pro C\#}
+% \\
+% \xxx{Proc jsme zvolili Monogame}
+% \\
+
+\section{Implementace AI}
+
+Nyní si rozebereme populární přístupy pro implementaci AI ve hrách.
+
+Nejpřímočarejší způsob je použít stavové automaty.
+
+Pokročitejší zpusob jsou behavior trees.
+
+Další pokročitelší způsob je Goal Oriented Action Planning (GOAP).
+
+Proč jsme zvolili behavior trees?
+
+Chování AI agentů může být popsané také přímo v systémech.
+
+Ne vždy je zřejmé co by mělo být součástí AI.
+
+% \\
+% \xxx{jaka jsou mozsnosti?}
+% \\
+% \xxx{- behavior trees}
+% \\
+% \xxx{- state machines}
+% \\
+% \xxx{- GOAP}
+% \\
+% \xxx{proc jsme zvolili behavior trees?}
+% \\
+% \xxx{behavior primo v systemech a proc jsme to nepouzili}
+% \\
+% \xxx{Co by melo byt rizeno AI a co ne?}
+% \\
+% \xxx{- tezba surovin: pripsani do inventare vs damage and drop system}
+% \\
+% \xxx{- zpracovani surovin: pripsani do inventare vs resource processing system}
+% \\
+
+\section{ECS}
+
+Některé systémy v ECS reagují pouze pokud je pro danou entitu splněna určitá podmínka.
+
+Na první pohled by se mohlo zdát, že jsou tyto systémy špatné, jelikož podmínka je drahá operace.
+
+Alternativní a pravděpodobně lepší způsob je použít eventy.
+
+Rozeberme si jak by se s eventy v ECS pracovalo.
+
+% \\
+% \xxx{condition checking systems are ok}
+% \\
+% \xxx{eventy v ECS}
+% \\
+
+\section{Generovani terenu}
+
+Rozeberme si dva přístupy pro generování terénu.
+
+První způsob je generovat terén přímo na CPU.
+
+Druhý způsob je pro generování terénu použít GPU.
+
+% problem s path finding
+
+Abychom si rozebrali řešení, bude nejprve nutné nejprve říci něco více o shaderech.
+
+Compute shader můžem použít k řešení vžše zmíněného problému.
+
+% \xxx{GPU vs CPU}
+
+\section{Inline entity processor}
+
+Inlinování funkcí je optimalizace, při které je volání funkce nahrazeno jejím obsahem.
+
+% priklad, kdy dochazi k inlinovani
+
+Kvůli měření je důležité, aby naše entity processory neměli ideálně žádný overhead.
+
+Pro inlinování entity processorů, využíváma následujicí techniky.
+
+% aggresive inlining, struktura + generika
+
+% \\
+% \xxx{Proc je to potreba}
+% \\
+% \xxx{Jak jsme toho dosahli}
+% \\

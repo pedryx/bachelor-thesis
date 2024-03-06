@@ -23,7 +23,9 @@ ECS nejenže poskytuje vysokou flexibilitu, ale také vyniká v oblasti výkonu~
 \section{ECS knihovny}
 Aby bylo možné efektivně využívat návrhový vzor ECS, je nezbytné implementovat odpovídající infrastrukturu. Samotná implementace této infrastruktury představuje obtížnou a časově náročnou úlohu, což vede mnoho vývojářů k volbě již existujících knihoven implementujících infrastrukturu pro tento návrhový vzor.
 
-V této práci se budeme věnovat knihovnám pro programovací jazyk C\#, neboť se jedná o programovací jazyk běžně používaný pro hry a aplikace. I když se omezíme pouze na C\#, existuje velké množství těchto knihoven. Naštěstí existují následující projekty na platformě GitHub, které nám mohou pomoci při výběru vhodné knihovny:
+V této práci se budeme věnovat knihovnám pro programovací jazyk C\#, neboť se jedná o programovací jazyk běžně používaný pro hry a aplikace. I když se omezíme pouze na C\#, existuje velké množství těchto knihoven. Jedním ze způsobů jak si vybrat takovou knihovnu je provést výkonostní porovnanní.
+
+V současné době existují dva známější projekty na platformě GitHub, které provádějí porovnání ECS knihoven pro C\#:
 
 \begin{enumerate}
     \item \textbf{CSharpECSComparison~\cite{CSharpECSComparison}:} Porovnává ECS knihovny na základě vlastností a závislostí.
@@ -38,11 +40,7 @@ Jelikož jsou testy příliš jednoduché, v případě rozsáhlejšího projekt
 
 Jedním ze způsobů, jak by bylo možné lépe porovnat výkon jednotlivých ECS knihoven, by bylo vytvoření hry, na které by bylo možné jednotlivé knihovny porovnávat. Taková hra by musela být nezávislá na konkrétní ECS knihovně. Ideálně by měla simulovat větší svět s větším počtem entit, což by umožnilo lepší měření. Jeden z cílů této práce bude vytvoření takové hry.
 
-Poté, co budeme mít tuto hru k dispozici, bude možné napsat výkonnostní test, který nám změří výkon příslušné ECS knihovny na naší hře. Pomocí tohoto testu bude možné udělat relativní výkonnostní srovnání jednotlivých ECS knihoven. Dalším cílem této práce bude tedy porovnat relativní výkon známějších ECS knihoven pro programovací jazyk C\#.
-
-% \xxx{hypoteza je takova ze poradi knihoven vyjde relativne stejne jako u jednoduchych testu}
-% \\
-% \xxx{pokud by nekdo udelal jinou hru, vysledky mohou byt stale jine, ale to plati skoro pro jakykoliv test (vcetne Ecs.CSharp.Benchmark), my se nesnazime udelat ultimatni merici nastroj, ale chceme poskytnout lepsi nastroj na vykonostni porovnavani}
+Poté, co budeme mít tuto hru k dispozici, bude možné napsat výkonnostní test, který nám změří výkon příslušné ECS knihovny na naší hře. Pomocí tohoto testu bude možné udělat výkonostní porovnání jednotlivých ECS knihoven. Dalším cílem této práce bude tedy porovnat relativní výkon známějších ECS knihoven pro programovací jazyk C\#.
 
 Zároveň takto vytvořená hra nám může pomoci při plnění výše zmíněných cílů. Konkrétně nám poskytne možnost provést průzkum možností návrhového vzoru ECS a ukázat výhody, které ECS může nabídnout oproti návrhovému vzoru Component.
 

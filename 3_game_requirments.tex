@@ -1,34 +1,18 @@
 \chapter{Co požadujeme od hry}
-V této kapitole si rozebereme co požadujeme hry.
+V této kapitole si rozebereme požadavky, které požadujeme od naší hry. Prvně si rozeberem jednotlivé charakteristiky, které by naše hra měla splňovat. Dále na základě těchto charakteristik zvolíme žánr naší hry a odlvodníme proč jsme jej zvolili.
 
-Připoměnme si prvně, že naší hru chceme použít pro měření ECS knihovny.
-
-\section{Simulace}
-Žánrem naší hry bude simulace, ale řekněmě si nejprve co to vlastně je.
-
-% \\
-% \xxx{Nestacilo by hodil citace na co je simulace a tenhle odstavec proste skiopnout?}
-% \\
-
-Proč jsme vlastně zvolili simulaci?
-
-% \\
-% \xxx{Proc jsme zvolili simulaci?}
-% \\
-% \xxx{- Velky pocet entit.}
-% \\
-% \xxx{- Mali vliv uzivatele na prubeh hry.}
+% Než budeme pokračovat, pripomeňmě si prvně, že naší hru chceme použít pro měření výkonu ECS knihoven.
 
 \section{Charakteristiky hry}
-Nyní si rozebereme jaké charakteristiky by naše hra měla splňovat.
+Nyní si rozebereme jaké charakteristiky by naše hra měla splňovat. Zároveň si u každé odůvodníme proč je pro nás důležitá.
 
-Hra by měla mít velký počet entit.
+Hra by měla mít velký počet entit. Velkým počtem entit zajistíme, že jednotlivé systému budou vykonávat netriviální množství práce, celkové měření pro nás bude taky jednodušší.
 
-Hra musí být dostatečně komplexní.
+Hra musí být dostatečně komplexní. Kdyby hra byla moc jednoduchá, tak jsme ničeho nedosáhli. Jedním z důvodů proč tuhle hru vůbec děláme je, že existujicí porovnání jsou příliš jednoduchá, proto je potrřeba aby naše hra byla dostatečna komplexní.
 
-Hra nesmí být až příliš komplexní.
+Hra nesmí být až příliš komplexní. Kdyby byla příliš komplexní, tak to odvádí od problému, který řešíme.
 
-Hra by něměla využívat častého přidávání a odebírání komponent.
+Hra by něměla využívat častého přidávání a odebírání komponent. Kdyby toho vuyžívala, tak by byli zvýhodněny sparse set based knihovny.
 
 % \\
 % \xxx{Jaka charakteristiky by nase hra mela mit?}
@@ -42,3 +26,15 @@ Hra by něměla využívat častého přidávání a odebírání komponent.
 % \xxx{- Hra by nemela vyuzivat casteho pridavani/odebirani komponent.}
 % \\
 % \xxx{-- Kdyby ano, nektere knihovny by byli zvyhodnene.}
+
+\section{Simulace}
+Žánrem naší hry bude simulace, ale řekněmě si nejprve co to vlastně je. Simulace je žánr video her, kterž se snaší simulovat agenty v nějákem prostředí. U nás agenti budou vesničani a jejich prostředí bude příroda.
+
+Proč jsme vlastně zvolili právě simulaci? Simulace nám umožní mít velký počet entit. Zároveň pro simulaci je snadné vymyslet herní design, který dobře škáluje s velikostí světa. To nám umožuje dělat jednoduše velké herní světy. Další velkou výhodou simulace je malí vliv od uživatele na průběh hry. Konkrétně v naší hře bude hráč spíše pozorovatel, který sleduje jak simulace probíhá.
+
+% \\
+% \xxx{Proc jsme zvolili simulaci?}
+% \\
+% \xxx{- Velky pocet entit.}
+% \\
+% \xxx{- Mali vliv uzivatele na prubeh hry.}

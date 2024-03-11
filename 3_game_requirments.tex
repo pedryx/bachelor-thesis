@@ -1,5 +1,5 @@
 \chapter{Co požadujeme od hry}
-V této kapitole si rozebereme požadavky, které požadujeme od naší hry. Prvně si rozeberem jednotlivé charakteristiky, které by naše hra měla splňovat. Dále na základě těchto charakteristik zvolíme žánr naší hry a odlvodníme proč jsme jej zvolili.
+V této kapitole si rozebereme požadavky, které požadujeme od naší hry. Prvně si rozeberem jednotlivé charakteristiky, které by naše hra měla splňovat. Dále na základě těchto charakteristik zvolíme žánr naší hry a odůvodníme proč jsme jej zvolili.
 
 Než budeme pokračovat, pripomeňmě si prvně, že naší hru chceme použít pro měření výkonu ECS knihoven. Budem tedy chtít aby byla nezávsilá na konkrétní knihovně. Konkrétní knihovnu bude možné zvolit před spuštěním hry.
 
@@ -17,7 +17,7 @@ Nézávlislost na konkrétní ECS knihovně pro nás bude důležitá, abychom h
 
 Časté přidávání a odebírání komponent by vedlo ke zvýhodnění ECS knihoven založených na sparse set. Cílem této práce ale není porovnat hnihovny založené na sparse set oproti knihovnám založených na arch type. To jestli hra využívá častého přidávání a odebírání komponent je závislé čistě na implementaci. 
 
-Ukažme si to na příkladu, konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pro knihovnu založenou na sparse set by byl typický přístup vytvořit Starvation komponentu a přidat jí na každou entitu, která hladoví. Pro knihovny založené na arch type by ale tento přístup vedl ke ztrátě na výkonu. Jedním ze způsobů jak by se dal problém vyřešit je, že by každá entita co může hladovět obsahovala Hunger komponentu, ve které by byl flag Starvation který by rozhodoval o tom jestli daná entita hladoví.
+Ukažme si to na příkladu, konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pro knihovnu založenou na sparse set by jeden z typických přístupů byl vytvořit Starvation komponentu a přidat jí na každou entitu, která hladoví. Pro knihovny založené na arch type by ale tento přístup vedl ke ztrátě na výkonu. Jedním ze způsobů jak by se dal problém vyřešit je, že by každá entita co může hladovět obsahovala Hunger komponentu, ve které by byl flag Starvation který by rozhodoval o tom jestli daná entita hladoví.
 
 Velký počet entit nám usnadní měření výkonu naší hry. Větší počet entit nám zaručí, že systémy budou vykonávat netriviální množství práce, zároveň si tím vyzkoušíme velký výkon, kterým ECS disponuje. Velký počet entit nám také implikuje větší herní svět.
 

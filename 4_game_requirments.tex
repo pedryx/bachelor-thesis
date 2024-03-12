@@ -19,7 +19,7 @@ Nézávlislost na konkrétní ECS knihovně pro nás bude důležitá, abychom h
 
 Ukažme si to na příkladu, konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pro knihovnu založenou na sparse set by jeden z typických přístupů byl vytvořit Starvation komponentu a přidat jí na každou entitu, která hladoví. Pro knihovny založené na arch type by ale tento přístup vedl ke ztrátě na výkonu. Jedním ze způsobů jak by se dal problém vyřešit je, že by každá entita co může hladovět obsahovala Hunger komponentu, ve které by byl flag Starvation který by rozhodoval o tom jestli daná entita hladoví.
 
-Velký počet entit nám usnadní měření výkonu naší hry. Větší počet entit nám zaručí, že systémy budou vykonávat netriviální množství práce, zároveň si tím vyzkoušíme velký výkon, kterým ECS disponuje. Velký počet entit nám také implikuje větší herní svět.
+Velký počet entit nám usnadní měření výkonu naší hry. Také nám zaručí, že systémy budou vykonávat netriviální množství práce. Zároveň si tím vyzkoušíme velký výkon, kterým ECS disponuje. Velký počet entit nám také implikuje větší herní svět.
 
 Bude pro nás důležité aby naše hra nebyla příliš jednoduchá. Budem se chtím vyhnout tomu, aby naše meření nebylo jenom dalším jednoduchým meřením výkonu. Ovšem taky si musíme dát pozor na to aby nebyla příliš složitá, jelikož to by odvádělo pozornost od problému, který řešíme.
 

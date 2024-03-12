@@ -1,28 +1,34 @@
-% game code changes more often than code in other industries
-
 \chapter{Architektury her}
 V této kapitole si rozeberem architektury, které lze využít pro vývoj her. Pomůže nám to lépe porozumět problémům, které ECS řeší. Začneme objektovým návrhem a prozkoumáme problémy spojené s dědičností při vývoji her. Následně se zaměříme na návrhový vzor Component, který se snaží řešit tuto problematiku, a nahlédneme proč komunikace mezi komponentami může být problematická.
 
-Proto abychom lépe porozuměli herním architekturám, bude nutné si nejprve přiblížit jak se tvorba her liší od tvorby běžního software.
-% Popsat iterativni vyvoj
+% Iterativni proces
+Proto abychom lépe porozuměli herním architekturám, bude nutné si nejprve přiblížit jak se tvorba her liší od tvorby jiného typu softwaru. Vývoj her je iterativní proces, při kterém se nejprve navrhnou herní mechaniky. Následně probíhá testovaní, při kterém se zjistí, jestli jsou příslušné herní mechaniky zábavné. Pokud nejsou je nutné je upravit a znovu otestovat. Tyto dvě aktivity se opakují dokud vytvořené mechaniky nejsou dostatečně zábavné. V moment co jsou mechaniky vytvořené a víme o nich, že jsou zábavné, je možné vytvořit další mechaniky a celí proces opakovat. Takto se postupuje dokud nedojde k vytvoření celé hry.
 
-% \xxx{navrhovy vzor x architektura}.
+% Co to implikuje?
+Výše zmíněný iterativní proces, nám implikuje to, že zdrojový kód pro hry se mění velice často. Z toho důvodu je flexibilita velice důležitá vlastnost architektury při vývoji her.
 
 \section{Objektový návrh}
-Objektový návrh je ... .
+% Co je objektovy navrj
+%Objektový návrh je vývoj softwaru za pomoci objektově orientovaného programovaní \xxx{link}. Jedná se o programovací paradigma 
+\xxx{Je tu potreba popsat co to je objektovy navrh?}
 
-Nýní si navrhněme jednoduchou hru, na které si přiblížíme problémy s dědičností, které mohou při vývoji her s objektovým návrhem nastat.
-%Za účelem detailnějšího porozumění problematiky dědičnosti si pomocí objektového návrhu navrhneme jednoduchou hru. Začneme implementací třídy GameObject, sloužící jako předek pro libovolný objekt ve scéně. Dále se rozhodnem do naší hry přidat jednotku lučištníka. Přidáváme tedy třídu Archer, která dědí od GameObject. Následně se rozhodujeme rozšířit naši hru o věž. Přidáváme tedy třídu Tower, dědicí od GameObject. Následně se rozhodnem, že chceme aby naše věž uměla střílet, proto pro třidu Tower implementujem střelbu. Ovšem střelbu jsme již určitě implementovali do třídy Archer, což nám nyní vytváří duplicitní kód.
-% do prikladu popridavat veci z prikladu nize
+% Jak se pouziva objektovy nabrh ve vyvoji her
 
-Jak tento problém vyřešit? Prvním přístupem je využití multiple inheritance \xxx{link}.
-%Jak tento problém vyřešit? Prvním přístupem je využití multiple inheritance. Pokud programovací jazyk povoluje multiple inheritance, umožňuje to jedné třídě mít více než jednoho předka. Vytvořením společného předka ShootableObject, který by obsahoval společný kód střelby jak pro věž tak pro lučišníka, by byl duplicitní kód eliminován. Ovšem s povolením multiple inheritance se může objevit tzv. diamond problem, kdy dochází k problémům při přístupu ke členům definovaným na společném předkovi, pokud třída dědí od dvou tříd s tímto společným předkem.
+Nýní si navrhneme jednoduchou hru, na které si přiblížíme problémy s dědičností, které mohou při vývoji her s objektovým návrhem nastat. Budeme navrhovat jednoduchý tower defense \xxx{link}. Začneme třídou GameObject, ta nám bude sloužit jako předek pro libovolný objekt ve scéně. Nyní bychom chtěli vytvořit jednotky, vytvoříme tedy třídu Unit, která podědí od GameObject. Chtěli bychom aby ve hře byli také speciální jednotky, které umí střílet, např. lučišníci. Vytvoříme tedy třídu Archer, která dědí od třídy Unit. Dále v naší hře budem potřebovat věže, uděláme tedy třídu Tower, dědicí od třídy GameObject. Určitě budem chtít od většiny našich věží aby uměli střílet, implementujeme tedy další třídu ShootingAbleTower, dědicí od třídy Tower. Do této třídy budem určitě chtít implementovat mechaniku střelby. Ovšem střelbu jsme již určitě implementovali do třídy Archer, což nám nyní vytváří duplicitní kód.
 
-Alternativním přístupem by mohlo být přesunutí logiky střelby do třídy GameObject.
-%, což však narušuje princip single responsibility, jenž uvádí, že každá třída by měla být odpovědná pouze za jednu funkcionalitu. Porušením tohoto principu by se v průběhu času mohlo projevit hromaděním logiky v této třídě, vedoucí k vytvoření obrovské třídy (tzv. Blob Object Problem).
+Jak tento problém vyřešit? Prvním přístupem je využití multiple inheritance \xxx{link} (vícenásobné dědičnosti). Pokud programovací jazyk povoluje multiple inheritance, umožňuje to jedné třídě mít více než jednoho předka. Pokud bychom chtěli pomocí multiple inheritence vyřešit náš problém, mohli bychom implementovat třídu ShootingAble, která dědí od GameObject. Do této třídy bychom implementovali mechaniku střelby. Náš Archer by poté dědil od ShootingAble a od Unit. Naše ShootingAbleTower by dědila od ShootingAble a od Tower.
 
-Další problém je, že náš návrh je příliš závislý na hierarchii dědičnosti (tzv. tight coupling \xxx{link}), což omezuje náš design hry.
-%V praxi to znamená, že např. není možné za běhu přidat objektu schopnost střílet. Řešením celé této situace je koncept Composition over Inheritance. Místo tradiční dědičnosti preferujeme rozdělení objektů na komponenty.
+Tímto řešení by nám ale vznikl tzv. diamond problém \xxx{link}. Jedná se problém, který může vzniknout při používání multiple inheritance. Diamond problém nástává tehdy, pokud je potřeba přisoupit ke členům definovaných na společném předkovi. V našem případě se jedná o členy na třídě GameObject.
+
+Alternativním přístupem by mohlo být přesunutí společné logiky do společného předka. V našem případě bychom mechaniku střelby implementovali přímo ve třídě GameObject.
+
+Ovšem tímto porušíme jeden z principů objektového programování, konkrétně single responsibility \xxx{link}. Tento princip nám říká, že každá třída by měla být zodpovědná pouze za jednu věc. Porušení tohoto principu může mít za následek, že se nám ve společném předkovi začne hromadit velké množství logiky. To může vyústit v obrovskou třídu, která řeší všechny možné herné mechaniky. Jedná se o tzv. blob object \xxx{link}. 
+
+Další problém je, že náš návrh je příliš závislý na hierarchii dědičnosti, což omezuje design naší hry. V praxi to znamená, že např. není možné za běhu přidat objektu schopnost střílet.
+
+Řešením celé této situace je koncept composition over inheritance \xxx{link}. Tento princip nám říka, že namísto hluboké hierarchie dědičnosti bychom měli preferovat rozdělení objektů do komponent. Je to princip, na kterém je postavený návrhový vzor Component a také ECS.
+
+\xxx{Ve skutečnosti byl princip composition over inheritance zmíněný již v Gang of Four a jedná se o dobrou praktiku v objektovém programování. - Byla by tohle dobrá poznámka pod čarou? }
 
 \section{Návrhový vzor Component}
 Component je návrhový vzor... .

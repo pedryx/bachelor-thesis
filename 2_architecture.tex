@@ -15,7 +15,11 @@ Přirozeným přístupem pro tvorbu software je použítí objektový návrh a s
 
 Navrhneme si jednoduchou hru, na které si přiblížíme problémy s dědičností, které mohou při vývoji her s objektovým návrhem nastat. Budeme navrhovat jednoduchý tower defense \xxx{link}. Začneme třídou \verb|GameObject|, ta nám bude sloužit jako předek pro libovolný objekt ve scéně. Nyní bychom chtěli vytvořit jednotky, vytvoříme tedy třídu \verb|Unit|, která podědí od \verb|GameObject|. Chtěli bychom aby ve hře byli také speciální jednotky, které umí střílet, např. lučišníci. Vytvoříme tedy třídu \verb|Archer|, která dědí od třídy \verb|Unit|. Dále v naší hře budem potřebovat věže, uděláme tedy třídu \verb|Tower|, dědicí od třídy \verb|GameObject|. Určitě budem chtít od většiny našich věží aby uměli střílet, implementujeme tedy další třídu \verb|ShootingAbleTower|, dědicí od třídy \verb|Tower|. Do této třídy budem určitě chtít implementovat mechaniku střelby. Ovšem střelbu jsme již určitě implementovali do třídy \verb|Archer|, což nám nyní vytváří duplicitní kód.
 
+\xxx{obrazek}
+
 Jak tento problém vyřešit? Prvním přístupem je využití multiple inheritance \xxx{link} (vícenásobné dědičnosti). Pokud programovací jazyk povoluje multiple inheritance, umožňuje to jedné třídě mít více než jednoho předka. Pokud bychom chtěli pomocí multiple inheritence vyřešit náš problém, mohli bychom implementovat třídu \verb|ShootingAble|, která dědí od \verb|GameObject|. Do této třídy bychom implementovali mechaniku střelby. Náš \verb|Archer| by poté dědil od \verb|ShootingAble| a od \verb|Unit|. Naše \verb|ShootingAbleTower| by dědila od \verb|ShootingAble| a od \verb|Tower|.
+
+\xxx{obrazek}
 
 Tímto řešení by nám ale vznikl tzv. diamond problém \xxx{link}. Jedná se problém, který může vzniknout při používání multiple inheritance. Diamond problém nástává tehdy, pokud je potřeba přisoupit ke členům definovaných na společném předkovi. V našem případě se jedná o členy na třídě \verb|GameObject|.
 
@@ -27,7 +31,7 @@ Další problém je, že náš návrh je příliš závislý na hierarchii dědi
 
 Řešením celé této situace je koncept composition over inheritance \xxx{link}. Tento princip nám říka, že namísto hluboké hierarchie dědičnosti bychom měli preferovat rozdělení objektů do komponent. Je to princip, na kterém je postavený návrhový vzor Component a také ECS.
 
-\xxx{Ve skutečnosti byl princip composition over inheritance zmíněný již v Gang of Four a jedná se o dobrou praktiku v objektovém programování. - Byla by tohle dobrá poznámka pod čarou? }
+\xxx{Pridat jako poznamku pod carou: Ve skutečnosti byl princip composition over inheritance zmíněný již v Gang of Four a jedná se o dobrou praktiku v objektovém programování. }
 
 \section{Návrhový vzor Component}
 \label{sec:component}

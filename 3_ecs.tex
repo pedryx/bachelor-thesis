@@ -1,10 +1,25 @@
 \chapter{ECS}
 \label{chap:ecs}
-V teto kapitole ...
+V této kapitole si více rozeberem návrhový vzor ECS. Řekneme si jak se implementuje ukládání komponent, rozebereme si vlastnosti ECS a na závěr porovnáme ECS s návrhovým vzorem Component.
 
-World
+\section{Reprezentace ECS}
+To jak ECS funguje jsme si již rozebrali v úvodu. Nyní si rozebereme jak bývají jednotlivé prvky ECS reprezentovány při jejich implementaci. Krom základních členů, jako jsou entity, komponenty a systémy, si představíme ještě world a query.
 
-Query
+Komponenty, jako takové, bývají často reprezentovány třídou nebo strukturou. Jak již bylo zmíněno v úvodu, komponenty obsahují pouze data, nikoliv žádnou logiku. Proto tyto třídy a struktury neobsahují žádné funkce.
+
+Entita by, po vzoru návrhového vzoru Component, mohla být reprezentována jako kolekce svých komponent. Ovšem to se v praxi nedělá, namísto toho se používá řešení, které jak si později ukážeme vede k lepšímu výkonu. Běžné řešení bývá to, že každá ECS implementace má správce všech entit a komponent, ve kterém jsou jednotlivé komponenty uloženy. Jednotlivé entity jsou potom reprezentovány pouze jako jednoduchý identifikátor a je úlohou tohoto správce aby mapoval jednotlivé entity k jejich komponentám.
+
+Tomuto správce se v ECS implementacích běžně říká world. Jak již bylo zmíněno, slouží jako správce a kontejner pro všechny entity a komponenty v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivím entitám.
+
+Některé ECS implemetace reprezentují entity pomocí malé struktury, obsahujicí identifikátor dané entity společně s referencí na world do kterého patří. To umožnuje mít této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání komponent.
+
+Reprezentace systémů se v jednotlivích ECS implementacích dost liší. Některé vyžadují aby systém byl třída dědicí od abstraktního předka, jíné zase volí opačný extrém a dovolují systém reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entity s určitou množinou komponent.
+
+Tomuto objektu se v ECS implementacích běžně říká query. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy komponent bude query pracovat. Je například možné mít Query, které pracuje nad komponenty Movement a Position. Takové Query by pak bylo schopné iterovat nad všemi entitami co mají komponenty Movement a Position. Pomocí tohoto Query by bylo možné implementovat MovementSystem, který by řídil logiku pohybu.
+
+Query se dělí do dvou typů, statické a dynamické. Statické query je možné zkonstruovat (znamenaje specifikovat typy komponent nad kterými bude pracovat) pouze za kompilace. Naproti tomu dynamické query je možné zkonstruovat za běhu. Dynamické query je poměrně pokročilá věc a pouze malé množství ECS implementací jej podporuje.
+
+Je důležité si uvědomit, že správa entit a komponent je dost složitá úloha. Je nutné aby bylo možné namapovat jednotlivé komponenty na jejich entity. Zároveň je také zapotřebí aby bylo možné iterovat určité n-tice těchto komponent za pomocí query. Je také důležité brát v potaz to, že jednotlivé entity a komponenty se mohou přidávat a odebírat za běhu. Více si o těchto věcech řekneme v pozdější sekci, nyní se ale zamřme na mazání entit. Jelikož smazání takové entity může být naročné na implementaci a nebo také na výkon, některé ECS implementace využívajicí koncept tombstone. Tombstone je oznaceni pro objekt, ktery po smazani stale existuje, pouze je někde poznamenáno, že je již smazaný. Smazané entity bývají tedy v některých ECS implementacích označeny jako tombstone a query je při iteraci ignoruje.
 
 \section{Správa paměti}
 
@@ -37,3 +52,8 @@ Flexibilita > vykon
 \section{ECS vs Component}
 
 TODO
+
+
+\xxx{relace?}
+\xxx{eventy?}
+\xxx{Bevy?}

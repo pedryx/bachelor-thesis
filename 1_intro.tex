@@ -1,8 +1,10 @@
 \chapter{Úvod}
 
-Vytváření her je komplexní proces, který zahrnuje mnoho fází, včetně prototypování a iterací. Často se ocitneme v situaci, kdy je nezbytné výrazně upravit již existující kód. Z tohoto důvodu je klíčová vysoká flexibilita architektury kódu. Jedním z přístupů k řešení tohoto problému je využití návrhového vzoru Component~\cite{nystrom2014game}, který poskytuje vysokou míru flexibility. Tento návrhový vzor je běžně používán v herních frameworcích a enginech, jako je například Unity (koncept MonoBehaviour) nebo MonoGame (koncept GameComponent).
+Vytváření her je komplexní proces, který zahrnuje mnoho fází, včetně prototypování a iterací. Často se ocitneme v situaci, kdy je nezbytné výrazně upravit již existující kód. Z tohoto důvodu je klíčová vysoká flexibilita architektury kódu.
 
-Nicméně existují pokročilejší přístupy, které mohou nabídnout ještě lepší flexibilitu a výkon. Jedním takovím je návrhový vzor Entity-Component-System~\cite{Caini_2019} (ECS). I přesto, že se v současné době nepoužíva tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme.
+Jedním z přístupů k řešení tohoto problému je využití návrhového vzoru Component, který poskytuje vysokou míru flexibility. Tento návrhový vzor je běžně používán v herních frameworcích a enginech, jako je například Unity (koncept MonoBehaviour) nebo MonoGame (koncept GameComponent). Návrhový vzor Component je dobře představen v~\citet{nystrom2014game}.
+
+Nicméně existují pokročilejší přístupy, které mohou nabídnout ještě lepší flexibilitu a výkon. Jedním takovím je návrhový vzor Entity-Component-System (ECS). Tento návrhový vzor je dobře rozebrán v následujicím článku~\cite{Caini_2019}. I přesto, že se v současné době nepoužíva tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme.
 
 \section{Entity-Component-System}
 ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebními kameny jsou entity, komponenty a systémy.
@@ -18,7 +20,7 @@ ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebním
     \end{itemize}
 \end{enumerate}
 
-ECS nejenže poskytuje vysokou flexibilitu, ale také vyniká v oblasti výkonu~\cite{Caini_2019}. Mezi cíle této práce bude patřit prozkoumat možnosti, které tento návrhový vzor přináší, a ukázat výhody, které nám ECS může poskytnout v porovnání s návrhovým vzorem Component.
+ECS nejenže poskytuje vysokou flexibilitu, ale také vyniká v oblasti výkonu. Jeho flexibilitu a výkon si více rozebereme v kapitole~\cref{chap:ecs}. Mezi cíle této práce bude patřit prozkoumat možnosti, které tento návrhový vzor přináší, a ukázat výhody, které nám ECS může poskytnout v porovnání s návrhovým vzorem Component.
 
 \section{ECS knihovny}
 Aby bylo možné efektivně využívat návrhový vzor ECS, je nezbytné implementovat odpovídající infrastrukturu. Samotná implementace této infrastruktury představuje obtížnou a časově náročnou úlohu, což vede mnoho vývojářů k volbě již existujících knihoven implementujících infrastrukturu pro tento návrhový vzor.

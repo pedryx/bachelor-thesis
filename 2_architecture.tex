@@ -1,5 +1,5 @@
 \chapter{Architektury her}
-V této kapitole si rozeberem architektury, které lze využít pro vývoj her. Pomůže nám to lépe porozumět problémům, které ECS řeší. Začneme objektovým návrhem a prozkoumáme problémy spojené s dědičností při vývoji her. Následně se zaměříme na návrhový vzor Component, který se snaží řešit tuto problematiku, a nahlédneme proč komunikace mezi komponentami může být problematická.
+V této kapitole si rozebereme architektury, které lze využít pro vývoj her. Pomůže nám to lépe porozumět problémům, které ECS řeší. Začneme objektovým návrhem a prozkoumáme problémy spojené s dědičností při vývoji her. Následně se zaměříme na návrhový vzor Component, který se snaží řešit tuto problematiku, a nahlédneme proč komunikace mezi komponentami může být problematická.
 
 % Iterativni proces
 Proto abychom lépe porozuměli herním architekturám, bude nutné si nejprve přiblížit jak se tvorba her liší od tvorby jiného typu softwaru. Vývoj her je iterativní proces, při kterém se nejprve navrhnou herní mechaniky. Následně probíhá testovaní, při kterém se zjistí, jestli jsou příslušné herní mechaniky zábavné. Pokud nejsou je nutné je upravit a znovu otestovat. Tyto dvě aktivity se opakují dokud vytvořené mechaniky nejsou dostatečně zábavné. V moment co jsou mechaniky vytvořené a víme o nich, že jsou zábavné, je možné vytvořit další mechaniky a celí proces opakovat. Takto se postupuje dokud nedojde k vytvoření celé hry.
@@ -8,13 +8,12 @@ Proto abychom lépe porozuměli herním architekturám, bude nutné si nejprve p
 Výše zmíněný iterativní proces, nám implikuje to, že zdrojový kód pro hry se mění velice často. Z toho důvodu je flexibilita velice důležitá vlastnost architektury při vývoji her.
 
 \section{Objektový návrh}
-% Co je objektovy navrj
-%Objektový návrh je vývoj softwaru za pomoci objektově orientovaného programovaní \xxx{link}. Jedná se o programovací paradigma 
-\xxx{Je tu potreba popsat co to je objektovy navrh?}
+% prirozenym zpusobem vyuzit bezneho objektoveho navrhu programovaciho jazyka, cili udelat nejakou sadu objektu provazanych dedicnosti
+Přirozeným přístupem pro tvorbu software je použítí objektový návrh a s jeho pomocí si vytvořit sadu tříd provázaných dědičností. Ovšem jak již bylo naznačeno, v případě tvorby her může být tento přístup problematický.
 
 % Jak se pouziva objektovy nabrh ve vyvoji her
 
-Nýní si navrhneme jednoduchou hru, na které si přiblížíme problémy s dědičností, které mohou při vývoji her s objektovým návrhem nastat. Budeme navrhovat jednoduchý tower defense \xxx{link}. Začneme třídou GameObject, ta nám bude sloužit jako předek pro libovolný objekt ve scéně. Nyní bychom chtěli vytvořit jednotky, vytvoříme tedy třídu Unit, která podědí od GameObject. Chtěli bychom aby ve hře byli také speciální jednotky, které umí střílet, např. lučišníci. Vytvoříme tedy třídu Archer, která dědí od třídy Unit. Dále v naší hře budem potřebovat věže, uděláme tedy třídu Tower, dědicí od třídy GameObject. Určitě budem chtít od většiny našich věží aby uměli střílet, implementujeme tedy další třídu ShootingAbleTower, dědicí od třídy Tower. Do této třídy budem určitě chtít implementovat mechaniku střelby. Ovšem střelbu jsme již určitě implementovali do třídy Archer, což nám nyní vytváří duplicitní kód.
+Navrhneme si jednoduchou hru, na které si přiblížíme problémy s dědičností, které mohou při vývoji her s objektovým návrhem nastat. Budeme navrhovat jednoduchý tower defense \xxx{link}. Začneme třídou GameObject, ta nám bude sloužit jako předek pro libovolný objekt ve scéně. Nyní bychom chtěli vytvořit jednotky, vytvoříme tedy třídu Unit, která podědí od GameObject. Chtěli bychom aby ve hře byli také speciální jednotky, které umí střílet, např. lučišníci. Vytvoříme tedy třídu Archer, která dědí od třídy Unit. Dále v naší hře budem potřebovat věže, uděláme tedy třídu Tower, dědicí od třídy GameObject. Určitě budem chtít od většiny našich věží aby uměli střílet, implementujeme tedy další třídu ShootingAbleTower, dědicí od třídy Tower. Do této třídy budem určitě chtít implementovat mechaniku střelby. Ovšem střelbu jsme již určitě implementovali do třídy Archer, což nám nyní vytváří duplicitní kód.
 
 Jak tento problém vyřešit? Prvním přístupem je využití multiple inheritance \xxx{link} (vícenásobné dědičnosti). Pokud programovací jazyk povoluje multiple inheritance, umožňuje to jedné třídě mít více než jednoho předka. Pokud bychom chtěli pomocí multiple inheritence vyřešit náš problém, mohli bychom implementovat třídu ShootingAble, která dědí od GameObject. Do této třídy bychom implementovali mechaniku střelby. Náš Archer by poté dědil od ShootingAble a od Unit. Naše ShootingAbleTower by dědila od ShootingAble a od Tower.
 

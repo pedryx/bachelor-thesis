@@ -40,7 +40,7 @@ Component je návrhový vzor, který se často používá pro vývoj her. Použ�
 % odkaz na game programming patterns
 
 % citace na component
-Přibližme si co to vlastně je návrhový vzor Component. Máme nějákou entitu (neplést s entitou z ECS, která reprezentuje pouze objekty v herní scéně) např. hráče nebo přímo celou hru. Tato entita obsahuje několik domén. Pro hráče to můžou být logiky co řeší např. útok nebo pohyb. Pro hru to můžou být jednotlivé herní mechaniky, jako např. spawnování nepřátel nebo čtení vstupu z klávesnice. Abychom izolovali tyto domény, tak kód každé takové domény umístíme do samostatné komponenty. Tato komponenta může být reprezentována např. třídou. Entita jako taková je redukována na kontejner těchto komponent.~\cite{nystrom2014game}.
+Přibližme si co to vlastně je návrhový vzor Component. Máme nějákou entitu (neplést s entitou z ECS, která reprezentuje pouze objekty v herní scéně) např. hráče nebo přímo celou hru. Tato entita obsahuje několik domén. Pro hráče to můžou být logiky co řeší např. útok nebo pohyb. Pro hru to můžou být jednotlivé herní mechaniky, jako např. spawnování nepřátel nebo čtení vstupu z klávesnice. Abychom izolovali tyto domény, tak kód každé takové domény umístíme do samostatné komponenty. Tato komponenta může být reprezentována např. třídou. Entita jako taková je redukována na kontejner těchto komponent~\cite{nystrom2014game}.
 
 \xxx{A single entity spans multiple domains. To keep the domains isolated, the code for each is placed in its own component class. The entity is reduced to a simple container of components.}
 

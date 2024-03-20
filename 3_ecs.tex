@@ -33,7 +33,9 @@ Je důležité si uvědomit, že správa entit a komponent je dost složitá úl
 \section{Ukladaní komponent}
 Nyní si rozeberem způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Používají se převážně dva způsoby arch type a sparse set. Ovšem některé knihovny tyto způsoby nepoužívají a ukládají komponenty neefektivně, přiblížíme si tedy také jak to tyto knihovny dělají a proč je to neefektivní.
 
-Arch type
+První způsob, který se používá pro ukládání komponent je tzv. arch type. Funguje to tak, že se vezmou jednotlivé entity a rozdělí se do typů. Každému takovému typu se říká arch type. Arch type každé entity je určen množinou typů komponent ze kterých je složena. Každý arch type je poté implmentován jako kolekce, která má v sobě několik polí. Konkrétně pole pro každý typ komponenty. Každá entita v arch type má poté přiřazen index. Komponenty na indexu i, náleží entitě s indexem i.Pokud poté vytvoříme query, které by mělo iterovat přes všechny entity s nějákou n-ticí komponent, tak toto query vezme vsechny arch type, které obsahují danou n-tici a jednoduše proiteruje příslušné pole.
+
+Velkou nevýhodou arch types je přidávání a odebírání komponent. Pokud je některé entitě přidána nebo odebrána komponenta, dojde ke změně jejího arch type. V takovém případě je nutné překopírovat všechny komponenty příslušné entity z původního arch type do nového. To může být výkonostně náročná operace. Také je důležité si uvědomit, že odebrání prvku z pole je O(n) operace, ovšem tomuto se dá jednoduše předejít. Pokud nám nezáleží na pořadí prvků v poli, můžeme jednoduše vzít prvek, který chceme odebrat a prohodit ho s posledním prvkem v poli. Poté provedem smazání posledního prvku. Tím dosáhneme smazání prvku z pole v O(1).
 
 Sparse set
 

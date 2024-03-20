@@ -13,7 +13,7 @@ Tomuto správci se v ECS implementacích běžně říká world. Jak již bylo z
 
 Některé ECS implemetace reprezentují entity pomocí malé struktury, obsahujicí identifikátor dané entity společně s referencí na world do kterého patří. To umožnuje mít na této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání komponent.
 
-Reprezentace systémů se v jednotlivích ECS implementacích dost liší. Některé vyžadují aby systém byl třída dědicí od abstraktního předka, jíné zase volí opačný extrém a dovolují systém reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entity s určitou množinou komponent.
+Reprezentace systémů se v jednotlivích ECS implementacích dost liší. Některé vyžadují aby systém byl třída dědicí od abstraktního předka, jíné zase volí opačný extrém a dovolují systém reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entit s určitou množinou komponent.
 
 Tomuto objektu se v ECS implementacích běžně říká query. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy komponent bude query pracovat. Je například možné mít Query, které pracuje nad komponenty Movement a Position. Takové Query by pak bylo schopné iterovat nad všemi entitami co mají komponenty Movement a Position. Pomocí tohoto Query by bylo možné implementovat MovementSystem, který by řídil logiku pohybu.
 

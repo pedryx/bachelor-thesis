@@ -21,17 +21,17 @@ Query se dělí do dvou typů, statické a dynamické. Statické query je možn�
 
 Je důležité si uvědomit, že správa entit a komponent je dost složitá úloha. Je nutné aby bylo možné namapovat jednotlivé komponenty na jejich entity. Zároveň je také zapotřebí aby bylo možné iterovat určité n-tice těchto komponent za pomocí query. Je také důležité brát v potaz to, že jednotlivé entity a komponenty se mohou přidávat a odebírat za běhu. Více si o těchto věcech řekneme v pozdější sekci, nyní se ale zamřme na mazání entit. Jelikož smazání takové entity může být naročné na implementaci a nebo také na výkon, některé ECS implementace využívajicí koncept tombstone. Tombstone je oznaceni pro objekt, ktery po smazani stale existuje, pouze je někde poznamenáno, že je již smazaný. Smazané entity bývají tedy v některých ECS implementacích označeny jako tombstone a query je při iteraci ignoruje.
 
-\section{Správa paměti}
+%\section{Správa paměti}
+%Než si rozeberem jak je možné úkládat komponenty, bude nutné si přiblížit jak vlastně funguje cache v počítači a také jaký je rozdíl mezi hodnotovími a referenčními typy v C\#.
 
-Proc je potreba tahle sekce?
+%Cache
 
-Cache
+%Referencni vs hodnotove typy
 
-Referencni vs hodnotove typy
+\xxx{sekce o cache a referencni vs hodnotove typy v C\#?}
 
 \section{Ukladaní komponent}
-
-...
+Nyní si rozeberem způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Používají se převážně dva způsoby arch type a sparse set. Ovšem některé knihovny tyto způsoby nepoužívají a ukládají komponenty neefektivně, přiblížíme si tedy také jak to tyto knihovny dělají a proč je to neefektivní.
 
 Arch type
 
@@ -40,7 +40,6 @@ Sparse set
 Componenty jako pointery
 
 \section{Vlastnosti ECS}
-
 ...
 
 Vysoka flexibilita
@@ -51,9 +50,6 @@ Flexibilita > vykon
 
 \section{ECS vs Component}
 
-TODO
+\xxx{TODO}
 
-
-\xxx{relace?}
-\xxx{eventy?}
-\xxx{Bevy?}
+\xxx{maybe topics: relace, eventy, tag component, system types, reaction systems, paralelism, paralel queries, query filters, functional programming, relace, eventy, prukopnici (herni engine Bevy, ECS knihovny entitas a flecs)}

@@ -11,7 +11,7 @@ Entita by, po vzoru návrhového vzoru Component, mohla být reprezentována jak
 
 Tomuto správci se v ECS implementacích běžně říká world. Jak již bylo zmíněno, slouží jako správce a kontejner pro všechny entity a komponenty v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivím entitám.
 
-Některé ECS implemetace reprezentují entity pomocí malé struktury, obsahujicí identifikátor dané entity společně s referencí na world do kterého patří. To umožnuje mít této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání komponent.
+Některé ECS implemetace reprezentují entity pomocí malé struktury, obsahujicí identifikátor dané entity společně s referencí na world do kterého patří. To umožnuje mít na této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání komponent.
 
 Reprezentace systémů se v jednotlivích ECS implementacích dost liší. Některé vyžadují aby systém byl třída dědicí od abstraktního předka, jíné zase volí opačný extrém a dovolují systém reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entity s určitou množinou komponent.
 

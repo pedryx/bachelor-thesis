@@ -45,7 +45,7 @@ Přibližme si co to vlastně je návrhový vzor Component. Máme nějákou enti
 \xxx{A single entity spans multiple domains. To keep the domains isolated, the code for each is placed in its own component class. The entity is reduced to a simple container of components.}
 
 % Jeho pouziti se muze lisit
-Je videt, že tento návrhový vzor je definován dost obecně. Jeho implementace a použítí se v praxi můžou lišit. Ve skutečnosti je tento návrhový vzor použit i v ECS, konkrétně pro komponenty jednotlivých entit. V této sekci se ale budem bavit o použití tohoto návrhového vzoru jakožto architektury pro vývoj her.
+Je videt, že tento návrhový vzor je definován velice obecně. Jeho implementace a použítí se v praxi můžou lišit. Ve skutečnosti je tento návrhový vzor použit i v ECS, konkrétně pro komponenty jednotlivých entit. V této sekci se ale budem bavit o použití tohoto návrhového vzoru jakožto architektury pro vývoj her.
 
 % Jak ho pouziva Unity
 Nyní si přibližme jak se návrhový vzor Component používá v herním enginu Unity. V Unity je každý objekt ve scéně reprezentován třidou \verb|GameObject|. Každý takový objekt má interně v sobě kontejner, který obsahuje komponenty, kterými objekt disponuje. Důležitým typem komponenty, který entita může mít jsou skripty, kterými si uživatel Unity může dodefinovat chování pro jednotlivé herní objekty ve scéně. Každý takovýto skript dědí od abstraktní třídy \verb|MonoBehaviour|. Tyto skripty společně s komponenty, které na sobě jednotlivé herní objekty mohou mít, jsou typickým příkladem návrhového vzoru Component.

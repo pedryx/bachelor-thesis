@@ -9,7 +9,7 @@ Komponenty, jako takové, bývají často reprezentovány třídou nebo struktur
 
 Entita by, po vzoru návrhového vzoru Component, mohla být reprezentována jako kolekce svých komponent. Ovšem to se v praxi nedělá, namísto toho se používá řešení, které jak si později ukážeme vede k lepšímu výkonu. Běžné řešení bývá to, že každá ECS implementace má správce všech entit a komponent, ve kterém jsou jednotlivé komponenty uloženy. Jednotlivé entity jsou potom reprezentovány pouze jako jednoduchý identifikátor a je úlohou tohoto správce aby mapoval jednotlivé entity k jejich komponentám.
 
-Tomuto správce se v ECS implementacích běžně říká world. Jak již bylo zmíněno, slouží jako správce a kontejner pro všechny entity a komponenty v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivím entitám.
+Tomuto správci se v ECS implementacích běžně říká world. Jak již bylo zmíněno, slouží jako správce a kontejner pro všechny entity a komponenty v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivím entitám.
 
 Některé ECS implemetace reprezentují entity pomocí malé struktury, obsahujicí identifikátor dané entity společně s referencí na world do kterého patří. To umožnuje mít této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání komponent.
 

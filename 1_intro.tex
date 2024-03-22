@@ -2,9 +2,9 @@
 
 Vytváření her je komplexní proces, který zahrnuje mnoho fází, včetně prototypování a iterací. Často se ocitneme v situaci, kdy je nezbytné výrazně upravit již existující kód. Z tohoto důvodu je klíčová vysoká flexibilita architektury kódu.
 
-Jedním z přístupů k řešení tohoto problému je využití návrhového vzoru Component, který poskytuje vysokou míru flexibility. Tento návrhový vzor je běžně používán v herních frameworcích a enginech, jako je například Unity (koncept MonoBehaviour) nebo MonoGame (koncept GameComponent). Návrhový vzor Component je dobře představen v~\citet{nystrom2014game}.
+Jedním z přístupů k řešení tohoto problému je využití návrhového vzoru Component, který poskytuje vysokou míru flexibility. Tento návrhový vzor je běžně používán v herních frameworcích a enginech, jako je například Unity (koncept MonoBehaviour) nebo MonoGame (koncept GameComponent). Návrhový vzor Component je dobře představen v knize Game Programming Patterns~\cite{nystrom2014game}.
 
-Nicméně existují pokročilejší přístupy, které mohou nabídnout ještě lepší flexibilitu a výkon. Jedním takovím je návrhový vzor Entity-Component-System (ECS). Tento návrhový vzor je dobře rozebrán v následujicím článku~\cite{Caini_2019}. I přesto, že se v současné době nepoužíva tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme.
+Nicméně existují pokročilejší přístupy, které mohou nabídnout ještě lepší flexibilitu a výkon. Jedním takovím je návrhový vzor Entity-Component-System (ECS).  I přesto, že se v současné době nepoužíva tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme. Tento návrhový vzor je dobře rozebrán v sérii článků s názvem ECS back and forth~\cite{Caini_2019}.
 
 \section{Entity-Component-System}
 ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebními kameny jsou entity, komponenty a systémy.
@@ -14,8 +14,8 @@ ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebním
     \item \textbf{Komponenta (Component):} Entita je složena z komponent, které ji popisují. Komponenty obsahují pouze data a žádnou herní logiku. Například hráč může mít komponentu Control, která popisuje, jak se ovládá, strom může mít komponentu Resource, která popisuje, kolik dřeva hráč získá, pokud jej pokácí, a zvíře může mít komponentu PathFollow, která popisuje cestu, po které se pohybuje. Všechny tři entity mohou mít komponenty Appearance, která popisuje, jak daný objekt vypadá, a Position, popisující, kde se daný objekt nachází v herní scéně. Dále hráč a zvíře mohou mít komponentu Movement, popisující jejich pohyb.
     \item \textbf{Systém (System):} Obsahuje herní logiku. Systémy pracují nad určitou množinou komponent. V každé iteraci vezmou všechny entity obsahující tuto množinu komponent a provedou nad nimi určité operace. Například:
     \begin{itemize}
-        \item \textbf{InputSystem:} Pracuje nad entitami s komponenty Control a Position, řídí logiku jejich ovládání.
-        \item \textbf{PathMovementSystem:} Pracuje nad entitami s komponenty PathFollow a Movement, řídí logiku jejich pohybu po cestě.
+        \item \textbf{InputSystem:} Pracuje nad entitami s komponentami Control a Position, řídí logiku jejich ovládání.
+        \item \textbf{PathMovementSystem:} Pracuje nad entitami s komponentami PathFollow a Movement, řídí logiku jejich pohybu po cestě.
         \item \textbf{RenderSystem:} Pracuje nad entitami s komponentou Appearance a řídí logiku jejich vykreslení.
     \end{itemize}
 \end{enumerate}

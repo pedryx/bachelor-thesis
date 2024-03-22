@@ -35,20 +35,20 @@ Další problém je, že náš návrh je příliš závislý na hierarchii dědi
 
 \section{Návrhový vzor Component}
 \label{sec:component}
-Component je návrhový vzor, který se často používá pro vývoj her. Používá jej velké množství herních frameworků a enginů, jako je např. Unity nebo MonoGame. Tento návrhový vzor je velice dobře popsán v~\citet{nystrom2014game}.
+Component je návrhový vzor, který se často používá pro vývoj her. Používá jej velké množství herních frameworků a enginů, jako je např. Unity nebo MonoGame. Jak jsme již zmínili v úvodu, návrhový vzor Component je velice dobře popsán v knize Game Programming Pattern~\cite{nystrom2014game}.
 % Unreal, Unity, MonoGame
 % odkaz na game programming patterns
 
 % citace na component
-Přibližme si co to vlastně je návrhový vzor Component. Máme nějákou entitu (neplést s entitou z ECS, která reprezentuje pouze objekty v herní scéně) např. hráče nebo přímo celou hru. Tato entita obsahuje několik domén. Pro hráče to mohou být logiky co řeší např. útok nebo pohyb. Pro hru to můžou být jednotlivé herní mechaniky, jako např. spawnování nepřátel nebo čtení vstupu z klávesnice. Abychom izolovali tyto domény, tak kód každé takové domény umístíme do samostatné komponenty. Tato komponenta může být reprezentována např. třídou. Entita jako taková je redukována na kontejner těchto komponent~\cite{nystrom2014game}.
+Přibližme si co to vlastně je návrhový vzor Component. Máme nějákou entitu (neplést s entitou z ECS, která reprezentuje pouze objekty v herní scéně) např. hráče nebo přímo celou hru. Tato entita obsahuje několik domén. Pro hráče to mohou být logiky co řeší např. útok nebo pohyb. Pro hru to můžou být jednotlivé herní mechaniky, jako např. spawnování nepřátel nebo čtení vstupu z klávesnice. Abychom izolovali tyto domény, tak kód každé takové domény umístíme do samostatné komponenty. Tato komponenta může být reprezentována např. třídou. Entita jako taková je redukována na kontejner těchto komponent. Použitá definice pochází z již zmíněné knížky Game Programming Patterns~\cite{nystrom2014game}.
 
-\xxx{A single entity spans multiple domains. To keep the domains isolated, the code for each is placed in its own component class. The entity is reduced to a simple container of components.}
+% \xxx{A single entity spans multiple domains. To keep the domains isolated, the code for each is placed in its own component class. The entity is reduced to a simple container of components.}
 
 % Jeho pouziti se muze lisit
-Je videt, že tento návrhový vzor je definován velice obecně. Jeho implementace a použítí se v praxi můžou lišit. Ve skutečnosti je tento návrhový vzor použit i v ECS, konkrétně pro komponenty jednotlivých entit. V této sekci se ale budem bavit o použití tohoto návrhového vzoru jako architektury pro vývoj her.
+Je videt, že tento návrhový vzor je definován velice obecně. Jeho implementace a použítí se v praxi můžou lišit. Ve skutečnosti je tento návrhový vzor použit i v ECS, konkrétně pro komponenty jednotlivých entit. V této sekci se ale budeme bavit o použití tohoto návrhového vzoru jako architektury pro vývoj her.
 
 % Jak ho pouziva Unity
-Nyní si přibližme jak se návrhový vzor Component používá v herním enginu Unity. V Unity je každý objekt ve scéně reprezentován třidou \verb|GameObject|. Každý takový objekt má interně v sobě kontejner, který obsahuje komponenty, kterými objekt disponuje. Důležitým typem komponenty, který entita může mít jsou skripty, kterými si uživatel Unity může dodefinovat chování pro jednotlivé herní objekty ve scéně. Každý takovýto skript dědí od abstraktní třídy \verb|MonoBehaviour|. Tyto skripty společně s komponenty, které na sobě jednotlivé herní objekty mohou mít, jsou typickým příkladem návrhového vzoru Component.
+Nyní si přibližme jak se návrhový vzor Component používá v herním enginu Unity. V Unity je každý objekt ve scéně reprezentován třídou \verb|GameObject|. Každý takový objekt má interně v sobě kontejner, který obsahuje komponenty, kterými objekt disponuje. Důležitým typem komponenty, který entita může mít, jsou skripty. Pomocé skriptů si uživatel Unity může dodefinovat chování pro jednotlivé herní objekty ve scéně. Každý takovýto skript dědí od abstraktní třídy \verb|MonoBehaviour|. Tyto skripty společně s ostatními komponentami, které na sobě jednotlivé herní objekty mohou mít, jsou typickým příkladem návrhového vzoru Component.
 
 % Jak ho pouziva MonoGame
 Na druhou stranu MonoGame, herní framework pro C\#, volí jiný způsob a jako danou entitu z definice zvolil hru samotnou. Jakákoliv herní komponenta dědí od abstraktní třídy \verb|GameComponent|. Hra má interní kolekci, kde uchovává všechny instance herních komponent. MonoGame má také abstraktní třídu \verb|DrawableGameComponent|, která dědí od \verb|GameComponent| a přidává herním komponentám, které od ní dědí, schopnost se vykreslit.
@@ -57,4 +57,6 @@ Jak je vidět u Unity i MonoGame, komponenty bývají často reprezentovány jak
 
 Další výkonostní probém je neefektivní využívání paměti. Jelikož jsou za potřebí virtuální funkce, je nutné jednotlivé komponenty reprezentovat jako pointery (nebo referenční typy). Tím pádem nevyužívají efektivně cache. Více o tomto si povíme v \xxx{dalsi kapitola?}.
 
-Dalším problémem návrhového vzoru Component je komunikace mezi jednotlivými komponenty. Tato komunikace může být problematická. Více je prozkoumána v~\citet{nystrom2014game}. Jedním z přístupů jak komunikaci mezi komponenty vyřešit je, že si z jedné komponenty vezmem referenci na jinou komponentu. Tím umo6n9me, že tyto komponenty můžou spolu komunikovat. Ovšem tím nám ale vznikne tight coupling \xxx{link}. Jedná se o situaci, kde dvě nebo více komponent (ne nutně komponent z návrhového vzoru Component nebo z ECS) je na sobě závislích. To může vyústit například v to, že pokud budem chtít provést změny v jedné komponentě, bude to vyžadovat provést změny také v jiné komponentě.
+Dalším problémem návrhového vzoru Component je komunikace mezi jednotlivými komponentami. Jedním z přístupů jak komunikaci mezi komponentami vyřešit je, že si z jedné komponenty vezmeme referenci na jinou komponentu. Tím umožníme, že tyto komponenty můžou spolu komunikovat. Ovšem tím nám ale vznikne tight coupling \xxx{link}. Jedná se o situaci, kde dvě nebo více komponent (ne nutně komponent z návrhového vzoru Component nebo z ECS) je na sobě závislích. To může vyústit například v to, že pokud budeme chtít provést změny v jedné komponentě, bude to vyžadovat provést změny také v jiné komponentě. Problematika komunikace mezi komponentami je Více prozkoumána v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}.
+
+% Veci jsou vysvetlene ale nevysel z nich zadny vysledek. Bude v kapitole 3?

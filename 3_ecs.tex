@@ -1,13 +1,13 @@
 \chapter{ECS}
 \label{chap:ecs}
-V této kapitole si více rozeberem návrhový vzor ECS. Řekneme si jak se implementuje ukládání komponent, rozebereme si vlastnosti ECS a na závěr porovnáme ECS s návrhovým vzorem Component.
+V této kapitole si více rozebereme návrhový vzor ECS. Řekneme si jak se implementuje ukládání komponent, rozebereme si vlastnosti ECS a na závěr porovnáme ECS s návrhovým vzorem Component.
 
 \section{Reprezentace ECS}
-To jak ECS funguje jsme si již rozebrali v úvodu. Nyní si rozebereme jak bývají jednotlivé prvky ECS reprezentovány při jejich implementaci. Krom základních členů, jako jsou entity, komponenty a systémy, si představíme ještě world a query.
+To jak ECS funguje jsme si již zmínili v úvodu. Nyní si rozebereme jak bývají jednotlivé prvky ECS reprezentovány při jejich implementaci. Krom základních členů, jako jsou entity, komponenty a systémy, si představíme ještě world a query.
 
 Komponenty, jako takové, bývají často reprezentovány třídou nebo strukturou. Jak již bylo zmíněno v úvodu, komponenty obsahují pouze data, nikoliv žádnou logiku. Proto tyto třídy a struktury neobsahují žádné funkce.
 
-Entita by, po vzoru návrhového vzoru Component, mohla být reprezentována jako kolekce svých komponent. Ovšem to se v praxi nedělá, namísto toho se používá řešení, které jak si později ukážeme vede k lepšímu výkonu. Běžné řešení bývá to, že každá ECS implementace má správce všech entit a komponent, ve kterém jsou jednotlivé komponenty uloženy. Jednotlivé entity jsou potom reprezentovány pouze jako jednoduchý identifikátor a je úlohou tohoto správce aby mapoval jednotlivé entity k jejich komponentám.
+Entita by, podobně jako v návrhovém vzoru Component, mohla být reprezentována jako kolekce svých komponent. Ovšem to se v praxi nedělá, namísto toho se používá řešení, které vede k lepšímu výkonu. Konkrétně se dělá to, že každá ECS implementace má správce všech entit a komponent, ve kterém jsou jednotlivé komponenty uloženy. Jednotlivé entity jsou potom reprezentovány pouze jako jednoduchý identifikátor a je úlohou tohoto správce aby mapoval jednotlivé entity k jejich komponentám.
 
 Tomuto správci se v ECS implementacích běžně říká world. Jak již bylo zmíněno, slouží jako správce a kontejner pro všechny entity a komponenty v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivím entitám.
 
@@ -15,11 +15,11 @@ Některé ECS implemetace reprezentují entity pomocí malé struktury, obsahuji
 
 Reprezentace systémů se v jednotlivích ECS implementacích dost liší. Některé vyžadují aby systém byl třída dědicí od abstraktního předka, jíné zase volí opačný extrém a dovolují systém reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entit s určitou množinou komponent.
 
-Tomuto objektu se v ECS implementacích běžně říká query. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy komponent bude query pracovat. Je například možné mít query, které pracuje nad komponenty Movement a Position. Takové query by pak bylo schopné iterovat nad všemi entitami co mají komponenty Movement a Position. Pomocí tohoto query by bylo možné implementovat MovementSystem, který by řídil logiku pohybu.
+Tomuto objektu se v ECS implementacích běžně říká query. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy komponent bude query pracovat. Je například možné mít query, které pracuje nad komponentami Movement a Position. Takové query by pak bylo schopné iterovat nad všemi entitami co mají komponenty Movement a Position. Pomocí tohoto query by bylo možné implementovat MovementSystem, který by řídil logiku pohybu.
 
 Query se dělí do dvou typů, statické a dynamické. Statické query je možné zkonstruovat (znamenaje také specifikovat typy komponent nad kterými bude pracovat) pouze za kompilace. Naproti tomu dynamické query je možné zkonstruovat za běhu. Dynamické query je poměrně pokročilá věc a pouze malé množství ECS implementací jej podporuje.
 
-Je důležité si uvědomit, že správa entit a komponent je dost složitá úloha. Je nutné aby bylo možné namapovat jednotlivé komponenty na jejich entity. Zároveň je také zapotřebí aby bylo možné iterovat určité n-tice těchto komponent za pomocí query. Je také důležité brát v potaz to, že jednotlivé entity a komponenty se mohou přidávat a odebírat za běhu. Více si o těchto věcech řekneme v pozdější sekci, nyní se ale zamřme na mazání entit. Jelikož smazání takové entity může být naročné na implementaci a nebo také na výkon, některé ECS implementace využívajicí koncept tombstone. Tombstone je oznaceni pro objekt, ktery po smazani stale existuje, pouze je někde poznamenáno, že je již smazaný. Smazané entity bývají tedy v některých ECS implementacích označeny jako tombstone a query je při iteraci ignoruje.
+% Je důležité si uvědomit, že správa entit a komponent je dost složitá úloha. Je nutné aby bylo možné namapovat jednotlivé komponenty na jejich entity. Zároveň je také zapotřebí aby bylo možné iterovat určité n-tice těchto komponent za pomocí query. Je také důležité brát v potaz to, že jednotlivé entity a komponenty se mohou přidávat a odebírat za běhu. Více si o těchto věcech řekneme v pozdější sekci, nyní se ale zaměřme na mazání entit. Jelikož smazání takové entity může být naročné na implementaci a nebo také na výkon, některé ECS implementace využívajicí koncept tombstone. Tombstone je oznaceni pro objekt, ktery po smazani stale existuje, pouze je někde poznamenáno, že je již smazaný. Smazané entity bývají tedy v některých ECS implementacích označeny jako tombstone a query je při iteraci ignoruje.
 
 %\section{Správa paměti}
 %Než si rozeberem jak je možné úkládat komponenty, bude nutné si přiblížit jak vlastně funguje cache v počítači a také jaký je rozdíl mezi hodnotovími a referenčními typy v C\#.
@@ -31,13 +31,15 @@ Je důležité si uvědomit, že správa entit a komponent je dost složitá úl
 \xxx{sekce o cache a referencni vs hodnotove typy v C\#?}
 
 \section{Ukladaní komponent}
-Nyní si rozeberem způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Používají se převážně dva způsoby arch type a sparse set. Ovšem některé knihovny tyto způsoby nepoužívají a ukládají komponenty neefektivně, přiblížíme si tedy také jak to tyto knihovny dělají a proč je to neefektivní.
+Nyní si rozeberem způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Používají se převážně dva způsoby \textit{arch type} a \textit{sparse set}. Ovšem některé knihovny tyto způsoby nepoužívají a ukládají komponenty neefektivně, přiblížíme si tedy také jak to tyto knihovny dělají a proč je to neefektivní.
 
-První způsob, který se používá pro ukládání komponent je tzv. arch type. Funguje to tak, že se vezmou jednotlivé entity a rozdělí se do typů. Každému takovému typu se říká arch type. Arch type každé entity je určen množinou typů komponent ze kterých je složena. Každý arch type je poté implmentován jako kolekce, která má v sobě několik polí. Konkrétně pole pro každý typ komponenty. Každá entita v arch type má poté přiřazen index. Komponenty na indexu i, náleží entitě s indexem i.Pokud poté vytvoříme query, které by mělo iterovat přes všechny entity s nějákou n-ticí komponent, tak toto query vezme vsechny arch type, které obsahují danou n-tici a jednoduše proiteruje příslušné pole.
+První způsob, který se používá pro ukládání komponent je tzv. \textit{arch type}. Funguje to tak, že se vezmou jednotlivé entity a rozdělí se do typů. Každému takovému typu se říká \textit{arch type}. \textit{Arch type} každé entity je určen množinou typů komponent ze kterých je složena. Každý \textit{arch type} je poté implmentován jako kolekce, která má v sobě několik polí. Konkrétně pole pro každý typ komponenty. Každá entita v \textit{arch type} má poté přiřazen index. Komponenty na indexu i, náleží entitě s indexem i. Pokud poté vytvoříme query, které by mělo iterovat přes všechny entity s nějákou n-ticí komponent, tak toto query vezme vsechny \textit{arch type}, které obsahují danou n-tici a jednoduše proiteruje příslušné pole.
 
-Velkou nevýhodou arch types je přidávání a odebírání komponent. Pokud je některé entitě přidána nebo odebrána komponenta, dojde ke změně jejího arch type. V takovém případě je nutné překopírovat všechny komponenty příslušné entity z původního arch type do nového. To může být výkonostně náročná operace. Také je důležité si uvědomit, že odebrání prvku z pole je O(n) operace, ovšem tomuto se dá jednoduše předejít. Pokud nám nezáleží na pořadí prvků v poli, můžeme jednoduše vzít prvek, který chceme odebrat a prohodit ho s posledním prvkem v poli. Poté provedem smazání posledního prvku. Tím dosáhneme smazání prvku z pole v O(1).
+\xxx{obrazek}
 
-Sparse set
+Velkou nevýhodou \textit{arch types} je přidávání a odebírání komponent. Pokud je některé entitě přidána nebo odebrána komponenta, dojde ke změně jejího \textit{arch type}. V takovém případě je nutné překopírovat všechny komponenty příslušné entity z původního \textit{arch type} do nového. To může být výkonostně náročná operace. Také je důležité si uvědomit, že odebrání prvku z pole je O(n) operace, ovšem tomuto se dá jednoduše předejít. Pokud nám nezáleží na pořadí prvků v poli, můžeme jednoduše vzít prvek, který chceme odebrat a prohodit ho s posledním prvkem v poli. Poté provedem smazání posledního prvku. Tím dosáhneme smazání prvku z pole v O(1).
+
+\textit{Sparse set}
 
 Componenty jako pointery
 
@@ -54,4 +56,4 @@ Flexibilita > vykon
 
 \xxx{TODO}
 
-\xxx{maybe topics: relace, eventy, tag component, system types, reaction systems, paralelism, paralel queries, query filters, functional programming, relace, eventy, prukopnici (herni engine Bevy, ECS knihovny entitas a flecs)}
+\xxx{maybe topics: tombstones, relace, eventy, tag component, system types, reaction systems, paralelism, paralel queries, query filters, functional programming, relace, eventy, prukopnici (herni engine Bevy, ECS knihovny entitas a flecs)}

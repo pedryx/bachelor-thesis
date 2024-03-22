@@ -1,10 +1,9 @@
 \chapter{Úvod}
-
 Vytváření her je komplexní proces, který zahrnuje mnoho fází, včetně prototypování a iterací. Často se ocitneme v situaci, kdy je nezbytné výrazně upravit již existující kód. Z tohoto důvodu je klíčová vysoká flexibilita architektury kódu.
 
 Jedním z přístupů k řešení tohoto problému je využití návrhového vzoru Component, který poskytuje vysokou míru flexibility. Tento návrhový vzor je běžně používán v herních frameworcích a enginech, jako je například Unity (koncept MonoBehaviour) nebo MonoGame (koncept GameComponent). Návrhový vzor Component je dobře představen v knize Game Programming Patterns~\cite{nystrom2014game}.
 
-Nicméně existují pokročilejší přístupy, které mohou nabídnout ještě lepší flexibilitu a výkon. Jedním takovím je návrhový vzor Entity-Component-System (ECS).  I přesto, že se v současné době nepoužíva tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme. Tento návrhový vzor je dobře rozebrán v sérii článků s názvem ECS back and forth~\cite{Caini_2019}.
+Nicméně existují pokročilejší přístupy, které mohou nabídnout ještě lepší flexibilitu a výkon. Jedním takovým je návrhový vzor Entity-Component-System (ECS).  I přesto, že se v současné době nepoužívá tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme. Tento návrhový vzor je dobře rozebrán v sérii článků s názvem ECS back and forth~\cite{Caini_2019}.
 
 \section{Entity-Component-System}
 ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebními kameny jsou entity, komponenty a systémy.
@@ -35,7 +34,7 @@ Jelikož jsou testy příliš jednoduché, v případě rozsáhlejšího projekt
 
 Jedním ze způsobů, jak by bylo možné lépe porovnat výkon jednotlivých ECS knihoven, by bylo vytvoření hry, na které by bylo možné měřit výkon jednotlivých knihoven. Taková hra by musela být nezávislá na konkrétní ECS knihovně. Měla by také obsahovat netriviálně velký svět s větším počtem entit. To by nám umožnilo lépe provádět měření. Jedním z cílů této práce bude vytvoření takovéto hry.
 
-Poté, co budeme mít tuto hru k dispozici, bude možné vytvořit výkonnostní test, který by dokázal změřit výkon příslušné ECS knihovny na této hře. Pomocí tohoto testu bude možné udělat výkonostní porovnání jednotlivých ECS knihoven. Vytvoření tohoto porovnání bude dalším cílem této práce.
+Poté, co budeme mít tuto hru k dispozici, bude možné vytvořit výkonnostní test, který by dokázal změřit výkon příslušné ECS knihovny na této hře. Pomocí tohoto testu bude možné udělat výkonnostní porovnání jednotlivých ECS knihoven. Vytvoření tohoto porovnání bude dalším cílem této práce.
 
 Zároveň takto vytvořená hra pro nás bude velice užitečná neboť nám pomůže při průzkumu možností návrhové vzoru ECS, což je jedním z cílů této práce.
 

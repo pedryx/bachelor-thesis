@@ -1,10 +1,10 @@
 \chapter{Co požadujeme od hry}
-V této kapitole si rozebereme požadavky, které požadujeme od naší hry. Prvně si rozeberem jednotlivé charakteristiky, které by naše hra měla splňovat. Dále na základě těchto charakteristik zvolíme žánr naší hry a odůvodníme proč jsme jej zvolili.
+V této kapitole si rozebereme požadavky, které požadujeme od naší hry. Prvně si rozebereme jednotlivé charakteristiky, které by naše hra měla splňovat. Dále na základě těchto charakteristik zvolíme žánr naší hry a odůvodníme proč jsme jej zvolili.
 
-Než budeme pokračovat, pripomeňmě si prvně, že naší hru chceme použít pro měření výkonu ECS knihoven. Budem tedy chtít aby byla nezávsilá na konkrétní knihovně. Konkrétní knihovnu bude možné zvolit před spuštěním hry.
+Než budeme pokračovat, připomeňme si prvně, že naší hru chceme použít pro měření výkonu ECS knihoven. Budeme tedy chtít aby byla nezávislá na konkrétní knihovně. Konkrétní knihovnu bude možné zvolit před spuštěním hry.
 
 \section{Charakteristiky hry}
-Aby nám naše hra napomohla kde splnění práce, budem chtít aby splňovala následujicí charakteristiky:
+Aby nám naše hra napomohla kde splnění práce, budeme chtít aby splňovala následující charakteristiky:
 
 \begin{enumerate}
     \item Nezávislost na konkrétní ECS knihovně.
@@ -13,15 +13,15 @@ Aby nám naše hra napomohla kde splnění práce, budem chtít aby splňovala n
     \item Adekvátní složitost hry.
 \end{enumerate}
 
-Nézávlislost na konkrétní ECS knihovně pro nás bude důležitá, abychom hru mohli použít pro měření výkonu jednotlivých knihoven. Hra bude namísto konkrétní ECS knihovny pracovat pouze s abstrakční vrstvou. Bude pro nás žádoucí aby se výkon naší hry bežicí s konkretní ECS knihovnou, implementujucí abstrakční vrstvu, blížil k výkonu hry, která by používala pouze konkrétní ECS knihovnu bez abstrakční vrstvy.
+Nezávislost na konkrétní ECS knihovně pro nás bude důležitá, abychom hru mohli použít pro měření výkonu jednotlivých knihoven. Hra bude namísto konkrétní ECS knihovny pracovat pouze s abstrakční vrstvou. Bude pro nás žádoucí aby se výkon naší hry bežící s konkretní ECS knihovnou, implementující abstrakční vrstvu, blížil k výkonu hry, která by používala pouze konkrétní ECS knihovnu bez abstrakční vrstvy.
 
-Časté přidávání a odebírání komponent by vedlo ke zvýhodnění ECS knihoven založených na sparse set. Cílem této práce ale není porovnat hnihovny založené na sparse set oproti knihovnám založených na arch type. To jestli hra využívá častého přidávání a odebírání komponent je závislé čistě na implementaci. 
+Časté přidávání a odebírání komponent by vedlo ke zvýhodnění ECS knihoven založených na sparse set. Cílem této práce ale není porovnat knihovny založené na sparse set oproti knihovnám založených na arch type. To jestli hra využívá častého přidávání a odebírání komponent je závislé čistě na implementaci. 
 
 Ukažme si to na příkladu, konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pro knihovnu založenou na sparse set by jeden z typických přístupů byl vytvořit Starvation komponentu a přidat jí na každou entitu, která hladoví. Pro knihovny založené na arch type by ale tento přístup vedl ke ztrátě na výkonu. Jedním ze způsobů jak by se dal problém vyřešit je, že by každá entita co může hladovět obsahovala Hunger komponentu, ve které by byl flag Starvation který by rozhodoval o tom jestli daná entita hladoví.
 
 Velký počet entit nám usnadní měření výkonu naší hry. Také nám zaručí, že systémy budou vykonávat netriviální množství práce. Zároveň si tím vyzkoušíme velký výkon, kterým ECS disponuje. Velký počet entit nám také implikuje větší herní svět.
 
-Bude pro nás důležité aby naše hra nebyla příliš jednoduchá. Budem se chtím vyhnout tomu, aby naše meření nebylo jenom dalším jednoduchým meřením výkonu. Ovšem taky si musíme dát pozor na to aby nebyla příliš složitá, jelikož to by odvádělo pozornost od problému, který řešíme.
+Bude pro nás důležité aby naše hra nebyla příliš jednoduchá. Budeme se chtít vyhnout tomu, aby naše měření nebylo jenom dalším jednoduchým měřením výkonu. Ovšem taky si musíme dát pozor na to aby nebyla příliš složitá, jelikož to by odvádělo pozornost od problému, který řešíme.
 
 % \\
 % \xxx{Jaka charakteristiky by nase hra mela mit?}
@@ -37,7 +37,7 @@ Bude pro nás důležité aby naše hra nebyla příliš jednoduchá. Budem se c
 % \xxx{-- Kdyby ano, nektere knihovny by byli zvyhodnene.}
 
 \section{Simulace}
-Žánrem naší hry bude simulace, ale řekněmě si nejprve co to vlastně je. Simulace je žánr video her, který se snaží simulovat agenty v jejich prostředí. U nás agenti budou vesničané a jejich prostředí bude příroda.
+Žánrem naší hry bude simulace, ale řekněme si nejprve co to vlastně je. Simulace je žánr video her, který se snaží simulovat agenty v jejich prostředí. U nás agenti budou vesničané a jejich prostředí bude příroda.
 
 Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostatním žánrům) vymyslet herní design, který má velký počet entit a netriviálně velký svět. Další velkou výhodou je malí vliv uživatele na průběh hry, to nám umožní lépe provádět měření. Konkrétně v naší hře hráč bude spíše pozorovatel, který sleduje jak simulace probíhá.
 

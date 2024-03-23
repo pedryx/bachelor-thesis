@@ -28,8 +28,6 @@ Tomuto objektu se v ECS implementacích běžně říká query. Pro jeho vytvoř
 
 %Referencni vs hodnotove typy
 
-\xxx{sekce o cache a referencni vs hodnotove typy v C\#?}
-
 \section{Ukládaní komponent}
 Nyní si rozebereme způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Používají se převážně dva způsoby \textit{arch type} a \textit{sparse set}. Ovšem některé knihovny tyto způsoby nepoužívají a ukládají komponenty neefektivně. Přiblížíme si tedy také tento neefektivní způsob pro ukládání komponent.
 
@@ -43,7 +41,28 @@ První způsob, který se používá pro ukládání komponent je tzv. \textit{a
 Velkou nevýhodou \textit{arch types} je přidávání a odebírání komponent. Pokud je některé entitě přidána nebo odebrána komponenta, dojde ke změně jejího \textit{arch type}. V takovém případě je nutné překopírovat všechny komponenty příslušné entity z původního \textit{arch type} do nového. To může být výkonnostně náročná operace. Také je důležité si uvědomit, že odebrání prvku z pole je O(n) operace, ovšem tomuto se dá jednoduše předejít. Pokud nám nezáleží na pořadí prvků v poli, můžeme jednoduše vzít prvek, který chceme odebrat a prohodit ho s posledním prvkem v poli. Poté provedeme smazání posledního prvku. Tím dosáhneme smazání prvku z pole v O(1).
 
 \subsection{Sparse set}
-\textit{Sparse set}
+
+\xxx{velikost packed nám dává kapacitu, velikost dense max prvek - upravit popis aby toto odrážel}
+
+\textit{Sparse set} je datová struktura, která reprezentuje množinu. Je možné do ní uložit čísla z množiny $0..u-1$. Na \textit{sparse set} je možné provádět operace vyhledání a vložení prvku v čase $O(1)$ a iteraci v čase $O(n)$. Rozbor této datové struktury je nad rámec této práce, proto pouze lehce nahlédneme na její implementaci.
+
+\textit{Sparse set} se skládá ze dvou polí. Prvnímu se říká \textit{packed array} (někdy také \textit{internal array}, \textit{direct array}, nebo prostě \textit{values}). Druhé nese název \text{sparse array} (někdy také \textit{external array}, \textit{reverse array}, nebo prostě \textit{indices}). Obě tyto pole mají pevnou velikost. Pro \textit{packed array} je také stanovena kapacita, která odpovídá počtu prvků ve \textit{sparse set}. Příklad prázdného \textit{sparse set} pro $u=\text{\xxx{počet}}$ je možné vidět na obrázku \xxx{sparse_set_empty}. 
+
+\xxx{obrázek - sparse_set_empty}
+
+Při jakékoliv operace platí pro \textit{sparse set} následující invariant: $\forall v \in \text{sparse}: \text{packed}\left[\text{sparse}\left[v\right]\right] = v$. Jak je vidět na obrázku \xxx{sparse_set_empty}, tento invariant platí také pro prvky, které nejsou součástí \textit{sparse set}.
+
+Nahlédněme prvně na operaci přidání prvku. Pokud bychom chtěli přidat prvek který se nachází hned za hranicí naší kapacity, konkrétně prvek $\text{packed}\left[\text{kapacita}\right]$ (v případě obrázku \xxx{sparse_set_empty} se jedná o prvek $0$), stačí nám zvýšit kapacitu o $1$. Tuto situaci můžeme vidět na obrázku \xxx{sparse_set_one}. V případě, že chceme přidat prvek, který se nachází na pozici $i$, kde $i > \text{kapacita}$, je nutné nejprve prohodit prvky $\text{packed}\left[\text{kapacita}\right]$ a $\text{packed}\left[i\right]$. Aby nedošlo k porušení invariantu, je také nutné prohodit odpovídající prvky v \textit{sparse array}. Po prohození prvků můžeme postupovat stejně jako v prvním případě. Tuto situaci můžeme vidět na obrázku \xxx{sparse_set_two}.
+
+\xxx{obrázek - sparse_set_one}
+
+\xxx{obrázek - sparse_set_two}
+
+Přidejme si do našeho pole další dva prvky, konkrétně $2$ a $1$. Přidání provedeme v tomto pořadí. Současnou situaci je možné vidět na obrázku \xxx{sparse_set_four}. Nyní bychom chtěli nějaký prvek odebrat. V jednoduchém případě, kdy je náš prvek těsně před hranicí kapacity, konkrétně se jedná o prvek $\text{packed}\left[\text{kapacita - 1}\right]$ (v případě obrázku \xxx{sparse_set_four} prvek 1), stačí nám zmenšit kapacitu o $1$. Pokud se jedná o jiný prvek, tak podobně jako při odebírání, prohodíme tento prvek s prvkem $\text{packed}\left[\text{kapacita - 1}\right]$. Obdobně jako u odebíraní je nutné prohodit odpovídající prvky v \textit{sparse array} aby nedošlo k porušení invariantu. Poté postupujeme jako v prvním případě. Příklad druhé situace můžeme vidět na obrázku \xxx{sparse_set_three}.
+
+\xxx{obrázek - sparse_set_three}
+
+\xxx{Jak se používá sparse set v ECS.}
 
 \subsection{Jiné způsoby ukládání komponent}
 Komponenty jako pointery

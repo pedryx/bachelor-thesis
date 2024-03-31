@@ -1,9 +1,9 @@
 \chapter{Úvod}
-Vytváření her je komplexní proces, který zahrnuje mnoho fází, včetně prototypování a iterací. Často se ocitneme v situaci, kdy je nezbytné výrazně upravit již existující kód. Z tohoto důvodu je klíčová vysoká flexibilita architektury kódu.
+Vytváření her je komplexní proces, který zahrnuje mnoho fází, včetně prototypování a iterací. Často se ocitneme v~situaci, kdy je nezbytné výrazně upravit již existující kód. Z tohoto důvodu je klíčová vysoká flexibilita architektury kódu.
 
-Jedním z přístupů k řešení tohoto problému je využití návrhového vzoru Component, který poskytuje vysokou míru flexibility. Tento návrhový vzor je běžně používán v herních frameworcích a enginech, jako je například Unity (koncept MonoBehaviour) nebo MonoGame (koncept GameComponent). Návrhový vzor Component je dobře představen v knize Game Programming Patterns~\cite{nystrom2014game}.
+Jedním z přístupů k řešení tohoto problému je využití návrhového vzoru Component, který poskytuje vysokou míru flexibility. Tento návrhový vzor je běžně používán v herních frameworcích a enginech, jako je například Unity~\cite{Unity} (koncept MonoBehaviour) nebo MonoGame~\cite{MonoGame} (koncept GameComponent). Návrhový vzor Component je dobře představen v knize Game Programming Patterns~\cite{nystrom2014game}.
 
-Nicméně existují pokročilejší přístupy, které mohou nabídnout ještě lepší flexibilitu a výkon. Jedním takovým je návrhový vzor Entity-Component-System (ECS).  I přesto, že se v současné době nepoužívá tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme. Tento návrhový vzor je dobře rozebrán v sérii článků s názvem ECS back and forth~\cite{Caini_2019}.
+Nicméně existují pokročilejší přístupy, které mohou nabídnout ještě lepší flexibilitu a výkon. Jedním takovým je návrhový vzor Entity-Component-System (ECS).  I přesto, že se v současné době nepoužívá tak často jako návrhový vzor Component, tak nabízí značné výhody při tvorbě her. Proto se na něj v této práci zaměříme.
 
 \section{Entity-Component-System}
 ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebními kameny jsou entity, komponenty a systémy.
@@ -19,14 +19,14 @@ ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebním
     \end{itemize}
 \end{enumerate}
 
-ECS nejenže poskytuje vysokou flexibilitu, ale také vyniká v oblasti výkonu. Jeho flexibilitu a výkon si více rozebereme v~\cref{chap:ecs} \xxx{poresit sklonovani u linku}. Mezi cíle této práce bude patřit prozkoumat možnosti, které tento návrhový vzor přináší, a ukázat výhody, které nám ECS může poskytnout v porovnání s návrhovým vzorem Component.
+ECS nejenže poskytuje vysokou flexibilitu, ale také vyniká v oblasti výkonu, obojí si více rozebereme v kapitole~\ref{chap:ecs}. Mezi cíle této práce bude patřit prozkoumat možnosti, které tento návrhový vzor přináší, a ukázat výhody, které nám ECS může poskytnout v porovnání s návrhovým vzorem Component.
 
 \section{ECS knihovny}
 Aby bylo možné efektivně využívat návrhový vzor ECS, je nezbytné implementovat odpovídající infrastrukturu. Samotná implementace této infrastruktury představuje obtížnou a časově náročnou úlohu, což vede mnoho vývojářů k volbě již existujících knihoven implementujících infrastrukturu pro tento návrhový vzor.
 
 V této práci se zaměříme na knihovny pro programovací jazyk C\#, neboť se jedná o programovací jazyk běžně používaný pro hry a aplikace. I když se omezíme pouze na C\#, existuje velké množství těchto knihoven.
 
-Jedním ze způsobů jak si vývojáři mohou vybrat ECS knihovnu je použít porovnání. CSharpECSComparison~\cite{CSharpECSComparison} je projekt na platformě GitHub, který porovnává populární ECS knihovny pro C\# na základě funkcionalit, vlastností a závislostí. Vývojář by si tedy mohl říci, které vlastnosti a funkcionality by od takové knihovny požadoval a na základě toho si vybrat. Ovšem možnosti co nám jednotlivé ECS knihovny nabízejí se tolik neliší, proto dává smysl porovnávat jednotlivé knihovny na základě výkonu. Bohužel CSharpECSComparison nám neposkytuje žádné informace o výkonu jednotlivých knihoven.
+Jedním ze způsobů jak si vývojáři mohou vybrat ECS knihovnu je použít porovnání. CSharpECSComparison~\cite{CSharpECSComparison} je projekt na platformě GitHub, který porovnává populární ECS knihovny pro C\# na základě funkcionalit, vlastností a závislostí. Vývojář by si tedy mohl říci, které vlastnosti a funkcionality by od takové knihovny požadoval a na základě toho si vybrat. Ovšem možnosti co nám jednotlivé ECS knihovny nabízejí se často příliš neliší, proto dává smysl porovnávat jednotlivé knihovny na základě výkonu. Bohužel CSharpECSComparison nám neposkytuje žádné informace o výkonu jednotlivých knihoven.
 
 Ecs.CSharp.Benchmark~\cite{EcsCsharpBenchmark} je projekt na platforme GitHub, který provádí jednoduché výkonnostní testy ECS knihoven pro C\#. Výsledky těchto testů mohou být užitečné při výběru knihovny na základě výkonu. Problém však může spočívat v tom, že tyto testy jsou příliš jednoduché. Každý test, který Ecs.CSharp.Benchmark provádí, pracuje pouze s velmi jednoduchými komponentami, kde každá komponenta obsahuje pouze jedno celé číslo. Testy jsou rozděleny do několika sad. První sada vytváří entity s těmito komponentami. Druhá sada spouští jednoduché systémy, které pouze sčítají výše zmíněná celá čísla na těchto komponentách.
 

@@ -29,38 +29,68 @@ Tomuto objektu se v ECS implementacích běžně říká query. Pro jeho vytvoř
 %Referencni vs hodnotove typy
 
 \section{Ukládaní komponent}
-Nyní si rozebereme způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Používají se převážně dva způsoby \textit{arch type} a \textit{sparse set}. Ovšem některé knihovny tyto způsoby nepoužívají a ukládají komponenty neefektivně. Přiblížíme si tedy také tento neefektivní způsob pro ukládání komponent.
+Nyní si rozebereme způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Většinou se rozlišují ECS implementace založené na \textit{sparse set} a ECS implementace založené na \textit{arch type}. Krom těchto dvou se poměrně často objevuje také třetí méně efektivní způsob ve kterém se jednotlivé komponenty ukládají pouze jako pointery, což má za následek špatný výkon.
 
 \subsection{Arch type}
-\xxx{Zkusit přeformulovat tuto subsekci.}
+V ECS implementacích založených na \textit{arch type}, je \textit{arch type} typ entity. \textit{Arch type} je jednoznačně určen množinou komponent. Například mějme entitu představující postavu hráče, označme ji pro jednoduchost pouze jako entita hráče. Chceme aby náš hráč uměl chodit. Je nutné mu tedy přiřadit komponentu \verb|Position|, která reprezentuje jeho pozici v herním světě a také komponentu \verb|Movement|, která mu přidá schopnost pohybu. Jeho \textit{arch type}, označme ho \textit{arch type}~A, je tedy jednoznačně určen typy komponent \verb|Position| a \verb|Movement|. Jakákoliv jiná entita, která má pouze tyto dvě komponenty, také patří do \textit{arch type}~A. Dále mějme entitu stromu. Strom bude mít pouze komponentu \verb|Position|. Jeho \textit{arch type}, označme ho \textit{arch type}~B, je tedy jednoznačně určen typem komponenty \verb|Position|. Jakákoliv jiná entita, co bude mít také pouze komponentu \verb|Position| bude také patřit do \textit{arch type}~B.
 
-První způsob, který se používá pro ukládání komponent je tzv. \textit{arch type}. Funguje to tak, že se vezmou jednotlivé entity a rozdělí se do typů. Každému takovému typu se říká \textit{arch type}. \textit{Arch type} každé entity je určen množinou typů komponent ze kterých je složena. Každý \textit{arch type} je poté implementován jako kolekce, která má v sobě několik polí. Konkrétně pole pro každý typ komponenty. Každá entita v \textit{arch type} má poté přiřazen index. Komponenty na indexu i, náleží entitě s indexem i. Pokud poté vytvoříme query, které by mělo iterovat přes všechny entity s nějakou n-ticí komponent, tak toto query vezme vsechny \textit{arch type}, které obsahují danou n-tici a jednoduše proiteruje příslušné pole.
+Každá entity si uchovává odkaz na svůj \textit{arch type}. Jednotlivé \textit{arch type} jsou poté uloženy ve world. Každý \textit{arch type} v sobě obsahuje několik polí, konkrétně jedno pro každý typ komponenty. Každé entitě, je přiřazen identifikátor, který slouží jako index do těchto polí. Například \textit{arch type}~A má v sobě dvě pole, jedno pro \verb|Position| a jedno pro \verb|Movement|. Entita hráče má na sobě index~i, pomocí kterého je možné získat komponentu \verb|Position| nebo \verb|Movement|, která ji náleží. \textit{Arch type}~B má v sobě pouze jedno pole pro \verb|Position|. Entita stromu má na sobě index~j, pomocí kterého je možné získat komponentu \verb|Position|, která ji náleží.
 
-\xxx{obrazek}
+Pokud poté vytvoříme query, které by mělo iterovat přes všechny entity s nějakou n-ticí komponent, tak toto query vezme vsechny \textit{arch type}, které obsahují danou n-tici a jednoduše projde příslušné pole. Například query, které by mělo iterovat přes entity s komponenty \verb|Position| a \verb|Movement|, vezme každý \textit{arch type} obsahující tyto dvě komponenty, v našem případě pouze \textit{arch type}~A, a projde příslušné pole. Pokud by query mělo iterovat přes entity s komponentou \verb|Position|, tak by prošlo pole pro \verb|Position| jak na \textit{arch type}~A tak na \textit{arch type}~B.
 
-Velkou nevýhodou \textit{arch types} je přidávání a odebírání komponent. Pokud je některé entitě přidána nebo odebrána komponenta, dojde ke změně jejího \textit{arch type}. V takovém případě je nutné překopírovat všechny komponenty příslušné entity z původního \textit{arch type} do nového. To může být výkonnostně náročná operace. Také je důležité si uvědomit, že odebrání prvku z pole je O(n) operace, ovšem tomuto se dá jednoduše předejít. Pokud nám nezáleží na pořadí prvků v poli, můžeme jednoduše vzít prvek, který chceme odebrat a prohodit ho s posledním prvkem v poli. Poté provedeme smazání posledního prvku. Tím dosáhneme smazání prvku z pole v O(1).
+Velkou nevýhodou ECS implementacích založených na \textit{arch type} je přidávání a odebírání komponent. Pokud je některé entitě přidána nebo odebrána komponenta, dojde ke změně jejího \textit{arch type}. V takovém případě je nutné překopírovat všechny komponenty příslušné entity z původního \textit{arch type} do nového. Například pokud bychom entitě stromu přidali komponentu \verb|Resource|, která by reprezentovala suroviny, které hráč získá pokud jej pokácí, tak po přidání této komponenty by bylo nutné vzít \textit{arch type}, který je jednoznačně určen komponentami \verb|Position| a \verb|Resource|, a jednotlivé komponenty, v našem případě pouze \verb|Position|, do něj přesunout.
+
+Přesouvání komponent může být výkonnostně náročná operace. Také je důležité si uvědomit, že přesouvání vyžaduje odebrání komponent z původního pole a to je O(n) operace. Ovšem tomuto se dá jednoduše předejít. Pokud nám nezáleží na pořadí prvků v poli, můžeme jednoduše vzít prvek, který chceme odebrat a prohodit ho s posledním prvkem v poli. Poté provedeme smazání posledního prvku. Tím dosáhneme smazání prvku z pole v čase O(1).
 
 \subsection{Sparse set}
 
-\xxx{velikost packed nám dává kapacitu, velikost dense max prvek - upravit popis aby toto odrážel}
+% \xxx{velikost packed nám dává kapacitu, velikost dense max prvek - upravit popis aby toto odrážel}
+% - je potreba to odrazet?
 
 \textit{Sparse set} je datová struktura, která reprezentuje množinu. Je možné do ní uložit čísla z množiny $0..u-1$. Na \textit{sparse set} je možné provádět operace vyhledání a vložení prvku v čase $O(1)$ a iteraci v čase $O(n)$. Rozbor této datové struktury je nad rámec této práce, proto pouze lehce nahlédneme na její implementaci.
 
-\textit{Sparse set} se skládá ze dvou polí. Prvnímu se říká \textit{packed array} (někdy také \textit{internal array}, \textit{direct array}, nebo prostě \textit{values}). Druhé nese název \text{sparse array} (někdy také \textit{external array}, \textit{reverse array}, nebo prostě \textit{indices}). Obě tyto pole mají pevnou velikost. Pro \textit{packed array} je také stanovena kapacita, která odpovídá počtu prvků ve \textit{sparse set}. Příklad prázdného \textit{sparse set} pro $u=\text{\xxx{počet}}$ je možné vidět na obrázku \xxx{sparse\_set\_empty}. 
+\textit{Sparse set} se skládá ze dvou polí. Prvnímu se říká \textit{packed array} (někdy také \textit{internal array}, \textit{direct array}, nebo prostě \textit{values}). Druhé nese název \text{sparse array} (někdy také \textit{external array}, \textit{reverse array}, nebo prostě \textit{indices}). Obě tyto pole mají pevnou velikost. Pro \textit{packed array} je také stanovena kapacita, která odpovídá počtu prvků ve \textit{sparse set}. Příklad prázdného \textit{sparse set} pro $u=6$ je možné vidět na obrázku \ref{fig:sparse_set_empty}. 
 
-\xxx{obrázek - sparse\_set\_empty}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{img/sparse_set_empty.pdf}
+    \caption{Příklad prázného sparse set pro u=6.}
+    \label{fig:sparse_set_empty}
+\end{figure}
 
-Při jakékoliv operace platí pro \textit{sparse set} následující invariant: $\forall v \in \text{sparse}: \text{packed}\left[\text{sparse}\left[v\right]\right] = v$. Jak je vidět na obrázku \xxx{sparse\_set\_empty}, tento invariant platí také pro prvky, které nejsou součástí \textit{sparse set}.
+Při jakékoliv operace platí pro \textit{sparse set} následující invariant: $\forall v \in \text{sparse}: \text{packed}\left[\text{sparse}\left[v\right]\right] = v$. Jak je vidět na obrázku \ref{fig:sparse_set_empty}, tento invariant platí také pro prvky, které nejsou součástí \textit{sparse set}.
 
-Nahlédněme prvně na operaci přidání prvku. Pokud bychom chtěli přidat prvek který se nachází hned za hranicí naší kapacity, konkrétně prvek $\text{packed}\left[\text{kapacita}\right]$ (v případě obrázku \xxx{sparse\_set\_empty} se jedná o prvek $0$), stačí nám zvýšit kapacitu o $1$. Tuto situaci můžeme vidět na obrázku \xxx{sparse\_set\_one}. V případě, že chceme přidat prvek, který se nachází na pozici $i$, kde $i > \text{kapacita}$, je nutné nejprve prohodit prvky $\text{packed}\left[\text{kapacita}\right]$ a $\text{packed}\left[i\right]$. Aby nedošlo k porušení invariantu, je také nutné prohodit odpovídající prvky v \textit{sparse array}. Po prohození prvků můžeme postupovat stejně jako v prvním případě. Tuto situaci můžeme vidět na obrázku \xxx{sparse\_set\_two}.
+Nahlédněme prvně na operaci přidání prvku. Pokud bychom chtěli přidat prvek který se nachází hned za hranicí naší kapacity, konkrétně prvek $\text{packed}\left[\text{kapacita}\right]$ (v případě obrázku \ref{fig:sparse_set_empty} se jedná o prvek $0$), stačí nám zvýšit kapacitu o $1$. Tuto situaci můžeme vidět na obrázku \ref{fig:sparse_set_one}. V případě, že chceme přidat prvek, který se nachází na pozici $i$, kde $i > \text{kapacita}$, je nutné nejprve prohodit prvky $\text{packed}\left[\text{kapacita}\right]$ a $\text{packed}\left[i\right]$. Aby nedošlo k porušení invariantu, je také nutné prohodit odpovídající prvky v \textit{sparse array}. Po prohození prvků můžeme postupovat stejně jako v prvním případě. Tuto situaci můžeme vidět na obrázku \ref{fig:sparse_set_two}.
 
-\xxx{obrázek - sparse\_set\_one}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{img/sparse_set_one.pdf}
+    \caption{Příklad našho sparse set po přidání prvku, který se nachází hned za hranicí kapacity.}
+    \label{fig:sparse_set_one}
+\end{figure}
 
-\xxx{obrázek - sparse\_set\_two}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{img/sparse_set_two.pdf}
+    \caption{Příklad našeho sparse set po přidání obecného prvku. Nejprve je nutné prohodit prvek, který chceme přidat s prvkem za hranicí kapacity, poté dojde k navýšení kapacity.}
+    \label{fig:sparse_set_two}
+\end{figure}
 
-Přidejme si do našeho pole další dva prvky, konkrétně $2$ a $1$. Přidání provedeme v tomto pořadí. Současnou situaci je možné vidět na obrázku \xxx{sparse\_set\_four}. Nyní bychom chtěli nějaký prvek odebrat. V jednoduchém případě, kdy je náš prvek těsně před hranicí kapacity, konkrétně se jedná o prvek $\text{packed}\left[\text{kapacita - 1}\right]$ (v případě obrázku \xxx{sparse\_set\_four} prvek 1), stačí nám zmenšit kapacitu o $1$. Pokud se jedná o jiný prvek, tak podobně jako při odebírání, prohodíme tento prvek s prvkem $\text{packed}\left[\text{kapacita - 1}\right]$. Obdobně jako u odebíraní je nutné prohodit odpovídající prvky v \textit{sparse array} aby nedošlo k porušení invariantu. Poté postupujeme jako v prvním případě. Příklad druhé situace můžeme vidět na obrázku \xxx{sparse\_set\_three}.
+Přidejme si do našeho pole další dva prvky, konkrétně $2$ a $1$. Přidání provedeme v tomto pořadí. Současnou situaci je možné vidět na obrázku \ref{fig:sparse_set_four}. Nyní bychom chtěli nějaký prvek odebrat. V jednoduchém případě, kdy je náš prvek těsně před hranicí kapacity, konkrétně se jedná o prvek $\text{packed}\left[\text{kapacita - 1}\right]$ (v případě obrázku \ref{fig:sparse_set_four} prvek 1), stačí nám zmenšit kapacitu o $1$. Pokud se jedná o jiný prvek, tak podobně jako při odebírání, prohodíme tento prvek s prvkem $\text{packed}\left[\text{kapacita - 1}\right]$. Obdobně jako u odebíraní je nutné prohodit odpovídající prvky v \textit{sparse array} aby nedošlo k porušení invariantu. Poté postupujeme jako v prvním případě. Příklad druhé situace můžeme vidět na obrázku \xxx{sparse\_set\_three}.
 
-\xxx{obrázek - sparse\_set\_three}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{img/sparse_set_four.pdf}
+    \caption{Příklad našeho sparse set po přidání prvků 2 a 1.}
+    \label{fig:sparse_set_four}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{img/sparse_set_three.pdf}
+    \caption{Příklad našeho sparse set po odebraní obecného prvku. Nejprve je nutné prohodit prvek, který chceme odebrat s prvek před hranicí kapacity, poté dojde ke snížení kapacity.}
+    \label{fig:sparse_set_three}
+\end{figure}
 
 \xxx{Jak se používá sparse set v ECS.}
 

@@ -116,9 +116,14 @@ Existují také ECS implementace, které se snaží \textit{sparse set} a \texti
 % levne pridavani/odebirani komponent, lehce horsi iterace v porovnanim s arch type
 
 \subsection{Jiné způsoby ukládání komponent}
-Komponenty jako pointery
+Jak již bylo zmíněno, existují i jiné způsoby, kterými lze komponenty ukládat. Některé z nich ale mají výrazně horší výkon a to převážně proto, protože vyžadují aby jednotlivé komponenty byli implementované jako třídy.
+
+V programovacím jazyce C\# třídy spadají pod tzv. referenční datové typy. Referenční datové typy jsou interně implementovány pouze jako pointery. To má za následek špatné využité cache, které vede k horšímu výkonu pro tyto způsoby. Cache a výkon jednotlivých způsobů si více přiblížíme v \ref{sec:ecs_props}.
+
+% queries jako dictionary?
 
 \section{Vlastnosti ECS}
+\label{sec:ecs_props}
 ...
 
 Vysoka flexibilita

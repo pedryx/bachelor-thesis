@@ -47,7 +47,7 @@ Přesouvání komponent může být výkonnostně náročná operace. Také je d
 % \xxx{velikost packed nám dává kapacitu, velikost dense max prvek - upravit popis aby toto odrážel}
 % - je potreba to odrazet?
 
-\textit{Sparse set} je datová struktura, která reprezentuje množinu. Je možné do ní uložit čísla z množiny $0..u-1$. Na \textit{sparse set} je možné provádět operace vyhledání a vložení prvku v čase $O(1)$ a iteraci v čase $O(n)$. Rozbor této datové struktury je nad rámec této práce, proto pouze lehce nahlédneme na její implementaci.
+\textit{Sparse set} je datová struktura, která reprezentuje množinu. Je možné do ní uložit čísla z množiny $0..u-1$. Na \textit{sparse set} je možné provádět operace vyhledání a vložení prvku v čase $O(1)$ a iteraci v čase $O(n)$. Než si budeme povídat jak tuto datovou strukturu lze využít pro ukládání komponent, tak ji nejprve přiblížíme. Ovšem rozbor této datové struktury by byl nad rámec této práce, proto pouze lehce nahlédneme na její implementaci.
 
 \textit{Sparse set} se skládá ze dvou polí. Prvnímu se říká \textit{packed array} (někdy také \textit{internal array}, \textit{direct array}, nebo prostě \textit{values}). Druhé nese název \text{sparse array} (někdy také \textit{external array}, \textit{reverse array}, nebo prostě \textit{indices}). Obě tyto pole mají pevnou velikost. Pro \textit{packed array} je také stanovena kapacita, která odpovídá počtu prvků ve \textit{sparse set}. Příklad prázdného \textit{sparse set} pro $u=6$ je možné vidět na obrázku \ref{fig:sparse_set_empty}. 
 
@@ -76,7 +76,7 @@ Nahlédněme prvně na operaci přidání prvku. Pokud bychom chtěli přidat pr
     \label{fig:sparse_set_two}
 \end{figure}
 
-Přidejme si do našeho pole další dva prvky, konkrétně $2$ a $1$. Přidání provedeme v tomto pořadí. Současnou situaci je možné vidět na obrázku \ref{fig:sparse_set_four}. Nyní bychom chtěli nějaký prvek odebrat. V jednoduchém případě, kdy je náš prvek těsně před hranicí kapacity, konkrétně se jedná o prvek $\text{packed}\left[\text{kapacita - 1}\right]$ (v případě obrázku \ref{fig:sparse_set_four} prvek 1), stačí nám zmenšit kapacitu o $1$. Pokud se jedná o jiný prvek, tak podobně jako při odebírání, prohodíme tento prvek s prvkem $\text{packed}\left[\text{kapacita - 1}\right]$. Obdobně jako u odebíraní je nutné prohodit odpovídající prvky v \textit{sparse array} aby nedošlo k porušení invariantu. Poté postupujeme jako v prvním případě. Příklad druhé situace můžeme vidět na obrázku \xxx{sparse\_set\_three}.
+Přidejme si do našeho pole další dva prvky, konkrétně $2$ a $1$. Přidání provedeme v tomto pořadí. Současnou situaci je možné vidět na obrázku \ref{fig:sparse_set_four}. Nyní bychom chtěli nějaký prvek odebrat. V jednoduchém případě, kdy je náš prvek těsně před hranicí kapacity, konkrétně se jedná o prvek $\text{packed}\left[\text{kapacita - 1}\right]$ (v případě obrázku \ref{fig:sparse_set_four} prvek 1), stačí nám zmenšit kapacitu o $1$. Pokud se jedná o jiný prvek, tak podobně jako při odebírání, prohodíme tento prvek s prvkem $\text{packed}\left[\text{kapacita - 1}\right]$. Obdobně jako u odebíraní je nutné prohodit odpovídající prvky v \textit{sparse array} aby nedošlo k porušení invariantu. Poté postupujeme jako v prvním případě. Příklad druhé situace můžeme vidět na obrázku \ref{fig:sparse_set_three}.
 
 \begin{figure}
     \centering
@@ -92,7 +92,28 @@ Přidejme si do našeho pole další dva prvky, konkrétně $2$ a $1$. Přidán�
     \label{fig:sparse_set_three}
 \end{figure}
 
-\xxx{Jak se používá sparse set v ECS.}
+% \xxx{Jak se používá sparse set v ECS.}
+
+% upravit uvod (potrebujeme vedet co jsou a jak funguji)
+% neni tak casty
+Z důvodu složitější implementace není velké množství ECS implementací, které využívají \textit{sparse set} pro ukládání komponent. Je také nutné zmínit, že jednotlivé implementace \textit{sparse set} se často drobně liší od teoretické částí.
+
+Způsobů jakými lze \textit{sparse set} pro ukládání komponent použít existuje více. My si tu představíme přímočarý přístup ve kterém se \textit{sparse set} používá jako datová struktura pro ukládání jednotlivých typů komponent. V tomto přístupu existuje pro každý typ komponenty \textit{sparse set}. Ke každému \textit{sparse set} si pořídíme třetí pole, ve kterém budeme ukládat jednotlivé instance komponent. Toto třetí pole budeme mít seřazené stejně jako naše \textit{packed array}. Kdykoliv přidáme nebo odebereme prvek v našem \textit{sparse set}, tak to také provedeme v našem poli komponent. Iterace je velice rychlá, jelikož všechny komponenty jsou za sebou na jednom místě.
+
+Ovšem nastává komplikace v případě, že chceme iterovat víc jak jeden typ komponenty. Jedním ze způsobů jak tento problém vyřešit je vzít ten nejmenší \textit{sparse set} a ten projít a pro každou entitu v něm se dotázat ostatních \textit{sparse set} jestli také danou entitu obsahují. Připomeňme si, že na \textit{sparse set} jsme schopni tento dotaz provést v O(1). Ale i přesto tyto kontroly lehce ubližují našemu výkonu, ale pořád je iterace přes jednotlivé komponenty relativně rychlá.
+
+Jak již bylo zmíněno \textit{sparse set} se dá používat vícero způsoby. Některé z nich nabízí mnohem větší výkon (ve srovnání s výše zmíněným způsobem). Jednotlivé způsobu jsou rozebrány v již zmiňovaném článku ECS back and fort~\cite{Caini_2019}.
+
+Hlavní výhodou \textit{sparse set} oproti \textit{arch type} je velice levné přidávání a odebírání komponent, které je většinou pro \textit{sparse set} realizované v O(1). Oproti tomu mají \textit{sparse set} nevýhodu v tom, že iterace komponent pro implementace založené na \textit{arch type} bývá rychlejší.
+
+Existují také ECS implementace, které se snaží \textit{sparse set} a \textit{arch type} kombinovat. Jednou takovou je Bevy~\cite{Bevy}. Jedná se o herní engine pro programovací jazyk Rust. V Bevy jsou jednotlivé komponent uloženy v \textit{arch type}. Ovšem uživatel si může specifikovat, že chce aby pro daný typ komponenty byl namísto toho použit \textit{sparse set}. Tím zařídí, že odebíraní a přidávání instancí pro daný typ komponenty bude v konstantním čase za cenu lehce pomalejší iterace.
+
+% implementace se casto drobne lisi od teoreticke varianty
+% pouziva se vicero zpusoby
+
+% predstavit zpusob kde se sparse set pouziva jako storage struktura pro kazdy typ komponenty
+
+% levne pridavani/odebirani komponent, lehce horsi iterace v porovnanim s arch type
 
 \subsection{Jiné způsoby ukládání komponent}
 Komponenty jako pointery
@@ -110,4 +131,4 @@ Flexibilita > vykon
 
 \xxx{TODO}
 
-\xxx{maybe topics: dynamicke vs staticke query, tombstones, relace, eventy, tag component, system types, reaction systems, paralelism, paralel queries, query filters, functional programming, relace, eventy, prukopnici (herni engine Bevy, ECS knihovny entitas a flecs)}
+\xxx{maybe topics: dynamicke vs staticke query, tombstones, relace, eventy, tag component, system types, reaction systems, paralelism, paralel queries, query filters, functional programming, relace, eventy, prukopnici (herni engine Bevy, ECS knihovny entt a flecs)}

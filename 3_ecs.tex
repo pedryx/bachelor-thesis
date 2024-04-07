@@ -19,10 +19,10 @@ Tomuto objektu se v ECS implementacích běžně říká query. Pro jeho vytvoř
 
 % Query se dělí do dvou typů, statické a dynamické. Statické query je možné zkonstruovat (znamenaje také specifikovat typy komponent nad kterými bude pracovat) pouze za kompilace. Naproti tomu dynamické query je možné zkonstruovat za běhu. Dynamické query je poměrně pokročilá věc a pouze malé množství ECS implementací jej podporuje.
 
-% Je důležité si uvědomit, že správa entit a komponent je dost složitá úloha. Je nutné aby bylo možné namapovat jednotlivé komponenty na jejich entity. Zároveň je také zapotřebí aby bylo možné iterovat určité n-tice těchto komponent za pomocí query. Je také důležité brát v potaz to, že jednotlivé entity a komponenty se mohou přidávat a odebírat za běhu. Více si o těchto věcech řekneme v pozdější sekci, nyní se ale zaměřme na mazání entit. Jelikož smazání takové entity může být naročné na implementaci a nebo také na výkon, některé ECS implementace využívajicí koncept tombstone. Tombstone je oznaceni pro objekt, ktery po smazani stale existuje, pouze je někde poznamenáno, že je již smazaný. Smazané entity bývají tedy v některých ECS implementacích označeny jako tombstone a query je při iteraci ignoruje.
+% Je důležité si uvědomit, že správa entit a komponent je dost složitá úloha. Je nutné aby bylo možné namapovat jednotlivé komponenty na jejich entity. Zároveň je také zapotřebí aby bylo možné iterovat určité n-tice těchto komponent za pomocí query. Je také důležité brát v potaz to, že jednotlivé entity a komponenty se mohou přidávat a odebírat za běhu. Více si o těchto věcech řekneme v pozdější sekci, nyní se ale zaměřme na mazání entit. Jelikož smazání takové entity může být náročné na implementaci a nebo také na výkon, některé ECS implementace využívající koncept tombstone. Tombstone je oznaceni pro objekt, ktery po smazani stale existuje, pouze je někde poznamenáno, že je již smazaný. Smazané entity bývají tedy v některých ECS implementacích označeny jako tombstone a query je při iteraci ignoruje.
 
 %\section{Správa paměti}
-%Než si rozeberem jak je možné úkládat komponenty, bude nutné si přiblížit jak vlastně funguje cache v počítači a také jaký je rozdíl mezi hodnotovími a referenčními typy v C\#.
+%Než si rozebereme jak je možné ukládat komponenty, bude nutné si přiblížit jak vlastně funguje cache v počítači a také jaký je rozdíl mezi hodnotovými a referenčními typy v C\#.
 
 %Cache
 
@@ -54,7 +54,7 @@ Přesouvání komponent může být výkonnostně náročná operace. Také je d
 \begin{figure}
     \centering
     \includegraphics[width=0.6\linewidth]{img/sparse_set_empty.pdf}
-    \caption{Příklad prázného sparse set pro u=6.}
+    \caption{Příklad prázdného sparse set pro u=6.}
     \label{fig:sparse_set_empty}
 \end{figure}
 
@@ -65,7 +65,7 @@ Nahlédněme prvně na operaci přidání prvku. Pokud bychom chtěli přidat pr
 \begin{figure}
     \centering
     \includegraphics[width=0.6\linewidth]{img/sparse_set_one.pdf}
-    \caption{Příklad našho sparse set po přidání prvku, který se nachází hned za hranicí kapacity.}
+    \caption{Příklad našeho sparse set po přidání prvku, který se nachází hned za hranicí kapacity.}
     \label{fig:sparse_set_one}
 \end{figure}
 

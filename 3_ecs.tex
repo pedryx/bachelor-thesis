@@ -123,9 +123,13 @@ V programovacím jazyce C\# třídy spadají pod tzv. referenční datové typy.
 % queries jako dictionary?
 
 \section{Vlastnosti ECS}
-Jak již bylo zmíněno, dvě hlavní výhody ECS jsou velmi vysoká flexibilita a velmi velký výkon. V této sekci si odůvodníme obě dvě tyto vlastnosti a na závěr nahledneme proč je flexibilita výrazně důležitější než výkon.
+Jak již bylo zmíněno, dvě hlavní výhody ECS jsou vysoká flexibilita a velký výkon. V této sekci si odůvodníme obě dvě tyto vlastnosti a na závěr nahledneme proč je flexibilita výrazně důležitější než výkon.
 
 \subsection{Vysoká flexibilita}
+
+Díky ECS lze dosáhnout dobré organizace kódu a vysoké flexibility. Jak jsme již zmiňovali flexibilita je pro nás při vývoji her hodně důležitá vlastnost. Vysoká flexibilita vychází převážně z dekompozice entit na komponenty. Jednotlivé komponenty je možné přidávat a odebírat a to i za běhu. Dále k flexibilitě přispívá nezávislost jednotlivých systému. Např systém který řeší vykreslování entit nemusí vůbec vědět o systému který řídí pohyb entit.
+
+Vysoká flexibilita je velice důležitá pro již zmiňovaný iterativní proces, který se při vývoji her používá. Dále nám také usnadňuje návrh některých herních mechanik. Je například možné reprezentovat to kterou entitu sleduje kamera pomocí CameraFollow komponenty. Pokud bychom chtěli udělat mechaniku, kde hráč začne na dálku ovládat nějaký stroj, můžeme prostě tomuto stroji přidat CameraFollow komponentu.
 
 % co to je flexibilita
 % pripomenout proc je dulezita
@@ -136,8 +140,29 @@ Jak již bylo zmíněno, dvě hlavní výhody ECS jsou velmi vysoká flexibilita
 \label{sec:ecs_props}
 
 % proc je potreba vysoky vykon
+Moderní počítačové hry mohou být velmi velké. Velká herní studia vydávají takzvané AAA tituly. Jedná se o opravdu velké hry, na kterých pracuje velký počet lidí. Z velikostí hry také roste nárok na její výkon. Pro tyto hry je tedy výkon klíčová vlastnost.
+
 % proc je nutne vysvetlit co je cache
+ECS získává velký výkon skrze velmi dobré využití cache. Než si podíváme jak konkrétně ECS cache používá, připomeňme si prvně jak funguje.
+
+Program si svoje data uchovává v paměti RAM. Ovšem přístup do této paměti je z hlediska času drahý. Pro představu u moderních pamětí takovíto přístup může trvat vyšší desítky nanosekund. Z tohoto důvodu se využívají menší paměti, takzvané cache, které disponují mnohem vyšší rychlostí ale mnohem menší velikostí. Pro představu moderní procesory používají cache, u kterých přístup může trvat menší stovky picosekund.
+
+Při přístupu k datům se procesor nejprve podívá zda nemá data již v této cache. Pokud ano, jedná se o takzvaný \textit{cache hit} a data si z ní načte. Pokud ne, jedná se o takzvaný \textit{cache miss} a je nutné data načíst z hlavní paměti. 
+
+Je nutné upozornit, že výše popsaný paměťový model je úmyslně zjednodušen. Více o něm a jeho používání je možné se dočíst například v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}, konkrétně v Data Locality kapitole.
+
+Již víme, že \textit{cache miss} jsou drahé a pro vysoký výkon je nutné je minimalizovat. Ale jak přesně procesor rozhoduje jaké data budou v cache a jaké ne. Využívá se takzvané časové a prostorové lokality. Časová lokalita spočívá v tom, že pokud jsme přistoupili k nějakým datům, je velká šance, že k nim brzo budeme chtít přistoupit znovu. Nadruhou stranu datová lokalita spočívá v tom, že pokud jsme přistoupili k nějakým datům, je velká šance, že budeme chtít přistoupit také k datům, které se nacházejí blízko nich.
+
+Jedena z možností, jak tedy minimalizovat počet \textit{cache miss}, je využít sekvenčního přístupu. Pokud budem přistupovat k datům, které jsou v paměti hned za sebou, tak díky prostorové lokalitě bude počet \textit{cache miss} velmi malí. A to je přesně to, čeho využívají \textit{arch type} a \textit{sparse set}.
+
+
+
+
+
 % priblizit cache
+% - paměťový systém, cache miss/cache hit
+% - data locality, time locality
+
 % proc arch type dobre vyuziva cache
 % proc sparse set dobre vyuziva cache
 % proc zpusoby, ktere vyzaduji komponenty jako tridy spatne vyuzivaji cache

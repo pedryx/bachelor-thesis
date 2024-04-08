@@ -116,6 +116,7 @@ Existují také ECS implementace, které se snaží \textit{sparse set} a \texti
 % levne pridavani/odebirani komponent, lehce horsi iterace v porovnanim s arch type
 
 \subsection{Jiné způsoby ukládání komponent}
+\label{sec:component_as_pointers}
 Jak již bylo zmíněno, existují i jiné způsoby, kterými lze komponenty ukládat. Některé z nich ale mají výrazně horší výkon a to převážně proto, protože vyžadují aby jednotlivé komponenty byli implementované jako třídy.
 
 V programovacím jazyce C\# třídy spadají pod tzv. referenční datové typy. Referenční datové typy jsou interně implementovány pouze jako pointery. To má za následek špatné využité cache, které vede k horšímu výkonu pro tyto způsoby. Cache a výkon jednotlivých způsobů si více přiblížíme v \ref{sec:ecs_props}.
@@ -162,10 +163,10 @@ Již víme, že \textit{cache miss} jsou drahé a pro vysoký výkon je nutné j
 Jedena z možností, jak tedy minimalizovat počet \textit{cache miss}, je využít sekvenčního přístupu. Pokud budem přistupovat k datům, které jsou v paměti hned za sebou, tak díky prostorové lokalitě bude počet \textit{cache miss} velmi malí. A to je přesně to, čeho využívají ECS implementace založené na \textit{arch type} nebo \textit{sparse set}.
 
 % proc arch type dobre vyuziva cache
-Jak jsme již popisovali, v ECS implementacích založených na \textit{arch type} má v sobě každý \textit{arch type} pole pro jednotlivé typy komponent. Každé takové pole má za sebou v paměti uloženy jednotlivé instance příslušných komponent. Query pouze iteruje přes tyto pole a \textit{cache miss} nám nastává pouze v případě, že začnem číst další takové pole (začnem iterovat další \textit{arch type}). Počet textit{cache miss} bude tedy velmi blízký počtu \textit{arch type}, které query musí projít.
+Jak jsme již popisovali, v ECS implementacích založených na \textit{arch type} má v sobě každý \textit{arch type} pole pro jednotlivé typy komponent. Každé takové pole má za sebou v paměti uloženy jednotlivé instance příslušných komponent. Query pouze iteruje přes tyto pole a \textit{cache miss} nám nastává pouze v případě, že začneme číst další takové pole (začneme iterovat další \textit{arch type}). Počet textit{cache miss} bude tedy velmi blízký počtu \textit{arch type}, které query musí projít.
 
 % proc sparse set dobre vyuziva cache
-Nadruhou stranu v ECS implementacích založených na \textit{sparse set} (ve výše popsaném využití) máme sice pro každý typ komponenty jedno pole, ale při použití query, které prochází vícero typů komponent můžeme mít netrivialní množství \textit{cache miss}. Výkon tedy bude ve většině případů horší než u ECS implementacích založených na \textit{arch type}, ale porad se dá očekávat nemalé množství sekvenčního přístupu takže obecně výkon bude furt relativně dobrý.
+Nadruhou stranu v ECS implementacích založených na \textit{sparse set} (ve výše popsaném využití) máme sice pro každý typ komponenty jedno pole, ale při použití query, které prochází vícero typů komponent můžeme mít netrivialní množství \textit{cache miss}. Výkon tedy bude ve většině případů horší než u ECS implementacích založených na \textit{arch type}, ale porad se dá očekávat nemalé množství sekvenčního přístupu takže obecně výkon bude pořád relativně dobrý.
 
 % proc zpusoby, ktere vyzaduji komponenty jako tridy spatne vyuzivaji cache
 Zmiňovali jsme si ECS implementace, které vyžadují aby komponenty byli třídy. To má za následek, že jednotlivé instance komponent jsou náhodně rozházené po paměti (každou instanci alokujeme na heap a pak pracujeme pouze s jedním pointerem). To vede k velmi velkému počtu \textit{cache miss} což má za následek výrazně horší výkon.
@@ -183,7 +184,10 @@ Jak již bylo zmíněno pro hry je flexibilita hrozně důležitá vlastnost a t
 
 % samostatna kapitola?
 % proc tahle cast?
+Již jsme si zmiňovali, že návrhový vzor Component je pro herní vývoj velice populární a používá jej velké množství herních frameworků a enginů. V této sekci jej porovnáme s návrhovým vzorem ECS a odůvodníme jeho popularitu.
+
 % flexibilita a vykon
+Hlavní vlastnosti, podle kterých lze porovnávat ECS a Component jsou výkon a flexibilita. Jak jsme si již zmiňovali, že návrhový vzor Component vyžaduje volání virtuálních funkcí, to má za následek dvě věci. Prvně jednotlivé komponenty musí být uloženy jako pointery, což jak jsme si zmiňovali v podsekci~\ref{sec:component_as_pointers} vede k velkému množství \textit{cache miss}. Druhá věc je přímo samotná cena volání virtuální funkce, která je také časově náročnější. Můžeme si jí představit jako dražší \textit{cache miss}. Je důležité upozornit, že obě tyto věci se dají do určité míry zoptimalizovat, takže reálný výkon není tak špatný, ale pořád je výrazně horší než u návrhového vzoru ECS.
 
 % porovnat flexibilitu na prikladech
 

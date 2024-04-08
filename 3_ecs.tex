@@ -146,9 +146,12 @@ Moderní počítačové hry mohou být velmi velké. Velká herní studia vydáv
 % proc je nutne vysvetlit co je cache
 ECS získává velký výkon skrze velmi dobré využití cache. Než si podíváme jak konkrétně ECS cache používá, připomeňme si prvně jak funguje.
 
+% priblizit cache
+% - paměťový systém, cache miss/cache hit
+% - data locality, time locality
 Program si svoje data uchovává v paměti RAM. Ovšem přístup do této paměti je z hlediska času drahý. Pro představu u moderních pamětí takovíto přístup může trvat vyšší desítky nanosekund. Z tohoto důvodu se využívají menší paměti, takzvané cache, které disponují mnohem vyšší rychlostí ale mnohem menší velikostí. Pro představu moderní procesory používají cache, u kterých přístup může trvat menší stovky picosekund.
 
-\xxx{obrazek - pristup do cache vs pristup do RAM}
+% \xxx{obrazek - pristup do cache vs pristup do RAM} ?
 
 Při přístupu k datům se procesor nejprve podívá zda nemá data již v této cache. Pokud ano, jedná se o takzvaný \textit{cache hit} a data si z ní načte. Pokud ne, jedná se o takzvaný \textit{cache miss} a je nutné data načíst z hlavní paměti. 
 
@@ -158,20 +161,20 @@ Již víme, že \textit{cache miss} jsou drahé a pro vysoký výkon je nutné j
 
 Jedena z možností, jak tedy minimalizovat počet \textit{cache miss}, je využít sekvenčního přístupu. Pokud budem přistupovat k datům, které jsou v paměti hned za sebou, tak díky prostorové lokalitě bude počet \textit{cache miss} velmi malí. A to je přesně to, čeho využívají ECS implementace založené na \textit{arch type} nebo \textit{sparse set}.
 
-Jak jsme již popisovali, v ECS implementacích založených na \textit{arch type} ma v sobě každý \textit{arch type} pole pro jednotlivé typy kompknent. Každé takové pole má za sebou v paměti uloženy jednotlivé instance příslušných komponent. Query pouze iteruje přes tyto pole a \textit{cache miss} nám nastává pouze v případě, že začnem číst další takové pole (začnem iterovat další \textit{arch type}). Počet textit{cache miss} bude tedy velmi blízký počtu \textit{arch type}, které query musí ptojít.
+% proc arch type dobre vyuziva cache
+Jak jsme již popisovali, v ECS implementacích založených na \textit{arch type} má v sobě každý \textit{arch type} pole pro jednotlivé typy komponent. Každé takové pole má za sebou v paměti uloženy jednotlivé instance příslušných komponent. Query pouze iteruje přes tyto pole a \textit{cache miss} nám nastává pouze v případě, že začnem číst další takové pole (začnem iterovat další \textit{arch type}). Počet textit{cache miss} bude tedy velmi blízký počtu \textit{arch type}, které query musí projít.
 
+% proc sparse set dobre vyuziva cache
 Nadruhou stranu v ECS implementacích založených na \textit{sparse set} (ve výše popsaném využití) máme sice pro každý typ komponenty jedno pole, ale při použití query, které prochází vícero typů komponent můžeme mít netrivialní množství \textit{cache miss}. Výkon tedy bude ve většině případů horší než u ECS implementacích založených na \textit{arch type}, ale porad se dá očekávat nemalé množství sekvenčního přístupu takže obecně výkon bude furt relativně dobrý.
 
-% priblizit cache
-% - paměťový systém, cache miss/cache hit
-% - data locality, time locality
-
-% proc arch type dobre vyuziva cache
-% proc sparse set dobre vyuziva cache
 % proc zpusoby, ktere vyzaduji komponenty jako tridy spatne vyuzivaji cache
+Zmiňovali jsme si ECS implementace, které vyžadují aby komponenty byli třídy. To má za následek, že jednotlivé instance komponent jsou náhodně rozházené po paměti (každou instanci alokujeme na heap a pak pracujeme pouze s jedním pointerem). To vede k velmi velkému počtu \textit{cache miss} což má za následek výrazně horší výkon.
 
 \subsection{Proč je flexibilita důležitější než výkon?}
 
+Je důležité upozornit na to, že velký výkon není to hlavní proč by někdo chtěl používat ECS. Moderní počítače jsou velmi rychlé a pokud se nejedná o AAA hru, tak výkon není zapotřebí tak hodně řešit. 
+
+Jak již bylo zmíněno pro hry je flexibilita hrozně důležitá vlastnost a ten hlavní důvod proč by někdo chtěl ECS použít je právě vysoká flexibilita a dobrá organizace kódu.
 % pocitace jsou velmi rychle
 % flexibilita je hrozne dulezita
 % je to hlavni duvod proc chceme pouzivat ecs

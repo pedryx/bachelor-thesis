@@ -29,7 +29,7 @@ Tomuto objektu se v ECS implementacích běžně říká query. Pro jeho vytvoř
 %Referencni vs hodnotove typy
 
 \section{Ukládaní komponent}
-Nyní si rozebereme způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Většinou se rozlišují ECS implementace založené na \textit{sparse set} a ECS implementace založené na \textit{arch type}. Krom těchto dvou se poměrně často objevuje také třetí méně efektivní způsob, který umožňuje jednotlivé komponenty reprezentovat pouze jako třídy, což má za následek horší výkon.
+Nyní si rozebereme způsoby, kterými jednotlivé ECS implementace řeší ukládání komponent v paměti. Většinou se rozlišují ECS implementace založené na \textit{sparse set} a ECS implementace založené na \textit{arch type}. Krom těchto dvou se poměrně často objevuje také třetí méně efektivní způsob, který vyžaduje jednotlivé komponenty reprezentovat pouze jako třídy, což má za následek horší výkon.
 
 \subsection{Arch type}
 V ECS implementacích založených na \textit{arch type}, je \textit{arch type} typ entity. \textit{Arch type} je jednoznačně určen množinou komponent. Například mějme entitu představující postavu hráče, označme ji pro jednoduchost pouze jako entita hráče. Chceme aby náš hráč uměl chodit. Je nutné mu tedy přiřadit komponentu \verb|Position|, která reprezentuje jeho pozici v herním světě a také komponentu \verb|Movement|, která mu přidá schopnost pohybu. Jeho \textit{arch type}, označme ho \textit{arch type}~A, je tedy jednoznačně určen typy komponent \verb|Position| a \verb|Movement|. Jakákoliv jiná entita, která má pouze tyto dvě komponenty, také patří do \textit{arch type}~A. Dále mějme entitu stromu. Strom bude mít pouze komponentu \verb|Position|. Jeho \textit{arch type}, označme ho \textit{arch type}~B, je tedy jednoznačně určen typem komponenty \verb|Position|. Jakákoliv jiná entita, co bude mít také pouze komponentu \verb|Position| bude také patřit do \textit{arch type}~B.
@@ -96,7 +96,7 @@ Přidejme si do našeho pole další dva prvky, konkrétně $2$ a $1$. Přidán�
 
 % upravit uvod (potrebujeme vedet co jsou a jak funguji)
 % neni tak casty
-Z důvodu složitější implementace není velké množství ECS implementací, které využívají \textit{sparse set} pro ukládání komponent. Je také nutné zmínit, že jednotlivé implementace \textit{sparse set} se často drobně liší od teoretické částí.
+Z důvodu složitější implementace není velké množství ECS implementací, které využívají \textit{sparse set} pro ukládání komponent. Je také nutné zmínit, že jednotlivé implementace \textit{sparse set} se často drobně liší od teoretické verze.
 
 Způsobů jakými lze \textit{sparse set} pro ukládání komponent použít existuje více. My si tu představíme přímočarý přístup ve kterém se \textit{sparse set} používá jako datová struktura pro ukládání jednotlivých typů komponent. V tomto přístupu existuje pro každý typ komponenty \textit{sparse set}. Ke každému \textit{sparse set} si pořídíme třetí pole, ve kterém budeme ukládat jednotlivé instance komponent. Toto třetí pole budeme mít seřazené stejně jako naše \textit{packed array}. Kdykoliv přidáme nebo odebereme prvek v našem \textit{sparse set}, tak to také provedeme v našem poli komponent. Iterace je velice rychlá, jelikož všechny komponenty jsou za sebou na jednom místě.
 
@@ -106,7 +106,7 @@ Jak již bylo zmíněno \textit{sparse set} se dá používat vícero způsoby. 
 
 Hlavní výhodou \textit{sparse set} oproti \textit{arch type} je velice levné přidávání a odebírání komponent, které je většinou pro \textit{sparse set} realizované v O(1). Oproti tomu mají \textit{sparse set} nevýhodu v tom, že iterace komponent pro implementace založené na \textit{arch type} bývá rychlejší.
 
-Existují také ECS implementace, které se snaží \textit{sparse set} a \textit{arch type} kombinovat. Jednou takovou je Bevy~\cite{Bevy}. Jedná se o herní engine pro programovací jazyk Rust. V Bevy jsou jednotlivé komponent uloženy v \textit{arch type}. Ovšem uživatel si může specifikovat, že chce aby pro daný typ komponenty byl namísto toho použit \textit{sparse set}. Tím zařídí, že odebíraní a přidávání instancí pro daný typ komponenty bude v konstantním čase za cenu lehce pomalejší iterace.
+Existují také ECS implementace, které se snaží \textit{sparse set} a \textit{arch type} kombinovat. Jednou takovou je Bevy~\cite{Bevy}. Jedná se o herní engine pro programovací jazyk Rust. V Bevy jsou jednotlivé komponent uloženy v \textit{arch type}. Ovšem uživatel si může specifikovat, že chce, aby pro daný typ komponenty byl namísto toho použit \textit{sparse set}. Tím zařídí, že odebíraní a přidávání instancí pro daný typ komponenty bude v konstantním čase za cenu lehce pomalejší iterace.
 
 % implementace se casto drobne lisi od teoreticke varianty
 % pouziva se vicero zpusoby
@@ -121,13 +121,14 @@ Jak již bylo zmíněno, existují i jiné způsoby, kterými lze komponenty ukl
 V programovacím jazyce C\# třídy spadají pod tzv. referenční datové typy. Referenční datové typy jsou interně implementovány pouze jako pointery. To má za následek špatné využité cache, které vede k horšímu výkonu pro tyto způsoby. Cache a výkon jednotlivých způsobů si více přiblížíme v \ref{sec:ecs_props}.
 
 % queries jako dictionary?
+% vlastni alokatory pro lepsi vyuziti cache pro tyto implementace
 
 \section{Vlastnosti ECS}
 Jak již bylo zmíněno, dvě hlavní výhody ECS jsou vysoká flexibilita a velký výkon. V této sekci si odůvodníme obě dvě tyto vlastnosti a na závěr nahledneme proč je flexibilita výrazně důležitější než výkon.
 
 \subsection{Vysoká flexibilita}
 
-Díky ECS lze dosáhnout dobré organizace kódu a vysoké flexibility. Jak jsme již zmiňovali flexibilita je pro nás při vývoji her hodně důležitá vlastnost. Vysoká flexibilita vychází převážně z dekompozice entit na komponenty. Jednotlivé komponenty je možné přidávat a odebírat a to i za běhu. Dále k flexibilitě přispívá nezávislost jednotlivých systému. Např systém který řeší vykreslování entit nemusí vůbec vědět o systému který řídí pohyb entit.
+Díky ECS lze dosáhnout dobré organizace kódu a vysoké flexibility. Jak jsme již zmiňovali flexibilita je pro nás při vývoji her hodně důležitá vlastnost. Vysoká flexibilita vychází převážně z dekompozice entit na komponenty. Jednotlivé komponenty je možné přidávat a odebírat a to i za běhu. Dále k flexibilitě přispívá nezávislost jednotlivých systému. Například systém který řeší vykreslování entit nemusí vůbec vědět o systému který řídí pohyb entit.
 
 Vysoká flexibilita je velice důležitá pro již zmiňovaný iterativní proces, který se při vývoji her používá. Dále nám také usnadňuje návrh některých herních mechanik. Je například možné reprezentovat to kterou entitu sleduje kamera pomocí CameraFollow komponenty. Pokud bychom chtěli udělat mechaniku, kde hráč začne na dálku ovládat nějaký stroj, můžeme prostě tomuto stroji přidat CameraFollow komponentu.
 
@@ -147,17 +148,19 @@ ECS získává velký výkon skrze velmi dobré využití cache. Než si podív�
 
 Program si svoje data uchovává v paměti RAM. Ovšem přístup do této paměti je z hlediska času drahý. Pro představu u moderních pamětí takovíto přístup může trvat vyšší desítky nanosekund. Z tohoto důvodu se využívají menší paměti, takzvané cache, které disponují mnohem vyšší rychlostí ale mnohem menší velikostí. Pro představu moderní procesory používají cache, u kterých přístup může trvat menší stovky picosekund.
 
+\xxx{obrazek - pristup do cache vs pristup do RAM}
+
 Při přístupu k datům se procesor nejprve podívá zda nemá data již v této cache. Pokud ano, jedná se o takzvaný \textit{cache hit} a data si z ní načte. Pokud ne, jedná se o takzvaný \textit{cache miss} a je nutné data načíst z hlavní paměti. 
 
 Je nutné upozornit, že výše popsaný paměťový model je úmyslně zjednodušen. Více o něm a jeho používání je možné se dočíst například v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}, konkrétně v Data Locality kapitole.
 
 Již víme, že \textit{cache miss} jsou drahé a pro vysoký výkon je nutné je minimalizovat. Ale jak přesně procesor rozhoduje jaké data budou v cache a jaké ne. Využívá se takzvané časové a prostorové lokality. Časová lokalita spočívá v tom, že pokud jsme přistoupili k nějakým datům, je velká šance, že k nim brzo budeme chtít přistoupit znovu. Nadruhou stranu datová lokalita spočívá v tom, že pokud jsme přistoupili k nějakým datům, je velká šance, že budeme chtít přistoupit také k datům, které se nacházejí blízko nich.
 
-Jedena z možností, jak tedy minimalizovat počet \textit{cache miss}, je využít sekvenčního přístupu. Pokud budem přistupovat k datům, které jsou v paměti hned za sebou, tak díky prostorové lokalitě bude počet \textit{cache miss} velmi malí. A to je přesně to, čeho využívají \textit{arch type} a \textit{sparse set}.
+Jedena z možností, jak tedy minimalizovat počet \textit{cache miss}, je využít sekvenčního přístupu. Pokud budem přistupovat k datům, které jsou v paměti hned za sebou, tak díky prostorové lokalitě bude počet \textit{cache miss} velmi malí. A to je přesně to, čeho využívají ECS implementace založené na \textit{arch type} nebo \textit{sparse set}.
 
+Jak jsme již popisovali, v ECS implementacích založených na \textit{arch type} ma v sobě každý \textit{arch type} pole pro jednotlivé typy kompknent. Každé takové pole má za sebou v paměti uloženy jednotlivé instance příslušných komponent. Query pouze iteruje přes tyto pole a \textit{cache miss} nám nastává pouze v případě, že začnem číst další takové pole (začnem iterovat další \textit{arch type}). Počet textit{cache miss} bude tedy velmi blízký počtu \textit{arch type}, které query musí ptojít.
 
-
-
+Nadruhou stranu v ECS implementacích založených na \textit{sparse set} (ve výše popsaném využití) máme sice pro každý typ komponenty jedno pole, ale při použití query, které prochází vícero typů komponent můžeme mít netrivialní množství \textit{cache miss}. Výkon tedy bude ve většině případů horší než u ECS implementacích založených na \textit{arch type}, ale porad se dá očekávat nemalé množství sekvenčního přístupu takže obecně výkon bude furt relativně dobrý.
 
 % priblizit cache
 % - paměťový systém, cache miss/cache hit
@@ -175,6 +178,12 @@ Jedena z možností, jak tedy minimalizovat počet \textit{cache miss}, je využ
 
 \section{ECS vs Component}
 
-\xxx{TODO}
+% samostatna kapitola?
+% proc tahle cast?
+% flexibilita a vykon
 
-\xxx{maybe topics: dynamicke vs staticke query, tombstones, relace, eventy, tag component, system types, reaction systems, paralelism, paralel queries, query filters, functional programming, relace, eventy, prukopnici (herni engine Bevy, ECS knihovny entt a flecs)}
+% porovnat flexibilitu na prikladech
+
+% herní enginy
+
+% \xxx{maybe topics: dynamicke vs staticke query, tombstones, relace, eventy, tag component, system types, reaction systems, paralelism, paralel queries, query filters, functional programming, relace, eventy, prukopnici (herni engine Bevy, ECS knihovny entt a flecs)}

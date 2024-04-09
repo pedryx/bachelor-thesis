@@ -31,11 +31,11 @@ Jak tento problém vyřešit? Prvním přístupem je využití \textit{multiple 
     \label{fig:diamong_problem}
 \end{figure}
 
-Tímto řešením by nám ale vznikl tzv. \textit{diamond problém} \xxx{link}. Jedná se o problém, který může vzniknout při používání \textit{multiple inheritance}. \textit{Diamond problém} nastává tehdy, pokud je potřeba přistoupit ke členům definovaným na společném předkovi. V našem případě se jedná o členy na třídě \verb|GameObject|.
+Tímto řešením by nám ale vznikl takzvaný \textit{diamond problém} \xxx{link}. Jedná se o problém, který může vzniknout při používání \textit{multiple inheritance}. \textit{Diamond problém} nastává tehdy, pokud je potřeba přistoupit ke členům definovaným na společném předkovi. V našem případě se jedná o členy na třídě \verb|GameObject|.
 
 Alternativním přístupem by mohlo být přesunutí společné logiky do společného předka. V našem případě bychom mechaniku střelby implementovali přímo ve třídě \verb|GameObject|.
 
-Ovšem tímto porušíme jeden z principů objektového programování, konkrétně \textit{single responsibility} \xxx{link}. Tento princip nám říká, že každá třída by měla být zodpovědná pouze za jednu věc. Porušení tohoto principu může mít za následek, že se nám ve společném předkovi začne hromadit velké množství logiky. To může vyústit v obrovskou třídu, která řeší všechny možné herní mechaniky. Jedná se o tzv. \textit{blob object} \xxx{link}. 
+Ovšem tímto porušíme jeden z principů objektového programování, konkrétně \textit{single responsibility} \xxx{link}. Tento princip nám říká, že každá třída by měla být zodpovědná pouze za jednu věc. Porušení tohoto principu může mít za následek, že se nám ve společném předkovi začne hromadit velké množství logiky. To může vyústit v obrovskou třídu, která řeší všechny možné herní mechaniky. Jedná se o takzvaný \textit{blob object} \xxx{link}. 
 
 Další problém je, že náš návrh je příliš závislý na hierarchii dědičnosti, což omezuje design naší hry. V praxi to znamená, že například není možné za běhu přidat objektu schopnost střílet.
 

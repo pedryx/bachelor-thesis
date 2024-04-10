@@ -1,6 +1,8 @@
 \chapter{Herní specifikace}
-
 % intro
+V této kapitole si představíme specifikaci naší hry. Cela hra se dá rozdělit na dva hlavní prvky. Konkrétně svět a vesnice. Specifikujeme si tedy každý z nich.
+
+Prvně než si začneme specifikovat jednotlivé prvky, je nutné říci, že se jedná o 2D hru. Jak již bylo zmíněno, hráč v této hře zastává roli pozorovatele a celí svět pozoruje skrze kameru pohledem ze shora. Ovládá pouze pozici a přiblížení této kamery.
 
 % svet
 % - nahodne generovany
@@ -9,17 +11,8 @@
 % - - trees
 % - - rocks
 % - - iron
-% villages
-% - villagers
-% - houses
-% player
-
-V této kapitole si představíme specifikaci naší hry. Cela hra se dá rozdělit na tři hlavní prvky. Konkrétně svět, vesnice a hráč. Specifikujeme si tedy každý z nich.
-
-Prvně než si začneme specifikovat jednotlivé prvky, je nutné říci, že se jedná o 2D hru. Jak již bylo zmíněno, hráč v této hře zastává roli pozorovatele a celí svět pozoruje skrze kameru pohledem ze shora.
-
 \section{Herní svět}
-Herní svět je náhodně generovaný s pevnou velikostí a skládá se z několika biomů. Každý biome je reprezentován jinou barvou a nacházejí se v něm odlišné suroviny. Zároveň pro každý biome je určeno zda po něm můžou vesničané chodit nebo stavět. Herní svět obsahuje následující biomy:
+Herní svět je náhodně generovaný s pevnou velikostí a skládá se z několika biomů. Každý biom je reprezentován jinou barvou a nacházejí se v něm odlišné suroviny. Zároveň pro každý biom je určeno zda po něm můžou vesničané chodit nebo stavět. Herní svět obsahuje následující biomy:
 
 \begin{enumerate}
     \item \textit{Voda} (\verb|Water|): Reprezentuje vodní plochu. Není na ní možné chodit ani stavět.
@@ -30,7 +23,7 @@ Herní svět je náhodně generovaný s pevnou velikostí a skládá se z někol
     \item \textit{Vysoká hora} (\verb|High Mountain|): \textit{Vysoká hora je vždy obklopena \textit{horou}}. Je pokryta sněhovou plochou. Je možné na ní chodit ale není možné na ní stavět. Nachází se na ní \textit{naleziště železné rudy}.
 \end{enumerate}
 
-Jak již bylo zmíněno v jednotlivých biomech se můžou nacházet suroviny. Suroviny se rozdělují do několika typů. Typ suroviny udává jak dlouho trvá ji sklidit, jaký předmět lze získat po jejím sklizení a počet těchto předmětů, který lze získat po jejím pokácení. Hra obsahuje následující suroviny:
+Jak již bylo zmíněno v jednotlivých biomech se můžou nacházet suroviny. Suroviny se rozdělují do několika typů. Typ suroviny udává jak dlouho trvá ji sklidit, jaký předmět lze získat po jejím sklizení a počet těchto předmětů, který lze získat po jejím sklizení. Hra obsahuje následující suroviny:
 
 \begin{enumerate}
     \item \textit{Strom} (\verb|Tree|): Po pokácení \textit{stromu} lze získat předmět \textit{dřeva}. \textit{Stromy} se nacházejí ve velkém množství v biomu \textit{lesa}.
@@ -50,4 +43,30 @@ Předměty získané skrze sklizení suroviny, je dále možné zpracovat v př�
     \item \textit{Cihla} (\verb|Brick|): \textit{Cihlu} je také možné použít pro stavbu budov. Jedna se o lehce pokročilejší surovinu oproti \textit{prknu}.
     \item \textit{Železo} (\verb|Iron|): \textit{Železo} stejně jako \textit{Prkno} a \textit{Cihlu} lze také použít pro stavbu budov. Jedná se o pokročilou surovinu.
     \item \textit{Jídlo} (\verb|Food|): \textit{Jídlo} je předmět, který musí vesničané požívat, aby neumřeli hlady.
+\end{enumerate}
+
+% villages
+% - villagers
+% - houses
+\section{Vesnice}
+V herním světě se náhodně nacházejí vesnice. V každé se nachází několik budov a vesničané. Každá vesnice má přehled o předmětech kterými disponuje. Pro všechny vesnice je také pevně stanovená stavební fronta, kde pro každou budovu v této frontě je daná cena. Jakmile vesnice nasbírá dostatek surovin pro další budovu z této fronty, dojde k odečtení těchto surovin a následně se objeví příslušná budova. Budova se nemůže objevit moc blízko ani moc daleko od budov, které se již ve vesnici nacházejí.
+
+Každý vesničan má svoje \textit{pracovní místo} (\verb|WorkPlace|). Vesničané vykonávají práci na základě své profese. Profese vesničanovi udává jaký předmět má pro vesnici obstarávat. Jeho práce spočívá v hledání a sklizení příslušné suroviny, kterou následně odnese do svého \textit{pracovního místa}, kde ji zpracuje a výsledný předmět odnese do \textit{skladiště}. Každý vesničan má právě jednu z následujících profesí:
+
+\begin{enumerate}
+    \item \textit{Dřevorubec} (\verb|Woodcutter|): Obstarává \textit{prkna}.
+    \item \textit{Horník kamene} (\verb|StoneMiner|): Obstarává \textit{cihly}.
+    \item \textit{Horník železa} (\verb|IronMiner|): Obstarává \textit{železo}.
+    \item \textit{Lovec} (\verb|Hunter|): Obstarává \textit{jídlo}.
+\end{enumerate}
+
+Všechny vesnice začínají s \textit{hlavní budovou}, \textit{skladištěm} a \textit{budovou dřevorubce}. Budovy lze rozdělit do dvou kategorii a to speciální a budovy pro zpracování předmětů. V budovách pro zpracování předmětů je možné zpracovat předměty v jiné předměty, zároveň slouží jako \textit{pracovní místo} pro vesničany. Vždy když je postavena nová bude pro zpracování předmětů, objeví se nový vesničan, kterému bude přidělena příslušná profese podle této budovy. Speciální budovy slouží ke speciálním účelům a patří mezi ně všechny ostatní budovy. V každé vesnici se můžou nacházet následující typy budov:
+
+\begin{enumerate}
+    \item \textit{Hlavní budova} (\verb|MainBuilding|): Jedná se o speciální budovu, která reprezentuje danou vesnici. Každá vesnice má právě jednu hlavní budovu. Nemá žádný jiný zvláštní účel.
+    \item \textit{Skladiště} (\verb|Stockpile|): Také se jedná o speciální budovu. Každá vesnice začíná s právě jedním skladištěm a nemůže jich mít více. Ve skladišti je možné skladovat jednotlivé předměty, kterými vesnice disponuje.
+    \item \textit{Budova dřevorubce} (\verb|WoodcutterHut|): Budova pro zpracování předmětů, konkrétně \textit{prken}. Slouží jako pracovní místo pro \textit{dřevorubce}.
+    \item \textit{Budova horníka} (\verb|MinerHut|): Budova pro zpracování předmětů, konkrétně \textit{cihel}. Slouží jako pracovní místo pro \textit{horníka kamene}.
+    \item \textit{Kovárna} (\verb|Smithy|): Budova pro zpracování předmětů. konkrétně \textit{železa}. Slouží jako pracovní místo pro \textit{horníka železa}.
+    \item \textit{Budova lovce} (\verb|HunterHut|): Budova pro zpracování předmětů, konkrétně \textit{jídla}. Slouží jako pracovní místo pro \textit{lovce}.
 \end{enumerate}

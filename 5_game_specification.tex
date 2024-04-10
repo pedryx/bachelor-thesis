@@ -1,3 +1,53 @@
 \chapter{Herní specifikace}
 
-\xxx{strucne popsat specifikaci}
+% intro
+
+% svet
+% - nahodne generovany
+% - biomes
+% - resources
+% - - trees
+% - - rocks
+% - - iron
+% villages
+% - villagers
+% - houses
+% player
+
+V této kapitole si představíme specifikaci naší hry. Cela hra se dá rozdělit na tři hlavní prvky. Konkrétně svět, vesnice a hráč. Specifikujeme si tedy každý z nich.
+
+Prvně než si začneme specifikovat jednotlivé prvky, je nutné říci, že se jedná o 2D hru. Jak již bylo zmíněno, hráč v této hře zastává roli pozorovatele a celí svět pozoruje skrze kameru pohledem ze shora.
+
+\section{Herní svět}
+Herní svět je náhodně generovaný s pevnou velikostí a skládá se z několika biomů. Každý biome je reprezentován jinou barvou a nacházejí se v něm odlišné suroviny. Zároveň pro každý biome je určeno zda po něm můžou vesničané chodit nebo stavět. Herní svět obsahuje následující biomy:
+
+\begin{enumerate}
+    \item \textit{Voda} (\verb|Water|): Reprezentuje vodní plochu. Není na ní možné chodit ani stavět.
+    \item \textit{Pláž} (\verb|Beach|): Jedná se o písečné oblasti v okolí \textit{vody}. Je na ní možné chodit i stavět.
+    \item \textit{Louka} (\verb|Plain|): Na \textit{louce} je možné chodit i stavět. Je na nich možné najít \textit{jeleny}.
+    \item \textit{Les} (\verb|Forest|): V \textit{lese} je možné chodit i stavět. Nachází se v něm velké množství \textit{stromů}.
+    \item \textit{Hora} (\verb|Mountain|): Jedná se o kamenitou \textit{horu}. Je možné na ní chodit i stavět. Nachází se na ní \textit{naleziště kamene}.
+    \item \textit{Vysoká hora} (\verb|High Mountain|): \textit{Vysoká hora je vždy obklopena \textit{horou}}. Je pokryta sněhovou plochou. Je možné na ní chodit ale není možné na ní stavět. Nachází se na ní \textit{naleziště železné rudy}.
+\end{enumerate}
+
+Jak již bylo zmíněno v jednotlivých biomech se můžou nacházet suroviny. Suroviny se rozdělují do několika typů. Typ suroviny udává jak dlouho trvá ji sklidit, jaký předmět lze získat po jejím sklizení a počet těchto předmětů, který lze získat po jejím pokácení. Hra obsahuje následující suroviny:
+
+\begin{enumerate}
+    \item \textit{Strom} (\verb|Tree|): Po pokácení \textit{stromu} lze získat předmět \textit{dřeva}. \textit{Stromy} se nacházejí ve velkém množství v biomu \textit{lesa}.
+    \item \textit{Naleziště kamene} (\verb|Rock|): Sklizením \textit{naleziště kamene} je možné získat předmět \textit{kamene}. \textit{Naleziště kamene} se nacházejí v biomu \textit{hory}.
+    \item \textit{Naleziště železné rudy} (\verb|Deposit|): Po sklizení \textit{naleziště železné rudy} je možné získat předmět \textit{železná ruda}. \textit{Naleziště železné rudy} se objevuje v biomu \textit{vysoká hora}.
+    \item \textit{Jelen} (\verb|Deer|): \textit{Jeleni} na rozdíl od jiných typů surovin umí chodit. Náhodně se pohybují po biomu \textit{louky}, ve které se také objevují. Po sklizení jelena je možné získat předmět \textit{masa}.
+\end{enumerate}
+
+Předměty získané skrze sklizení suroviny, je dále možné zpracovat v příslušné budově. Každý předmět se může zpracovávat jinak dlouho. Hra obsahuje následující předměty.
+
+\begin{enumerate}
+    \item \textit{Dřevo} (\verb|Wood|): \textit{Dřevo} se dá dále zpracovat v \textit{prkno}.
+    \item \textit{Kámen} (\verb|Stone|): \textit{Kámen} je možné přepracovat v \textit{cihlu}.
+    \item \textit{Železná ruda} (\verb|Ore|): \textit{Železnou rudu} lze vypálit a tím získat \textit{železo}.
+    \item \textit{Maso} (\verb|Meat|): \textit{Maso} je možné uvařit, tím lze získat \textit{jídlo}.
+    \item \textit{Prkno} (\verb|Plank|): \textit{Prkna} je možné použít pro stavbu budov.
+    \item \textit{Cihla} (\verb|Brick|): \textit{Cihlu} je také možné použít pro stavbu budov. Jedna se o lehce pokročilejší surovinu oproti \textit{prknu}.
+    \item \textit{Železo} (\verb|Iron|): \textit{Železo} stejně jako \textit{Prkno} a \textit{Cihlu} lze také použít pro stavbu budov. Jedná se o pokročilou surovinu.
+    \item \textit{Jídlo} (\verb|Food|): \textit{Jídlo} je předmět, který musí vesničané požívat, aby neumřeli hlady.
+\end{enumerate}

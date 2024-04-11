@@ -1,21 +1,52 @@
-% TODO: Proc jsem delali rozhodnuti kdyz vznikala ta implementace.
-\chapter{Analýza přistupu k implementaci}
+% Proc jsem delali rozhodnuti kdyz vznikala ta implementace.
+\chapter{Analýza implementace}
+V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementace a odůvodníme jejich zvolení. První nahlédneme na abstrakční vrstvu a poté na samotnou hru.
 
-V této kapitole prozkoumáme přístupy k implementaci herních mechanik a rozeberm si proč jsme zvolili ty co jsme zvolili.
+% analyza abstrakce
+\section{Analýza abstrakční vrstvy}
+V této sekci si představíme knihovny, které budeme chtít měřit. Nahlédneme na jejich rozhraní a na základě toho odůvodníme rozhodnutí provedené při implementaci abstrakční vrstvy.
 
-\section{Volba frameworku/enginu}
+% - knihovny
+\subsection{Měřené knihovny}
+Než začneme provádět analýzu abstrakční vrstvy, musíme si nejprve představit jednotlivé knihovny, které budeme chtít měřit. Následně nahlédneme na jejich rozhraní, to nám pomůže při analýze abstrakční vrstvy.
 
-Prvně si řekněme co to vlastně je herní engine a herní framework.
+% --- predstaveni knihoven
+I přesto, že lze program použít pro měření velkého množství ECS knihoven pro C\#, omezíme se pouze na následující:
 
-Nýní si rozeberem populární herní enginy a frameworky pro C\#.
+\begin{enumerate}
+    \item Arch~\ref{Arch}
+    \item DefaultEcs~\ref{DefaultEcs}
+    \item Entitas~\ref{Entitas}
+    \item HypEcs~\ref{HypEcs}
+    \item LeoECS~\ref{LeoECS}
+    \item \xxx{Pridat dalsi knihovny kdyz bude cas.}
+\end{enumerate}
 
-Proč jsme zvolili právě MonoGame?
+\xxx{ --- rozebrat interface knihoven}\\\\
 
-% \\
-% \xxx{Jake enginy/frameworky existujou pro C\#}
-% \\
-% \xxx{Proc jsme zvolili Monogame}
-% \\
+
+\xxx{ - entity processor}\\\\
+\xxx{ --- -> entity processor}\\\\
+\xxx{ --- co je inline function call}\\\\
+\xxx{ --- jak jej zaridit}\\\\
+\xxx{ --- -> proto struktura a generika (IECSSystem)}\\\\
+
+\xxx{ - IEntity (chceme bohate rozhrani, jak jsme si popisovali)}\\\\
+\xxx{ - IWorld (nektere ECS knihovny potrebuji Update/Tick)}\\\\
+\xxx{ - Component attribute}\\\\
+\xxx{ - ECSFactory (proc types - zjednoduseni rozhrani)}\\\\
+
+\xxx{ analyza hry}\\\\
+
+
+
+
+
+
+
+
+
+\iffalse
 
 \section{Implementace AI}
 
@@ -110,3 +141,5 @@ Pro inlinování entity processorů, využíváma následujicí techniky.
 % \\
 % \xxx{Jak jsme toho dosahli}
 % \\
+
+\fi

@@ -14,16 +14,33 @@ Než začneme provádět analýzu abstrakční vrstvy, musíme si nejprve předs
 I přesto, že lze program použít pro měření velkého množství ECS knihoven pro C\#, omezíme se pouze na následující:
 
 \begin{enumerate}
-    \item Arch~\ref{Arch}
-    \item DefaultEcs~\ref{DefaultEcs}
-    \item Entitas~\ref{Entitas}
-    \item HypEcs~\ref{HypEcs}
-    \item LeoECS~\ref{LeoECS}
+    \item Arch~\cite{Arch}
+    \item DefaultEcs~\cite{DefaultEcs}
+    \item Entitas~\cite{Entitas}
+    \item HypEcs~\cite{HypEcs}
+    \item LeoECS~\cite{LeoECS}
     \item \xxx{Pridat dalsi knihovny kdyz bude cas.}
 \end{enumerate}
 
 \xxx{ --- rozebrat interface knihoven}\\\\
 
+% \section{Inline entity processor}
+
+% Inlinování funkcí je optimalizace, při které je volání funkce nahrazeno jejím obsahem.
+
+% % priklad, kdy dochazi k inlinovani
+
+% Kvůli měření je důležité, aby naše entity procesory neměli ideálně žádný overhead.
+
+% Pro inlinování entity procesorů, využíváme následující techniky.
+
+% % aggressive inlining, struktura + generika
+
+% % \\
+% % \xxx{Proc je to potreba}
+% % \\
+% % \xxx{Jak jsme toho dosahli}
+% % \\
 
 \xxx{ - entity processor}\\\\
 \xxx{ --- -> entity processor}\\\\
@@ -36,27 +53,19 @@ I přesto, že lze program použít pro měření velkého množství ECS knihov
 \xxx{ - Component attribute}\\\\
 \xxx{ - ECSFactory (proc types - zjednoduseni rozhrani)}\\\\
 
-\xxx{ analyza hry}\\\\
+\section{Analýza hry}
 
+text
 
-
-
-
-
-
-
-
-\iffalse
-
-\section{Implementace AI}
+\subsection{Implementace AI}
 
 Nyní si rozebereme populární přístupy pro implementaci AI ve hrách.
 
-Nejpřímočarejší způsob je použít stavové automaty.
+Nejpřímočařejší způsob je použít stavové automaty.
 
-Pokročitejší zpusob jsou behavior trees.
+Pokročilejší zpusob jsou behavior trees.
 
-Další pokročitelší způsob je Goal Oriented Action Planning (GOAP).
+Další pokročilejší způsob je Goal Oriented Action Planning (GOAP).
 
 Proč jsme zvolili behavior trees?
 
@@ -84,7 +93,7 @@ Ne vždy je zřejmé co by mělo být součástí AI.
 % \xxx{- zpracovani surovin: pripsani do inventare vs resource processing system}
 % \\
 
-\section{ECS}
+\subsection{ECS}
 
 Některé systémy v ECS reagují pouze pokud je pro danou entitu splněna určitá podmínka.
 
@@ -102,7 +111,7 @@ Další způsob, jak by se tento problém dal řešit jsou Reaction systémy.
 % \xxx{eventy v ECS}
 % \\
 
-\section{Generovani terenu}
+\subsection{Generovani terenu}
 
 Rozeberme si dva přístupy pro generování terénu.
 
@@ -114,32 +123,6 @@ Druhý způsob je pro generování terénu použít GPU.
 
 Abychom si rozebrali řešení, bude nejprve nutné nejprve říci něco více o shaderech.
 
-Compute shader můžem použít k řešení výše zmíněného problému.
+Compute shader můžeme použít k řešení výše zmíněného problému.
 
 % \xxx{GPU vs CPU}
-
-\section{Abstrakční vrstva}
-
-\xxx{TODO}
-% Analyza abstakce
-% Analyza jak pomoci toho udelat hru
-
-\section{Inline entity processor}
-
-Inlinování funkcí je optimalizace, při které je volání funkce nahrazeno jejím obsahem.
-
-% priklad, kdy dochazi k inlinovani
-
-Kvůli měření je důležité, aby naše entity processory neměli ideálně žádný overhead.
-
-Pro inlinování entity processorů, využíváma následujicí techniky.
-
-% aggresive inlining, struktura + generika
-
-% \\
-% \xxx{Proc je to potreba}
-% \\
-% \xxx{Jak jsme toho dosahli}
-% \\
-
-\fi

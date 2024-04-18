@@ -1,5 +1,5 @@
 \chapter{Hra}
-V této si specifikujeme jak bude vypadat naše hra. Prvně si rozebereme jaké požadavky od ní chceme a následně provedem samotnou specifikaci.
+V této kapitole si specifikujeme jak bude vypadat naše hra. Prvně si rozebereme jaké vlastnosti od ní vyžadujeme a následně provedem samotnou specifikaci.
 
 \section{Herní požadavky}
 Nyní si upřesníme požadavky co chceme od naší hry, následně také zvolíme herní žánr.
@@ -16,7 +16,7 @@ Aby nám naše hra napomohla kde splnění práce, budeme chtít aby splňovala 
 
     Časté přidávání a odebírání komponent by vedlo ke zvýhodnění ECS knihoven založených na \textit{sparse set}. Cílem této práce ale není porovnat knihovny založené na \textit{sparse set} oproti knihovnám založených na \textit{arch type}.
 
-    Je taky nutné zmínit, že to jestli hra využívá častého přidávání a odebírání komponent je závislé čistě na implementaci. Ukažme si to na příkladu, konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pro knihovnu založenou na \textit{sparse set} by jeden z typických přístupů byl vytvořit \verb|Starvation| komponentu a přidat jí na každou entitu, která hladoví. Pro knihovny založené na \textit{arch type} by ale tento přístup vedl ke ztrátě na výkonu. Jedním ze způsobů jak by se dal problém vyřešit je, že by každá entita co může hladovět obsahovala \verb|Hunger| komponentu, ve které by byl flag \verb|Starvation| který by rozhodoval o tom jestli daná entita hladoví.
+    Je taky nutné zmínit, že to jestli hra využívá častého přidávání a odebírání komponent je závislé čistě na implementaci. Ukažme si to na příkladu, konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pro knihovnu založenou na \textit{sparse set} by jeden z typických přístupů byl vytvořit \verb|Starvation| komponentu a přidat jí na každou entitu, která začne hladovět. V případě, že se příšlušná entita nasytí jídlem, tak přestane hladovět a dojde k odebrání této komponenty. Pro knihovny založené na \textit{arch type} by ale tento přístup vedl ke ztrátě na výkonu. Jedním ze způsobů jak by se dal problém vyřešit je, že by každá entita co může hladovět obsahovala \verb|Hunger| komponentu, ve které by byl flag \verb|Starvation| který by rozhodoval o tom jestli daná entita hladoví či nikoliv.
     
     \item \textbf{Velký počet entit:} Velký počet entit nám usnadní měření výkonu naší hry. Také nám zaručí, že systémy budou vykonávat netriviální množství práce. Zároveň si tím vyzkoušíme velký výkon, kterým ECS disponuje. Velký počet entit nám také implikuje větší herní svět.
     
@@ -53,7 +53,7 @@ Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostat
 % intro
 Nyní si představíme specifikaci naší hry. Cela hra se dá rozdělit na dva hlavní prvky. Konkrétně svět a vesnice. Specifikujeme si tedy každý z nich.
 
-Prvně než si začneme specifikovat jednotlivé prvky, je nutné říci, že se jedná o 2D hru. Jak již bylo zmíněno, hráč v této hře zastává roli pozorovatele a celí svět pozoruje skrze kameru pohledem ze shora. Ovládá pouze pozici a přiblížení této kamery.
+Prvně než si začneme specifikovat jednotlivé prvky, je nutné říci, že se jedná o 2D hru. Hráč v této hře zastává roli pozorovatele a celí svět pozoruje skrze kameru pohledem ze shora. Ovládá pouze pozici a přiblížení této kamery.
 
 % svet
 % - nahodne generovany

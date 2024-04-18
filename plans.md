@@ -12,11 +12,11 @@
 
 1. Intro
 - what is ecs
-- ecs libraries (incl. list of libraries we will be measuring)
+- ecs libraries
 - why are we doing this
 - abstract layer and why it is not trivial
 - what are the goals
-2. Game specification
+2. Game
 - what properties we require from the game
 - camera, language, os
 - describe the game

@@ -19,7 +19,7 @@ ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebním
     \end{itemize}
 \end{enumerate}
 
-Mezi vedlejší cíle této práce bude patřit prozkoumat možnosti, které tento návrhový vzor přináší, a ukázat výhody, které nám ECS může poskytnout v porovnání s návrhovým vzorem Component.
+% Mezi vedlejší cíle této práce bude patřit prozkoumat možnosti, které tento návrhový vzor přináší, a ukázat výhody, které nám ECS může poskytnout v porovnání s návrhovým vzorem Component.
 
 \section{ECS knihovny}
 Aby bylo možné efektivně využívat návrhový vzor ECS, je nezbytné implementovat odpovídající infrastrukturu. Samotná implementace této infrastruktury představuje obtížnou a časově náročnou úlohu, což vede mnoho vývojářů k volbě již existujících knihoven implementujících infrastrukturu pro tento návrhový vzor.
@@ -36,7 +36,7 @@ Jedním ze způsobů, jak by bylo možné lépe porovnat výkon jednotlivých EC
 
 Poté, co budeme mít tuto hru k dispozici, bude možné vytvořit výkonnostní test, který by dokázal změřit výkon příslušné ECS knihovny na této hře. Pomocí tohoto testu bude možné udělat výkonnostní porovnání jednotlivých ECS knihoven. Vytvoření tohoto porovnání bude dalším cílem této práce.
 
-Zároveň takto vytvořená hra pro nás bude velice užitečná neboť nám pomůže při průzkumu možností návrhové vzoru ECS, což je jedním z cílů této práce.
+% Zároveň takto vytvořená hra pro nás bude velice užitečná neboť nám pomůže při průzkumu možností návrhové vzoru ECS, což je jedním z cílů této práce.
 
 \section{Abstrakční vrstva}
 Vzhledem k tomu, že plánovanou hru budeme chtít využít k porovnávání různých ECS knihoven, je nezbytné navrhnout ji tak, aby fungovala nezávisle na konkrétní ECS knihovně. S ohledem na odlišné API jednotlivých ECS knihoven je nezbytné vytvořit abstrakční vrstvu pro ECS. Pro každou knihovnu, kterou budeme chtít porovnávat, poskytneme implementaci této vrstvy. Samotná hra poté pracuje s touto abstrakční vrstvou.
@@ -49,11 +49,11 @@ Pro shrnutí, tato práce bude mít následující cíle:
     \item[h1)] Vytvořit hru pomocí ECS, která bude nezávislá na konkrétní ECS knihovně.
     \item[h2)] Pomocí vytvořené hry porovnat relativní výkon populárních ECS knihoven pro programovací jazyk C\#.
 \end{enumerate}
-Mezi vedlejší cíle bude patřit:
-\begin{enumerate}
-    \item[v1)] Prozkoumat možnosti návrhového vzoru ECS.
-    \item[v2)] Ukázat výhody, které nám ECS může nabídnout oproti návrhovému vzoru Component.
-\end{enumerate}
+% Mezi vedlejší cíle bude patřit:
+% \begin{enumerate}
+%     \item[v1)] Prozkoumat možnosti návrhového vzoru ECS.
+%     \item[v2)] Ukázat výhody, které nám ECS může nabídnout oproti návrhovému vzoru Component.
+% \end{enumerate}
 
 
 

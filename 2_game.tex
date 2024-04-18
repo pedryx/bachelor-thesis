@@ -1,6 +1,57 @@
-\chapter{Herní specifikace}
+\chapter{Hra}
+V této si specifikujeme jak bude vypadat naše hra. Prvně si rozebereme jaké požadavky od ní chceme a následně provedem samotnou specifikaci.
+
+\section{Herní požadavky}
+Nyní si upřesníme požadavky co chceme od naší hry, následně také zvolíme herní žánr.
+
+Než budeme pokračovat, připomeňme si prvně, že naší hru chceme použít pro měření výkonu ECS knihoven. Budeme tedy chtít aby byla nezávislá na konkrétní ECS knihovně. Konkrétní ECS knihovnu bude možné zvolit před spuštěním hry.
+
+\subsection{Charakteristiky hry}
+Aby nám naše hra napomohla kde splnění práce, budeme chtít aby splňovala následující charakteristiky:
+
+\begin{enumerate}
+    \item \textbf{Nezávislost na konkrétní ECS knihovně:} Nezávislost na konkrétní ECS knihovně pro nás bude důležitá, abychom hru mohli použít pro měření výkonu jednotlivých knihoven. Hra bude namísto konkrétní ECS knihovny pracovat pouze s abstrakční vrstvou. Bude pro nás žádoucí aby se výkon naší hry bežící s konkretní ECS knihovnou, implementující abstrakční vrstvu, blížil k výkonu hry, která by používala pouze konkrétní ECS knihovnu bez abstrakční vrstvy.
+
+    \item \textbf{Hra by neměla využívat častého přidávání a odebírání komponent:} ECS knihovny se dají rozdělit podle způsobu ukládání komponent. Rozlišují se převážně knihovny založené na \textit{arch type} a knihovny založené na \textit{sparse set}. Knihovny založené na \textit{arch type} většinou realizují přidávání a odebírání komponent v čase O(n). Knihovny založené na \textit{sparse set} jsou na tom lépe a většinou to realizují v O(1), ovšem jejich nevýhodou bývá lehce pomalejší iterace přes komponenty v porovnáním s knihovnami založenými na \textit{arch type}. Více si o tomto povíme později konkrétně v kapitole \ref{chap:hypothesis}.
+
+    Časté přidávání a odebírání komponent by vedlo ke zvýhodnění ECS knihoven založených na \textit{sparse set}. Cílem této práce ale není porovnat knihovny založené na \textit{sparse set} oproti knihovnám založených na \textit{arch type}.
+
+    Je taky nutné zmínit, že to jestli hra využívá častého přidávání a odebírání komponent je závislé čistě na implementaci. Ukažme si to na příkladu, konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pro knihovnu založenou na \textit{sparse set} by jeden z typických přístupů byl vytvořit \verb|Starvation| komponentu a přidat jí na každou entitu, která hladoví. Pro knihovny založené na \textit{arch type} by ale tento přístup vedl ke ztrátě na výkonu. Jedním ze způsobů jak by se dal problém vyřešit je, že by každá entita co může hladovět obsahovala \verb|Hunger| komponentu, ve které by byl flag \verb|Starvation| který by rozhodoval o tom jestli daná entita hladoví.
+    
+    \item \textbf{Velký počet entit:} Velký počet entit nám usnadní měření výkonu naší hry. Také nám zaručí, že systémy budou vykonávat netriviální množství práce. Zároveň si tím vyzkoušíme velký výkon, kterým ECS disponuje. Velký počet entit nám také implikuje větší herní svět.
+    
+    \item \textbf{Adekvátní složitost hry:} Bude pro nás důležité aby naše hra nebyla příliš jednoduchá. Budeme se chtít vyhnout tomu, aby naše měření nebylo jenom dalším jednoduchým měřením výkonu. Ovšem taky si musíme dát pozor na to aby nebyla příliš složitá, jelikož to by odvádělo pozornost od problému, který řešíme.
+\end{enumerate}
+
+
+% \\
+% \xxx{Jaka charakteristiky by nase hra mela mit?}
+% \\
+% \xxx{- Velky pocet entit.}
+% \\
+% \xxx{- Hra musi byt dostatecne slozita aby vysledek mel prakticky smysl.}
+% \\
+% \xxx{- Hra nesmi byt prislis slozita aby slozitost neodvadela od problemu.}
+% \\
+% \xxx{- Hra by nemela vyuzivat casteho pridavani/odebirani komponent.}
+% \\
+% \xxx{-- Kdyby ano, nektere knihovny by byli zvyhodnene.}
+
+\subsection{Simulace}
+Žánrem naší hry bude simulace, ale řekněme si nejprve co to vlastně je. Simulace je žánr video her, který se snaží simulovat agenty v jejich prostředí. U nás agenti budou vesničané a jejich prostředí bude příroda.
+
+Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostatním žánrům) vymyslet herní design, který má velký počet entit a netriviálně velký svět. Další velkou výhodou je malí vliv uživatele na průběh hry, to nám umožní lépe provádět měření. Konkrétně v naší hře hráč bude spíše pozorovatel, který sleduje jak simulace probíhá.
+
+% \\
+% \xxx{Proc jsme zvolili simulaci?}
+% \\
+% \xxx{- Velky pocet entit.}
+% \\
+% \xxx{- Mali vliv uzivatele na prubeh hry.}
+
+\section{Herní specifikace}
 % intro
-V této kapitole si představíme specifikaci naší hry. Cela hra se dá rozdělit na dva hlavní prvky. Konkrétně svět a vesnice. Specifikujeme si tedy každý z nich.
+Nyní si představíme specifikaci naší hry. Cela hra se dá rozdělit na dva hlavní prvky. Konkrétně svět a vesnice. Specifikujeme si tedy každý z nich.
 
 Prvně než si začneme specifikovat jednotlivé prvky, je nutné říci, že se jedná o 2D hru. Jak již bylo zmíněno, hráč v této hře zastává roli pozorovatele a celí svět pozoruje skrze kameru pohledem ze shora. Ovládá pouze pozici a přiblížení této kamery.
 
@@ -17,7 +68,7 @@ Herní svět je náhodně generovaný s pevnou velikostí a skládá se z někol
 \begin{enumerate}
     \item \textit{Voda} (\verb|Water|): Reprezentuje vodní plochu. Není na ní možné chodit ani stavět.
     \item \textit{Pláž} (\verb|Beach|): Jedná se o písečné oblasti v okolí \textit{vody}. Je na ní možné chodit i stavět.
-    \item \textit{Louka} (\verb|Plain|): Na \textit{louce} je možné chodit i stavět. Je na nich možné najít \textit{jeleny}.
+    \item \textit{Louka} (\verb|Plain|): Na \textit{louce} je možné chodit i stavět. Je na ni možné najít \textit{jeleny}.
     \item \textit{Les} (\verb|Forest|): V \textit{lese} je možné chodit i stavět. Nachází se v něm velké množství \textit{stromů}.
     \item \textit{Hora} (\verb|Mountain|): Jedná se o kamenitou \textit{horu}. Je možné na ní chodit i stavět. Nachází se na ní \textit{naleziště kamene}.
     \item \textit{Vysoká hora} (\verb|High Mountain|): \textit{Vysoká hora je vždy obklopena \textit{horou}}. Je pokryta sněhovou plochou. Je možné na ní chodit ale není možné na ní stavět. Nachází se na ní \textit{naleziště železné rudy}.
@@ -64,7 +115,7 @@ Všechny vesnice začínají s \textit{hlavní budovou}, \textit{skladištěm} a
 
 \begin{enumerate}
     \item \textit{Hlavní budova} (\verb|MainBuilding|): Jedná se o speciální budovu, která reprezentuje danou vesnici. Každá vesnice má právě jednu hlavní budovu. Nemá žádný jiný zvláštní účel.
-    \item \textit{Skladiště} (\verb|Stockpile|): Také se jedná o speciální budovu. Každá vesnice začíná s právě jedním skladištěm a nemůže jich mít více. Ve skladišti je možné skladovat jednotlivé předměty, kterými vesnice disponuje.
+    \item \textit{Skladiště} (\verb|Stockpile|): Jedná se o speciální budovu. Každá vesnice začíná s právě jedním skladištěm a nemůže jich mít více. Ve skladišti je možné skladovat jednotlivé předměty, kterými vesnice disponuje.
     \item \textit{Budova dřevorubce} (\verb|WoodcutterHut|): Budova pro zpracování předmětů, konkrétně \textit{prken}. Slouží jako pracovní místo pro \textit{dřevorubce}.
     \item \textit{Budova horníka} (\verb|MinerHut|): Budova pro zpracování předmětů, konkrétně \textit{cihel}. Slouží jako pracovní místo pro \textit{horníka kamene}.
     \item \textit{Kovárna} (\verb|Smithy|): Budova pro zpracování předmětů. konkrétně \textit{železa}. Slouží jako pracovní místo pro \textit{horníka železa}.

@@ -6,6 +6,138 @@ V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementa
 \section{Analýza abstrakční vrstvy}
 Abstrakční vrstva pro nás je důležitá, jelikož chceme aby naše hra byla nezávislá na konkrétní ECS knihovně. Program jako takový bude pracovat namísto ECS knihovny pouze s touto abstrakční vrstvou. Pro každou ECS knihovnu, kterou budeme měřit bude nutné vytvořit implementaci této vrstvy. K volbě konkrétní ECS knihovny dojde před spuštěním programu.
 
+\subsection{Rozhraní ECS knihoven}
+Potřebujeme rozebrat, abychom navrhli abstrakci, která bude podporovat různé ECS knihovny.
+
+Běžné prvky v rozhraní.
+
+\begin{ordering}
+    \item Entity
+    \item Component
+    \item World
+    \item System
+    \item Query
+\end{ordering}
+
+Systémy reprezentovány různě.
+
+\begin{ordering}
+    \item \verb|world.Query((entity) => { /**/ })|
+    \item \verb|world.Query((comp1, comp2) => { /**/ })|
+    \item \verb|world.Query((comp1[], comp2[]) => { /**/ })|
+    \item \verb|void Update(entity) { /**/ }|
+    \item \verb|void Update(comp1, comp2) { /**/ }|
+    \item \verb|void Update(comp1[], comp2[]) { /**/ }|
+    \item \verb|foreach (entity in entities) { /**/ }|
+    \item \verb|foreach ((comp1, comp2) in entities) { /**/ }|
+    \item \verb|for (int i = 0; i < 0; i++) { comp1[i], comp2[i], /**/ }|
+\end{ordering}
+
+EntityProcessor jako řešení různých reprezentací systémů.
+
+\subsection{Reprezentace systémů}
+Prvně inlinování funkce, protože výkon věc z požadavků.
+
+Co je inlinování funkce.
+
+Kdy je funkce inlinovaná,
+
+Generika a struktura jako řešení.
+
+\subsection{Component tag}
+Některé ECS knihovny potřebují před spuštěním hry vědět o typech komponent.
+
+Component tag jako řešení.
+
+\subsection{ECSFactory}
+Je nějak potřeba konstruovat implementace tříd z abstrakční vrstvy.
+
+Konstrukce systémů je ukecaná.
+
+ECSFactory jako řešení.
+
+\section{Analýza hry}
+Budeme chtít používat ai pro chování vesničanů.
+
+\subsection{Umělá inteligence}
+Způsoby reprezentace ai:
+
+\begin{ordering}
+    \item Stavové automaty
+    \item Stromy chování
+    \item GOAP
+\end{ordering}
+
+Proč jsme zvolili stromy chování.
+
+Použili jsme knihovnu na stromy chování.
+
+Umělou inteligenci je možné definovat také v systémech.
+
+Ne vždy je zřejmé co by mělo či nemělo být součástí umělé inteligence.
+
+Tezba surovin: připsání do inventáře vs damage and drop systém.
+
+Zpracování surovin: připsání do inventáře vs resource processing systém. 
+
+\subsection{ECS}
+Některé systémy proběhnou pro danou entitu pouze pokud je pro ní splněna určitá podmínka.
+
+Podmínka je drahá operace protože pipeline flush.
+
+Řešením můžou být eventy. EventQueue, EventReader/EventWriter, csharp events.
+
+Další možné řešení jsou reaction systémy.
+
+Proč eventy a reaction systémy nemůžeme použít. Proč nepoužíváme csharp eventy.
+
+Proč tyto systémy nezpůsobují výkonnostní potíže při správných podmínkách (+ ty podmínky).
+
+\subsection{Procedurální terén}
+Terén generován pomocí simple noise.
+
+\subsubsection{Generování terénu na CPU}
+Zápis do jedné nebo více textur.
+
+Rozmazání při přiblížení nebo oddálení.
+
+Může trvat dlouho.
+
+\subsubsection{Generování terénu na GPU}
+Shadery jsou programy pro GPU. V této práci použijeme fragment shader a compute shader.
+
+Shader pro generování terénu.
+
+Je možné libovolně přiblížit nebo oddálit.
+
+Provádíme za běhu a velmi rychle.
+
+Z právě techto důvodů GPU.
+
+\subsection{Path-finding pro vygenerovaný terén}
+Při CPU přístupu by stačilo číst z textury.
+
+Chceme pěkné cesty, takže výslednou cestu zkrášlujeme.
+
+Vygenerovat texturu by trvalo dlouho, proto použijeme compute shader.
+
+Zvolíme rozlišení, které předsamplujeme do pole, ve kterém poté provádíme path-finding.
+
+Generování může trvat, protože přesun dat mezi GPU a CPU je drahý.
+
+Je nutné použít fork MonoGame, který podporuje compute shadery.
+
+
+
+
+
+
+
+
+
+
+
+
 % \subsection{Reprezentace systémů}
 % Jak již bylo zmíněno v úvodu, velký problém při návrhu systémů je rozdílné rozhrani, které pro systémy jednotlivé ecs knihovny nabízejí.
 
@@ -20,21 +152,11 @@ Abstrakční vrstva pro nás je důležitá, jelikož chceme aby naše hra byla 
 % \item \xxx{TODO}
 % \end{ordering}
 
-\subsection{Rozhraní ECS knihoven}
 
-\subsection{Reprezentace systémů}
 
-\subsection{ECSFactory}
 
-\subsection{Component tag}
 
-\section{Analýza hry}
 
-\subsection{Umělá inteligence}
-
-\subsection{Systémy}
-
-\subsection{Procedurální terén}
 
 
 

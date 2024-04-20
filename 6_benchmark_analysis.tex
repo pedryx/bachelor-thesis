@@ -1,10 +1,37 @@
 \chapter{Analýza měření}
+Zanalyzujeme rozhodnutí při implementaci experimentů.
 
 \section{Benchmark.NET}
+Měření výkonu je komplexní proces, který by mohl být prací sám o sobě.
+
+Benchmark.NET je populární framework pro platformu .NET, který lze použít k měření výkonu.
 
 \section{Přístupy k měření výkonu}
 
+Nejprve je nutné si říct co to je vlastně game loop.
+
+Nejpřímočařejší způsob je změřit jak dlouho trvá jedna iterace.
+
+Lepší způsob by tedy bylo změřit n iterací a spočítat jejich průměr. To je také způsob, který jsme zvolili.
+
+Rendering může být časově náročnější proces, rozeberme si jestli by měl či neměl být součástí měření.
+
+Dalším způsobem jak měřit výkon, je změřit iterace jednotlivých systémů. Větší insight ale nevidíme overall výkon, ale mohl by být pomocný.
+
+Výkon je také možné měřit během hraní samotné hry. Poskytuje insight pro jiné věci než chceme ale mohl by být pomocný.
+
 \section{Co při měření nebereme v potaz}
+Některé ECS knihovny pro získání lepšího výkonu používají paralelní queries.
+
+Naše hra je nepoužívá protože je z jednoduchosti navržena single threaded.
+
+Další častá optimalizace, co některé ECS knihovny nabízejí jsou již zmiňované reaction systémy.
+
+My je nepoužíváme protože je né každá ecs knihovna podporuje.
+
+Jednotlivé ECS knihovny často používají další specifické výkonnostní funkcionality.
+
+My je nepoužíváme protože jsou ecs knihovna specific.
 
 % \chapter{Analýza měření}
 % V této kapitole si rozebereme jaké existují přístupy k měření a na co při měření dbát ohled.

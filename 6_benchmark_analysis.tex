@@ -1,56 +1,64 @@
 \chapter{Analýza měření}
-V této kapitole si rozebereme jaké existují přístupy k měření a na co při měření dbát ohled.
 
-\section{Problematika měření}
-Měření výkonu je komplexní proces, který by mohl být samostatnou prací sám o sobě.
+\section{Benchmark.NET}
 
-Benchmark.NET je populární framework pro platformu .NET, který lze použít k měření výkonu.
+\section{Přístupy k měření výkonu}
 
-\section{Přístupy k měření}
-Nejprve je nutné si říct co to je vlastně game loop.
+\section{Co při měření nebereme v potaz}
 
-Nejpřímočarejší způsob je změřit jak dlouho trvá jedna iterace.
+% \chapter{Analýza měření}
+% V této kapitole si rozebereme jaké existují přístupy k měření a na co při měření dbát ohled.
 
-Lepší způsob by tedy bylo změřit n iterací a spočítat jejich průměr.
+% \section{Problematika měření}
+% Měření výkonu je komplexní proces, který by mohl být samostatnou prací sám o sobě.
 
-Rendering může být časově naročnější proces, rozeberme si jestli by měl či neměl být součastí měření.
+% Benchmark.NET je populární framework pro platformu .NET, který lze použít k měření výkonu.
 
-Dalším způsobem jak měřit výkon, je změřit iterace jednotlivých systémů.
-% proc to nedelame
+% \section{Přístupy k měření}
+% Nejprve je nutné si říct co to je vlastně game loop.
 
-Výkon je také možné měřit během hraní samotné hry.
-% proc to nedelame
+% Nejpřímočařejší způsob je změřit jak dlouho trvá jedna iterace.
 
-% \xxx{Delta time jedne iterace}
-% \\
-% \xxx{Delta time n iteracich}
-% \\
-% \xxx{Mel by byt rendering soucasti mereni}
-% \\
-% \xxx{Mereni prumerneho delta time jednotlivych ssytemu}
-% \\
-% \xxx{Mereni behem hrani}
+% Lepší způsob by tedy bylo změřit n iterací a spočítat jejich průměr.
 
-\section{Na co při měření neberem ohled?}
-Některé ECS knihovny pro získání lepšího výkonu používají paralelní queries.
-% co to je
-% nase hra je nepouziva protoze je z jednoduchosti navrzena single threaded
+% Rendering může být časově náročnější proces, rozeberme si jestli by měl či neměl být součástí měření.
 
-Další častá optimalizace, co některé ECS knihovny nabízejí jsou reaction systémy.
-% co to je
-% nepouzivame to protoze to nemaji vsechny knihovny
+% Dalším způsobem jak měřit výkon, je změřit iterace jednotlivých systémů.
+% % proc to nedelame
 
-Jednotlivé ECS knihovny často používají další specifické výkonostní funkcionality.
-% mi je nepouzivame protoze je nemaji vsechny knihovny
+% Výkon je také možné měřit během hraní samotné hry.
+% % proc to nedelame
 
-Další věc na kterou při měření neberem ohledy je přídávání a odebírání komponent.
-% sparse set muzou by zvyhodnene
-% nas herni design je prizpusoben tomu, ze to neovlivni mereni
+% % \xxx{Delta time jedne iterace}
+% % \\
+% % \xxx{Delta time n iteracich}
+% % \\
+% % \xxx{Mel by byt rendering soucasti mereni}
+% % \\
+% % \xxx{Mereni prumerneho delta time jednotlivych ssytemu}
+% % \\
+% % \xxx{Mereni behem hrani}
 
-% \xxx{Paralelni queries}
-% \\
-% \xxx{Reaction systemy}
-% \\
-% \xxx{Pridavani/odebirani komponent za runtime - design prizpusoben}
-% \\
-% \xxx{jine vykonostni vylepseni specificke pro danou ECS knihovnu}
+% \section{Na co při měření nebereme ohled?}
+% Některé ECS knihovny pro získání lepšího výkonu používají paralelní queries.
+% % co to je
+% % nase hra je nepouziva protoze je z jednoduchosti navrzena single threaded
+
+% Další častá optimalizace, co některé ECS knihovny nabízejí jsou reaction systémy.
+% % co to je
+% % nepouzivame to protoze to nemaji vsechny knihovny
+
+% Jednotlivé ECS knihovny často používají další specifické výkonnostní funkcionality.
+% % mi je nepouzivame protoze je nemaji vsechny knihovny
+
+% Další věc na kterou při měření nebereme ohledy je přidávání a odebírání komponent.
+% % sparse set muzou by zvyhodnene
+% % nas herni design je prizpusoben tomu, ze to neovlivni mereni
+
+% % \xxx{Paralelni queries}
+% % \\
+% % \xxx{Reaction systemy}
+% % \\
+% % \xxx{Pridavani/odebirani komponent za runtime - design prizpusoben}
+% % \\
+% % \xxx{jine vykonostni vylepseni specificke pro danou ECS knihovnu}

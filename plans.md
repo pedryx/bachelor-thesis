@@ -2,10 +2,10 @@
 
 ## Main
 - create a game which is independent of ecs library
-- use created game to compare relative performance of populare ecs libraries
+- use created game to compare relative performance of popular ecs libraries
 
 ## Side
-- explore options of ecs deaign pattern
+- explore options of ecs design pattern
 - show advantage of ecs over component design pattern
 
 # Chapters
@@ -66,17 +66,17 @@
 - archtype > sparse set > other
 6. Measurements analysis
 - why benchmark.net
-- aproaches to measerumet
+- approaches to measurement
   - game loop
   - one iteration
   - n iterations
   - should rendering be included?
   - iterations of each system
   - measuring why playing
-- na co neberem ohled
+- na co nebereme ohled
   - paralelni queries
   - reaction systemy
-  - jine vykonostni vylepseni
+  - jine výkonnostní vylepseni
 7. Results
 - how are doing measurements
 - results
@@ -92,5 +92,5 @@
 - mozna budouci vylepseni
   - hra by mohla byt zajimavejsi
   - mereni behem hrani
-  - cas pro kazdy ststem zvladt
+  - cas pro kazdy systém zvlášť
   - prepinani knihovny za behu

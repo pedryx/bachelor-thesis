@@ -57,7 +57,6 @@
 - game world
 - game data
 - ai?
-- villages and villagers
 - systems and components
 5. Hypothesis
 - cache

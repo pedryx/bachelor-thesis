@@ -11,17 +11,17 @@ Potřebujeme rozebrat, abychom navrhli abstrakci, která bude podporovat různé
 
 Běžné prvky v rozhraní.
 
-\begin{ordering}
+\begin{enumerate}
     \item Entity
     \item Component
     \item World
     \item System
     \item Query
-\end{ordering}
+\end{enumerate}
 
 Systémy reprezentovány různě.
 
-\begin{ordering}
+\begin{enumerate}
     \item \verb|world.Query((entity) => { /**/ })|
     \item \verb|world.Query((comp1, comp2) => { /**/ })|
     \item \verb|world.Query((comp1[], comp2[]) => { /**/ })|
@@ -31,7 +31,7 @@ Systémy reprezentovány různě.
     \item \verb|foreach (entity in entities) { /**/ }|
     \item \verb|foreach ((comp1, comp2) in entities) { /**/ }|
     \item \verb|for (int i = 0; i < 0; i++) { comp1[i], comp2[i], /**/ }|
-\end{ordering}
+\end{enumerate}
 
 EntityProcessor jako řešení různých reprezentací systémů.
 
@@ -62,11 +62,11 @@ Budeme chtít používat ai pro chování vesničanů.
 \subsection{Umělá inteligence}
 Způsoby reprezentace ai:
 
-\begin{ordering}
+\begin{enumerate}
     \item Stavové automaty
     \item Stromy chování
     \item GOAP
-\end{ordering}
+\end{enumerate}
 
 Proč jsme zvolili stromy chování.
 

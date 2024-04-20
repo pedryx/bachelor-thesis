@@ -4,45 +4,56 @@ V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementa
 
 % analyza abstrakce
 \section{Analýza abstrakční vrstvy}
-Nyní prozkoumáme rozhodnutí, které jsme udělali při práci na abstrakční vratvě.
+Abstrakční vrstva pro nás je důležitá, jelikož chceme aby naše hra byla nezávislá na konkrétní ECS knihovně. Program jako takový bude pracovat namísto ECS knihovny pouze s touto abstrakční vrstvou. Pro každou ECS knihovnu, kterou budeme měřit bude nutné vytvořit implementaci této vrstvy. K volbě konkrétní ECS knihovny dojde před spuštěním programu.
+
+% \subsection{Reprezentace systémů}
+% Jak již bylo zmíněno v úvodu, velký problém při návrhu systémů je rozdílné rozhrani, které pro systémy jednotlivé ecs knihovny nabízejí.
+
+% Dále, jak již jsme si zmiňovali v podkapitole o herních požadavcích, chceme aby se výkon naší hry při použití této abstrakční vrstvy blížil výkonu s použitím pouze samotné ecs knihovny.
+
+% Nahlédneme na oba tyto problémy blíže a prozkoumáme jak jsme je vyřešili.
+
+% \subsubsection{Rozhraní ecs knihoven}
+% ECS knihovny reprezentují systémy následujícími způsoby:
+
+% \begon{ordering}
+% \item \xxx{TODO}
+% \end{ordering}
+
+\subsection{Rozhraní ECS knihoven}
 
 \subsection{Reprezentace systémů}
-Jak již bylo zmíněno v úvodu, velký problém při návrhu systémů je rozdílné rozhrani, které pro systémy jednotlivé ecs knihovny nabízejí.
 
-Dále, jak již jsme si zmiňovali v podkapitole o herních požadavcích, chceme aby se výkon naší hry při použití této abstrakční vrstvy blížil výkonu s použitím pouze samotné ecs knihovny.
+\subsection{ECSFactory}
 
-Nahlédneme na oba tyto problémy blíže a prozkoumáme jak jsme je vyřešili.
-
-\subsubsection{Rozhraní ecs knihoven}
-ECS knihovny reprezentují systémy následujícími způsoby:
-
-\begon{ordering}
-\item \xxx{TODO}
-\end{ordering}
+\subsection{Component tag}
 
 
 
 
 
-V této sekci si představíme knihovny, které budeme chtít měřit. Nahlédneme na jejich rozhraní a na základě toho odůvodníme rozhodnutí provedené při implementaci abstrakční vrstvy.
 
-% - knihovny
-\subsection{Měřené knihovny}
-Než začneme provádět analýzu abstrakční vrstvy, musíme si nejprve představit jednotlivé knihovny, které budeme chtít měřit. Následně nahlédneme na jejich rozhraní, to nám pomůže při analýze abstrakční vrstvy.
 
-% --- predstaveni knihoven
-I přesto, že lze program použít pro měření velkého množství ECS knihoven pro C\#, omezíme se pouze na následující:
 
-\begin{enumerate}
-    \item Arch~\cite{Arch}
-    \item DefaultEcs~\cite{DefaultEcs}
-    \item Entitas~\cite{Entitas}
-    \item HypEcs~\cite{HypEcs}
-    \item LeoECS~\cite{LeoECS}
-    \item \xxx{Pridat dalsi knihovny kdyz bude cas.}
-\end{enumerate}
+% V této sekci si představíme knihovny, které budeme chtít měřit. Nahlédneme na jejich rozhraní a na základě toho odůvodníme rozhodnutí provedené při implementaci abstrakční vrstvy.
 
-\xxx{ --- rozebrat interface knihoven}\\\\
+% % - knihovny
+% \subsection{Měřené knihovny}
+% Než začneme provádět analýzu abstrakční vrstvy, musíme si nejprve představit jednotlivé knihovny, které budeme chtít měřit. Následně nahlédneme na jejich rozhraní, to nám pomůže při analýze abstrakční vrstvy.
+
+% % --- predstaveni knihoven
+% I přesto, že lze program použít pro měření velkého množství ECS knihoven pro C\#, omezíme se pouze na následující:
+
+% \begin{enumerate}
+%     \item Arch~\cite{Arch}
+%     \item DefaultEcs~\cite{DefaultEcs}
+%     \item Entitas~\cite{Entitas}
+%     \item HypEcs~\cite{HypEcs}
+%     \item LeoECS~\cite{LeoECS}
+%     \item \xxx{Pridat dalsi knihovny kdyz bude cas.}
+% \end{enumerate}
+
+% \xxx{ --- rozebrat interface knihoven}\\\\
 
 % \section{Inline entity processor}
 
@@ -62,36 +73,36 @@ I přesto, že lze program použít pro měření velkého množství ECS knihov
 % % \xxx{Jak jsme toho dosahli}
 % % \\
 
-\xxx{ - entity processor}\\\\
-\xxx{ --- -> entity processor}\\\\
-\xxx{ --- co je inline function call}\\\\
-\xxx{ --- jak jej zaridit}\\\\
-\xxx{ --- -> proto struktura a generika (IECSSystem)}\\\\
+% \xxx{ - entity processor}\\\\
+% \xxx{ --- -> entity processor}\\\\
+% \xxx{ --- co je inline function call}\\\\
+% \xxx{ --- jak jej zaridit}\\\\
+% \xxx{ --- -> proto struktura a generika (IECSSystem)}\\\\
 
-\xxx{ - IEntity (chceme bohate rozhrani, jak jsme si popisovali)}\\\\
-\xxx{ - IWorld (nektere ECS knihovny potrebuji Update/Tick)}\\\\
-\xxx{ - Component attribute}\\\\
-\xxx{ - ECSFactory (proc types - zjednoduseni rozhrani)}\\\\
+% \xxx{ - IEntity (chceme bohate rozhrani, jak jsme si popisovali)}\\\\
+% \xxx{ - IWorld (nektere ECS knihovny potrebuji Update/Tick)}\\\\
+% \xxx{ - Component attribute}\\\\
+% \xxx{ - ECSFactory (proc types - zjednoduseni rozhrani)}\\\\
 
-\section{Analýza hry}
+% \section{Analýza hry}
 
-text
+% text
 
-\subsection{Implementace AI}
+% \subsection{Implementace AI}
 
-Nyní si rozebereme populární přístupy pro implementaci AI ve hrách.
+% Nyní si rozebereme populární přístupy pro implementaci AI ve hrách.
 
-Nejpřímočařejší způsob je použít stavové automaty.
+% Nejpřímočařejší způsob je použít stavové automaty.
 
-Pokročilejší zpusob jsou behavior trees.
+% Pokročilejší zpusob jsou behavior trees.
 
-Další pokročilejší způsob je Goal Oriented Action Planning (GOAP).
+% Další pokročilejší způsob je Goal Oriented Action Planning (GOAP).
 
-Proč jsme zvolili behavior trees?
+% Proč jsme zvolili behavior trees?
 
-Chování AI agentů může být popsané také přímo v systémech.
+% Chování AI agentů může být popsané také přímo v systémech.
 
-Ne vždy je zřejmé co by mělo být součástí AI.
+% Ne vždy je zřejmé co by mělo být součástí AI.
 
 % \\
 % \xxx{jaka jsou mozsnosti?}
@@ -113,17 +124,17 @@ Ne vždy je zřejmé co by mělo být součástí AI.
 % \xxx{- zpracovani surovin: pripsani do inventare vs resource processing system}
 % \\
 
-\subsection{ECS}
+% \subsection{ECS}
 
-Některé systémy v ECS reagují pouze pokud je pro danou entitu splněna určitá podmínka.
+% Některé systémy v ECS reagují pouze pokud je pro danou entitu splněna určitá podmínka.
 
-Na první pohled by se mohlo zdát, že jsou tyto systémy špatné, jelikož podmínka je drahá operace.
+% Na první pohled by se mohlo zdát, že jsou tyto systémy špatné, jelikož podmínka je drahá operace.
 
-Alternativní a pravděpodobně lepší způsob je použít eventy.
+% Alternativní a pravděpodobně lepší způsob je použít eventy.
 
-Rozeberme si jak by se s eventy v ECS pracovalo.
+% Rozeberme si jak by se s eventy v ECS pracovalo.
 
-Další způsob, jak by se tento problém dal řešit jsou Reaction systémy.
+% Další způsob, jak by se tento problém dal řešit jsou Reaction systémy.
 
 % \\
 % \xxx{condition checking systems are ok}
@@ -131,18 +142,18 @@ Další způsob, jak by se tento problém dal řešit jsou Reaction systémy.
 % \xxx{eventy v ECS}
 % \\
 
-\subsection{Generovani terenu}
+% \subsection{Generovani terenu}
 
-Rozeberme si dva přístupy pro generování terénu.
+% Rozeberme si dva přístupy pro generování terénu.
 
-První způsob je generovat terén přímo na CPU.
+% První způsob je generovat terén přímo na CPU.
 
-Druhý způsob je pro generování terénu použít GPU.
+% Druhý způsob je pro generování terénu použít GPU.
 
 % problem s path finding
 
-Abychom si rozebrali řešení, bude nejprve nutné nejprve říci něco více o shaderech.
+% Abychom si rozebrali řešení, bude nejprve nutné nejprve říci něco více o shaderech.
 
-Compute shader můžeme použít k řešení výše zmíněného problému.
+% Compute shader můžeme použít k řešení výše zmíněného problému.
 
 % \xxx{GPU vs CPU}

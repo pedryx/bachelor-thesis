@@ -22,19 +22,17 @@
 - describe the game
 3. Implementation analysis
 - decisions when working on abstract layer
+  - rozhrani ecs knihoven
+    - entity
+    - component
+    - world
+    - system
+    - query
   - reprezentace systemu
     - entityprocesor
-    - rozhrani ecs knihoven
-      - entity
-      - component
-      - world
-      - system
-      - query
-      - proto entityprocesor
     - function inlining
       - co to je
       - kdy je funkce inlinovana
-      - proto entityprocesor
   - ecs factory
   - component tag
 - decisions when working on game itself

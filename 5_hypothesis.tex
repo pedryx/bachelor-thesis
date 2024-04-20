@@ -1,11 +1,44 @@
 \chapter{Hypotéza}
 \label{chap:hypothesis}
+V této kapitole si řekneme jak předpokládáme, že vyjdou naše experimenty.
 
 \section{Cache}
+Prvně si budeme muset přiblížit jak funguje cache protože to má velký vliv na naše experimenty.
+
+Popsat paměťový model.
+
+Přístup k datům.
+
+Model je zjednodušen.
 
 \section{Způsoby ukládání komponent}
+Dále je nutné si rozebrat jak se běžné ukládají komponenty. Používají se běžně 3 způsoby.
+
+\begin{enumerate}
+    \item arch type
+
+    popis
+
+    jak ukládá komponenty
+    \item sparse set
+
+    popis
+
+    jak ukládá komponenty
+
+    \item komponenty jako třídy
+
+    jak ukládají komponenty
+
+    proč je to špatné
+\end{enumerate}
 
 \section{Hypotéza}
+Nejrychleji vyjdou arch type protože nejlépe využívají cache.
+
+Poté budou sparse set protože mají malí počet cache miss ale mají ho větší než arch type.
+
+Nejhůře budou ty co chtějí aby komponenty byli třídy protože mají nejvíc cache miss.
 
 % V této kapitole si rozebereme, jaké výsledky očekáváme od našeho měření.
 

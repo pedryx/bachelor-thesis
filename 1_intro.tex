@@ -11,7 +11,7 @@ ECS je návrhový vzor používaný pro vývoj her. Jeho základními stavebním
 \begin{enumerate}
     \item \textbf{Entita (Entity):} Reprezentuje objekt v herní scéně, může být cokoliv od hráče po strom nebo zvíře.
     \item \textbf{Komponenta (Component):} Entita je složena z komponent, které ji popisují. Komponenty obsahují pouze data a žádnou herní logiku. Například hráč může mít komponentu Control, která popisuje, jak se ovládá, strom může mít komponentu Resource, která popisuje, kolik dřeva hráč získá, pokud jej pokácí, a zvíře může mít komponentu PathFollow, která popisuje cestu, po které se pohybuje. Všechny tři entity mohou mít komponenty Appearance, která popisuje, jak daný objekt vypadá, a Position, popisující, kde se daný objekt nachází v herní scéně. Dále hráč a zvíře mohou mít komponentu Movement, popisující jejich pohyb.
-    \item \textbf{Systém (System):} Obsahuje herní logiku. Systémy pracují nad určitou množinou komponent. V každé iteraci vezmou všechny entity obsahující tuto množinu komponent a provedou nad nimi určité operace. Například:
+    \item \textbf{Systém (System):} Systém obsahuje herní logiku. Systémy pracují nad určitou množinou komponent. V každé iteraci vezmou všechny entity obsahující tuto množinu komponent a provedou nad nimi určité operace. Například:
     \begin{itemize}
         \item \textbf{InputSystem:} Pracuje nad entitami s komponentami Control a Position, řídí logiku jejich ovládání.
         \item \textbf{PathMovementSystem:} Pracuje nad entitami s komponentami PathFollow a Movement, řídí logiku jejich pohybu po cestě.

@@ -7,7 +7,7 @@ Nyní si upřesníme požadavky co chceme od naší hry, následně také zvolí
 Než budeme pokračovat, připomeňme si prvně, že naší hru chceme použít pro měření výkonu ECS knihoven. Budeme tedy chtít aby byla nezávislá na konkrétní ECS knihovně. Konkrétní ECS knihovnu bude možné zvolit před spuštěním hry.
 
 \subsection{Charakteristiky hry}
-Aby nám naše hra napomohla kde splnění práce, budeme chtít aby splňovala následující charakteristiky:
+Aby nám naše hra napomohla ke splnění práce, budeme chtít aby splňovala následující charakteristiky:
 
 \begin{enumerate}
     \item \textbf{Nezávislost na konkrétní ECS knihovně:} Nezávislost na konkrétní ECS knihovně pro nás bude důležitá, abychom hru mohli použít pro měření výkonu jednotlivých knihoven. Hra bude namísto konkrétní ECS knihovny pracovat pouze s abstrakční vrstvou. Bude pro nás žádoucí aby se výkon naší hry bežící s konkretní ECS knihovnou, implementující abstrakční vrstvu, blížil k výkonu hry, která by používala pouze konkrétní ECS knihovnu bez abstrakční vrstvy.
@@ -111,7 +111,7 @@ Každý vesničan má svoje \textit{pracovní místo} (\verb|WorkPlace|). Vesni�
     \item \textit{Lovec} (\verb|Hunter|): Obstarává \textit{jídlo}.
 \end{enumerate}
 
-Všechny vesnice začínají s \textit{hlavní budovou}, \textit{skladištěm} a \textit{budovou dřevorubce}. Budovy lze rozdělit do dvou kategorii a to speciální a budovy pro zpracování předmětů. V budovách pro zpracování předmětů je možné zpracovat předměty v jiné předměty, zároveň slouží jako \textit{pracovní místo} pro vesničany. Vždy když je postavena nová bude pro zpracování předmětů, objeví se nový vesničan, kterému bude přidělena příslušná profese podle této budovy. Speciální budovy slouží ke speciálním účelům a patří mezi ně všechny ostatní budovy. V každé vesnici se můžou nacházet následující typy budov:
+Všechny vesnice začínají s \textit{hlavní budovou}, \textit{skladištěm} a \textit{budovou dřevorubce}. Budovy lze rozdělit do dvou kategorii a to speciální a budovy pro zpracování předmětů. V budovách pro zpracování předmětů je možné přepracovat předměty v jiné předměty, zároveň slouží jako \textit{pracovní místo} pro vesničany. Vždy když je postavena nová budova pro zpracování předmětů, objeví se nový vesničan, kterému bude přidělena příslušná profese podle této budovy. Speciální budovy slouží ke speciálním účelům a patří mezi ně všechny ostatní budovy. V každé vesnici se můžou nacházet následující typy budov:
 
 \begin{enumerate}
     \item \textit{Hlavní budova} (\verb|MainBuilding|): Jedná se o speciální budovu, která reprezentuje danou vesnici. Každá vesnice má právě jednu hlavní budovu. Nemá žádný jiný zvláštní účel.

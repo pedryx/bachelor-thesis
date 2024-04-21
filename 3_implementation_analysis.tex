@@ -7,35 +7,47 @@ V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementa
 Abstrakční vrstva pro nás je důležitá, jelikož chceme aby naše hra byla nezávislá na konkrétní ECS knihovně. Program jako takový bude pracovat namísto ECS knihovny pouze s touto abstrakční vrstvou. Pro každou ECS knihovnu, kterou budeme měřit bude nutné vytvořit implementaci této vrstvy. K volbě konkrétní ECS knihovny dojde před spuštěním programu.
 
 \subsection{Rozhraní ECS knihoven}
-Potřebujeme rozebrat, abychom navrhli abstrakci, která bude podporovat různé ECS knihovny.
-
-Běžné prvky v rozhraní.
+Pro návrh abstrakční vrstvy bude nejprve nutné rozebrat jak jsou jednotlivé prvky ECS reprezentovány při jejich implementaci. Krom základních členů, jako jsou \textit{entity}, \textit{komponenty} a \textit{systémy}, si představíme ještě \textit{world} a \textit{query}.
 
 \begin{enumerate}
-    \item Entity
-    \item Component
-    \item World
-    \item System
-    \item Query
+    \item \textbf{Component} \textit{Komponenty}, jako takové, bývají často reprezentovány třídou nebo strukturou. Jak již bylo zmíněno v úvodu, \textit{komponenty} obsahují pouze data, nikoliv žádnou logiku. Proto tyto třídy a struktury neobsahují žádné funkce.
+
+    \item \textbf{Entity} \textit{Entita} by, podobně jako v návrhovém vzoru Component, mohla být reprezentována jako kolekce svých \textit{komponent}. Ovšem to se v praxi nedělá, namísto toho se používá řešení, které vede k lepšímu výkonu. Většina ECS implementacích reprezentuje \textit{entity} pouze jako jednoduchý identifikátor a jednotlivé \textit{komponenty} jsou na \textit{entity} mapovány skrze \textit{world}.
+
+    \item \textbf{World} \textit{World} je spravce \textit{entit} a \text{komponent}. Tento správce slouží jako kontejner pro všechny \textit{entity} a \textit{komponenty} v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivým entitám.
+
+    Některé ECS implementace reprezentují entity pomocí malé struktury, obsahující identifikátor dané entity společně s referencí na world do kterého patří. To umožňuje mít na této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání komponent.
+
+    \item \textbf{System} Reprezentace \textit{systémů} se v jednotlivých ECS implementacích dost liší. Některé vyžadují aby \textit{systém} byl třída dědicí od abstraktního předka, jiné zase volí opačný extrém a dovolují \textit{systém} reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entit s určitou množinou komponent.
+
+    \item \textbf{Query} \textit{Query} je objekt, který lze použít pro iterování \textit{entit} s určitou množinou \textit{komponent}. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy \textit{komponent} bude \textit{query} pracovat. Je například možné mít \textit{query}, které pracuje nad \textit{komponentami} \verb|Movement| a \verb|Position|. Takové \textit{query} by pak bylo schopné iterovat nad všemi \textit{entitami} co mají \textit{komponenty} \verb|Movement| a \verb|Position|. Pomocí tohoto \textit{query} by bylo možné implementovat \verb|MovementSystem|, který by řídil logiku pohybu.
 \end{enumerate}
 
-Systémy reprezentovány různě.
+Jak již bylo zmíněno, způsoby jakými jednotlivé ECS knihovny reprezentují \textit{systémy} se dost liší. Rozeberme si nyní tyto způsoby.
 
 \begin{enumerate}
-    \item \verb|world.Query((entity) => { /**/ })|
-    \item \verb|world.Query((comp1, comp2) => { /**/ })|
-    \item \verb|world.Query((comp1[], comp2[]) => { /**/ })|
+    \item \verb|Query((entity) => { /**/ })|
+    \item \verb|Query((component1, component2) => { /**/ })|
+    \item \verb|Query((components1[], components2[]) => { /**/ })|
     \item \verb|void Update(entity) { /**/ }|
-    \item \verb|void Update(comp1, comp2) { /**/ }|
-    \item \verb|void Update(comp1[], comp2[]) { /**/ }|
+    \item \verb|void Update(component1, component2) { /**/ }|
+    \item \verb|void Update(components1[], components2[]) { /**/ }|
     \item \verb|foreach (entity in entities) { /**/ }|
-    \item \verb|foreach ((comp1, comp2) in entities) { /**/ }|
-    \item \verb|for (int i = 0; i < 0; i++) { comp1[i], comp2[i], /**/ }|
+    \item \verb|foreach ((component1, component2) in entities) { /**/ }|
+    \item \verb|for (int i = 0; i < entitiesCount; i++)|\\\verb|{ components1[i], components2[i], /**/ }|
 \end{enumerate}
 
-EntityProcessor jako řešení různých reprezentací systémů.
+Jak je možné vidět tyto způsoby lze rozdělit do tří kategorií.
+
+Do první kategorie spadají způsoby 1-3. Knihovny, které využívají tyto způsoby mají většinou definovanou metodu \verb|Query| (neplést s \textit{query} -- objektem pro iterování \textit{entit}). Tato metoda bývá často implementována na \textit{query} nebo na \textit{world}. Této metodě se předává lambda funkce, která je v případě 1 volána na každou iterovanou \textit{entitu}, v případě 2 volána na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 3 volána na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
+
+Způsoby z druhé kategorie vyžadují aby \textit{systém} byl třída, dědicí od rozhraní nebo předka. Toto rozhraní nebo předek nabízí abstraktní metodu \verb|Update|, kterou je nutné přetížit. Do této kategorie spadají způsoby 4-6. Při iteraci je v případě 4 metoda \verb|Update| volána na každou iterovanou \textit{entitu}, v případě 5 na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 6 na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
+
+Třetí kategorie nabízí kolekce nebo iterátory, které lze iterovat. Tyto kolekce nebo iterátory lze získat voláním příslušné funkce na \textit{world} nebo \textit{query}. Do této kategorie spadají způsoby 7-9. V případě 7 tato kolekce nebo iterátor obsahuje všechny \textit{entity}, které chceme iterovat. V případě 8 tato kolekce nebo iterátor obsahuje n-tice žádoucích instancí \textit{komponent} každé iterované \textit{entity}. V případě 9 je namísto kolekce použita množina polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
 
 \subsection{Reprezentace systémů}
+Jak reprezentujeme knihovny v abstrakční vrstvě.
+
 Prvně inlinování funkce, protože výkon věc z požadavků.
 
 Co je inlinování funkce.

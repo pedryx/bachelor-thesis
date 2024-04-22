@@ -46,11 +46,11 @@ Způsoby z druhé kategorie vyžadují aby \textit{systém} byl třída, dědic�
 Třetí kategorie nabízí kolekce nebo iterátory, které lze iterovat. Tyto kolekce nebo iterátory lze získat voláním příslušné funkce na \textit{world} nebo \textit{query}. Do této kategorie spadají způsoby 7--9. V případě 7 tato kolekce nebo iterátor obsahuje všechny \textit{entity}, které chceme iterovat. V případě 8 tato kolekce nebo iterátor obsahuje n-tice žádoucích instancí \textit{komponent} každé iterované \textit{entity}. V případě 9 je namísto kolekce použita množina polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
 
 \subsection{Inlinování funkce}
-Při pohledu na způsoby, kterými jednotlivé ECS knihovny reprezentují systémy přirozeně vyplývá pro každou entitu zavolat funkci(konkrétně na místě komentáře \verb|/**/|), která danou entitu zpracuje. Ovšem volání funkce nás stojí čas. Tento čas není moc velký a je většinou zanedbatelný s porovnáním s časem vykonávání funkce samotné. Ovšem my bychom chtěli volat funkci pro každou žádoucí entitu a v případě, že by tato funkce byla jednoduchá (její vykonání by trvalo malé množství času), tak se jednotlivé časy volání této funkce nasčítají a naše řešení by vedlo ke ztrátě na výkonu.
+Při pohledu na způsoby, kterými jednotlivé ECS knihovny reprezentují systémy přirozeně vyplývá pro každou entitu zavolat funkci (konkrétně na místě komentáře \verb|/**/|), která danou entitu zpracuje. Ovšem volání funkce nás stojí čas. Tento čas není moc velký a je většinou zanedbatelný s porovnáním s časem vykonávání funkce samotné. Ovšem my bychom chtěli volat funkci pro každou žádoucí entitu a v případě, že by tato funkce byla jednoduchá (její vykonání by trvalo malé množství času), tak se jednotlivé časy volání této funkce nasčítají a naše řešení by vedlo ke ztrátě na výkonu.
 
 Některé ECS knihovny se snaží tomuto problému předejít tím, že namísto toho aby jejich systémy přijímali funkci, kterou zavolají na každou entitu, poskytnou uživateli kolekce nebo iterátory, které si uživatel sám zpracuje. Tím se volání funkce vyhnou úplně. Znamená to tedy, že náš způsob ublíží na výkonu pouze některým knihovnám a to by mělo vliv na naše porovnání. Konkrétně se jedná o způsoby 3, 6, 7, 8 a 9 z minulé sekce.
 
-Moderní překladače používají optimalizaci, která nahradí místo volání funkce samotným obsahem dané funkce. Díky tomu může být volání takovéto funkce zadarmo. Konkrétně se jedná o takzvané \textit{inlinování funkce} (\textit{inline expansion}). Ovšem překladače tuto optimalizaci ne vždy dělají, jelikož v některých případech se to nevyplatí nebo to dokonce udělat nemohou.
+JIT používá optimalizace, při které se nahradí místo volání funkce samotným obsahem dané funkce. Díky tomu může být volání takovéto funkce zadarmo. Konkrétně se jedná o takzvané \textit{inlinování funkce} (\textit{inline expansion}). Ovšem JIT tuto optimalizaci ne vždy provede, jelikož v některých případech se to nevyplatí nebo to dokonce udělat nemůže.
 
 Pro více informací o tom kdy dochází a nedochází k \textit{inlinování funkcí}, je možné nahlédnout do článků od David Notario~\cite{Notario_2004} a Vance Morrison~\cite{Morrison_2008}. Konkrétně pro nás jsou důležité dva body.
 
@@ -59,14 +59,25 @@ Pro více informací o tom kdy dochází a nedochází k \textit{inlinování fu
     \item K \textit{inlinování funkce} nedojde, pokud je kód dané funkce příliš velký.
 \end{enumerate}
 
-Je nutné zmínit, že tyto články jsou již starší a pro moderní C\# jsou pravidla pro inlinování méně přísná. Například překladač je schopný v některých případech provést \textit{inlinování funkce} i přes to, že se jedná o virtuálního volání funkce.
-
-% Pokud naše funkce bude příliš velká, můžeme \textit{inlinování} napomoci s použitím atributu \verb|MethodImplOptions.AggressiveInlining|~\cite{MethodImplOptions}, který napoví překladači, že bychom chtěli danou funkci \textit{inlinovat}. Mimo jiné dojde k navýšení velikosti kódu, při které je kód dané funkce považován za příliš velký pro \textit{inlinování}. Může se stát, že velikost kódu dané funkce bude i přes to příliš vysoká. V takovém případě ale bude cena vykonání dané funkce výrazně vyšší než její volání. 
+Je nutné zmínit, že tyto články jsou již starší a nyní jsou pravidla pro inlinování méně přísná. Například JIT je schopný v některých případech provést \textit{inlinování funkce} i přes to, že se jedná o virtuálního volání funkce.
 
 \subsection{Reprezentace systémů}
-Nyní si rozeberme jak by bylo tedy možné reprezentovat systémy v abstrakční vrstvě.
+Jak již bylo v minulé sekci naznačeno, každý systém bude mít tedy funkci, kterou bude volat na každou entitu. Zároveň každý systém iteruje jednotlivé entity jiným způsobem. Systémy tedy budeme reprezentovat tím, že si pořídíme dva prvky.
 
-Generika a struktura jako řešení pro problémy z minulé sekce.
+\begin{enumerate}
+    \item \textbf{EntityProcessor} První nazvěme \verb|EntityProcessor|. Ten bude mít na sobě již zmiňovanou funkci, nazvěme ji \verb|Process|, pro zpracování jedné entity.
+    \item \textbf{IECSSystem} Druhý nazvěme \verb|IECSSystem|. Jedná se o rozhraní. Pro každou ECS knihovnu, kterou budeme chtít měřit, implementujeme třídu, která hude dědit od tohoto rozhraní. Toto rozhraní bude nabízet metodu \verb|Update| ve které implementujeme iteraci přes jednotlivé entity. Každá instance takového systému bude mít také instanci \verb|EntityProcessor|, jejíž \verb|Process| metodu při iteraci zavolá na jednotlivé entity.
+\end{enumerate}
+
+Tím jsme vyřešili různé reprezentace systému, ale ještě zbývá problém s \textit{inlinováním funkce}. Vyřešíme to tím, že jednotlivé \verb|EntityProcessor| budou struktury, které budou dědit od rozhraní \verb|IEntityProcesor|. Instance systému poté přijme typ konkrétního \verb|EntityProcessor| jako generický argument.
+
+Nyní si vysvětlíme proč je pro nás důležité, že jednotlivé \verb|EntityProcessor| jsou struktury.
+
+Když se vytváří konkrétní specializace pro generickou třídu či metodu, tak v případě parametru, který je struktura, dochází k procesu zvanému \textit{monomorfizace} (\textit{monomorphization}). Při \textit{monomorfizaci} se pro daný generický argument, který je hodnotového datového typu, vytvoří specializace dané třídy či metody, ve které je generický argument přímo nahrazen daným typem. Je nutné poznamenat, že k \textit{monomorfizaci} dochází pouze v případě dosazení typu, který je hodnotového typu (neboli jedná se o strukturu). V případě referenčního datového typu se vytváří pouze jedna jediná specializace, která daný generický argument nahrazuje typem \verb|object|.
+
+Při použití konkrétního systému, kterému předáme jako generický argument jeden z \verb|EntityProcessor| dojde tedy k \textit{monomorfizaci}. Konkrétně dojde k vytvoření specializace pro již zmiňovanou metodu \verb|Update|. Tato specializace iteruje jednotlivé entity a na každé z nich volá metodu \verb|Process| na konkrétním \verb|EntityProcessor|. Na tomto volání může JIT provést \textit{inlinování}.
+
+Může se stát, že metoda \verb|Process| na konkrétním \verb|EntityProcessor| bude příliš velká a nedojde k jejímu \textit{inlinování}. Tomu můžeme napomoci s použitím atributu \verb|MethodImplOptions.AggressiveInlining|~\cite{MethodImplOptions}, který JITu napoví, že bychom chtěli konkrétní metodu \textit{inlinovat} při jakémkoliv volání. Jedním z efektů při použití tohoto atributu je, že dojde k navýšení velikosti kódu, při které je kód dané funkce považován za příliš velký pro \textit{inlinování}. Může se stát, že velikost kódu dané funkce bude i po použití tohoto atributu příliš vysoká. V takovém případě ale bude cena vykonání dané funkce výrazně vyšší než její volání. 
 
 \subsection{Component tag}
 Některé ECS knihovny potřebují před spuštěním hry vědět o typech komponent.

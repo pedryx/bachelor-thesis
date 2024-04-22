@@ -45,16 +45,28 @@ Způsoby z druhé kategorie vyžadují aby \textit{systém} byl třída, dědic�
 
 Třetí kategorie nabízí kolekce nebo iterátory, které lze iterovat. Tyto kolekce nebo iterátory lze získat voláním příslušné funkce na \textit{world} nebo \textit{query}. Do této kategorie spadají způsoby 7--9. V případě 7 tato kolekce nebo iterátor obsahuje všechny \textit{entity}, které chceme iterovat. V případě 8 tato kolekce nebo iterátor obsahuje n-tice žádoucích instancí \textit{komponent} každé iterované \textit{entity}. V případě 9 je namísto kolekce použita množina polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
 
+\subsection{Inlinování funkce}
+Při pohledu na způsoby, kterými jednotlivé ECS knihovny reprezentují systémy přirozeně vyplývá pro každou entitu (konkrétně na místě komentáře \verb|/**/|) zavolat funkci, která danou entitu zpracuje. Ovšem volání funkce nás stojí čas. Tento čas není moc velký a je většinou zanedbatelný s porovnáním s časem vykonávání funkce samotné. Ovšem my bychom chtěli volat funkci pro každou žádoucí entitu a v případě, že by tato funkce byla jednoduchá (její vykonání by trvalo malé množství času), tak se jednotlivé časy volání této funkce nesčítají a naše řešení by vedlo ke ztrátě na výkonu.
+
+Moderní překladače používají optimalizaci, která nahradí místo volání funkce samotným obsahem dané funkce. Díky tomu může být volání takovéto funkce zadarmo. Konkrétně se jedná o takzvané \textit{inlinování funkce} (\textit{inline expansion}). Ovšem překladače tuto optimalizaci ne vždy dělají, jelikož v některých případech se to nevyplatí nebo to dokonce udělat nemohou.
+
+Jeden z případů, kdy překladač nemůže \textit{inlinování funkce} provést je volání lambda funkce. Je tedy možné nahlédnout, že krom ztráty na výkonu, by naše řešení vedlo k znevýhodnění ECS knihoven, které nevyužívají lambda funkce pro reprezentaci systémů (konkrétně způsoby 4--9 z minulé sekce), oproti ECS knihovnám, které lambda funkce pro reprezentaci systémů používají (konkrétně způsoby 1--3 z minulé sekce).
+
+Pro více informací o tom kdy dochází a nedochází k \textit{inlinování funkcí}, je možné nahlédnout do článků od David Notario~\cite{Notario_2004} a Vance Morrison~\cite{Morrison_2008}. Konkrétně pro nás jsou důležité dva body.
+
+\begin{enumerate}
+    \item K \textit{inlinování funkce} nedojde, pokud se jedná o virtuální volání funkce.
+    \item K \textit{inlinování funkce} pokud je kód dané funkce příliš velký.
+\end{enumerate}
+
+Je nutné zmínit, že tyto články jsou již starší a pro moderní C\# jsou pravidla pro inlinování méně přísná. Například překladač je schopný v některých případech provést \textit{inlinování funkce} v případě virtuálního volání funkce.
+
+% Pokud naše funkce bude příliš velká, můžeme \textit{inlinování} napomoci s použitím atributu \verb|MethodImplOptions.AggressiveInlining|~\cite{MethodImplOptions}, který napoví překladači, že bychom chtěli danou funkci \textit{inlinovat}. Mimo jiné dojde k navýšení velikosti kódu, při které je kód dané funkce považován za příliš velký pro \textit{inlinování}. Může se stát, že velikost kódu dané funkce bude i přes to příliš vysoká. V takovém případě ale bude cena vykonání dané funkce výrazně vyšší než její volání. 
+
 \subsection{Reprezentace systémů}
-Jak reprezentujeme knihovny v abstrakční vrstvě.
+Nyní si rozeberme jak by bylo tedy možné reprezentovat systémy v abstrakční vrstvě.
 
-Prvně inlinování funkce, protože výkon věc z požadavků.
-
-Co je inlinování funkce.
-
-Kdy je funkce inlinovaná,
-
-Generika a struktura jako řešení.
+Generika a struktura jako řešení pro problémy z minulé sekce.
 
 \subsection{Component tag}
 Některé ECS knihovny potřebují před spuštěním hry vědět o typech komponent.

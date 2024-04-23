@@ -68,11 +68,11 @@ Pro více informací o tom kdy dochází a nedochází k \textit{inlinování fu
 Je nutné zmínit, že tyto články jsou již starší a nyní jsou pravidla pro inlinování méně přísná. Například JIT je schopný v některých případech provést \textit{inlinování funkce} i přes to, že se jedná o virtuálního volání funkce.
 
 \subsection{Reprezentace systémů}
-Jak již bylo v minulé sekci naznačeno, každý systém bude mít tedy funkci, kterou bude volat na každou entitu. Zároveň každý systém iteruje jednotlivé entity jiným způsobem. Systémy tedy budeme reprezentovat tím, že si pořídíme dva prvky.
+Jak již bylo v minulé sekci naznačeno, každý systém bude mít tedy funkci, kterou bude volat na každou entitu. Zároveň každý systém iteruje jednotlivé entity jiným způsobem. Systémy tedy budeme reprezentovat tím, že si pořídíme dva typy.
 
 \begin{enumerate}
-    \item \textbf{EntityProcessor} První nazvěme \verb|EntityProcessor|. Ten bude mít na sobě již zmiňovanou funkci, nazvěme ji \verb|Process|, pro zpracování jedné entity.
-    \item \textbf{IECSSystem} Druhý nazvěme \verb|IECSSystem|. Jedná se o rozhraní. Pro každou ECS knihovnu, kterou budeme chtít měřit, implementujeme třídu, která hude dědit od tohoto rozhraní. Toto rozhraní bude nabízet metodu \verb|Update| ve které implementujeme iteraci přes jednotlivé entity. Každá instance takového systému bude mít také instanci \verb|EntityProcessor|, jejíž \verb|Process| metodu při iteraci zavolá na jednotlivé entity.
+    \item \textbf{EntityProcessor} Prvním bude \verb|EntityProcessor|. Ten bude mít na sobě již zmiňovanou funkci, nazvěme ji \verb|Process|, pro zpracování jedné entity.
+    \item \textbf{IECSSystem} Druhým bude rozhraní \verb|IECSSystem|. Pro každou ECS knihovnu, kterou budeme chtít měřit, implementujeme třídu, která hude dědit od tohoto rozhraní. Toto rozhraní bude nabízet metodu \verb|Update| ve které implementujeme iteraci přes jednotlivé entity. Každá instance takového systému bude mít také instanci \verb|EntityProcessor|, jejíž \verb|Process| metodu při iteraci zavolá na jednotlivé entity.
 \end{enumerate}
 
 Tím jsme vyřešili různé reprezentace systému, ale ještě zbývá problém s \textit{inlinováním funkce}. Vyřešíme to tím, že jednotlivé \verb|EntityProcessor| budou struktury, které budou dědit od rozhraní \verb|IEntityProcesor|. Instance systému poté přijme typ konkrétního \verb|EntityProcessor| jako generický argument.

@@ -23,30 +23,36 @@ Pro návrh abstrakční vrstvy bude nejprve nutné rozebrat jak jsou jednotlivé
     \item \textbf{Query} \textit{Query} je objekt, který lze použít pro iterování \textit{entit} s určitou množinou \textit{komponent}. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy \textit{komponent} bude \textit{query} pracovat. Je například možné mít \textit{query}, které pracuje nad \textit{komponentami} \verb|Movement| a \verb|Position|. Takové \textit{query} by pak bylo schopné iterovat nad všemi \textit{entitami} co mají \textit{komponenty} \verb|Movement| a \verb|Position|. Pomocí tohoto \textit{query} by bylo možné implementovat \verb|MovementSystem|, který by řídil logiku pohybu.
 \end{enumerate}
 
-Jak již bylo zmíněno, způsoby jakými jednotlivé ECS knihovny reprezentují \textit{systémy} se dost liší. Rozeberme si nyní tyto způsoby.
+Pro reprezentaci \textit{systémů} v naší abstrakční vrstvě bude nejprve nutné si přiblížit jak jednotlivé ECS knihovny reprezentují systémy. Jak již bylo zmíněno, reprezentace \textit{systémů} se v jednotlivých ECS knihovnách dost liší. Významný rozdíl spočívá ve způsobech, jakými iterují entity. Tyto způsoby se dají rozdělit do tří kategorií, kde každá kategorie obsahuje tři způsoby. Nyní si rozebereme jednotlivé kategorie a způsoby. Vždy prvně představíme pseudokód pro způsoby z této kategorie a poté danou kategorii popíšeme.
 
 \begin{enumerate}
     \item \verb|Query((entity) => { /**/ })|
     \item \verb|Query((component1, component2) => { /**/ })|
     \item \verb|Query((components1[], components2[]) => { /**/ })|
+\end{enumerate}
+
+Způsoby z této kategorie mají většinou definovanou metodu \verb|Query| (neplést s \textit{query} jako objektem pro iterování \textit{entit}). Tato metoda bývá často implementována na \textit{query} nebo na \textit{world}. Této metodě se předává lambda funkce, která je v případě 1 volána na každou iterovanou \textit{entitu}, v případě 2 volána na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 3 volána na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
+
+\begin{enumerate}
+    \setcounter{enumi}{4}
     \item \verb|void Update(entity) { /**/ }|
     \item \verb|void Update(component1, component2) { /**/ }|
     \item \verb|void Update(components1[], components2[]) { /**/ }|
+\end{enumerate}
+
+Způsoby z druhé kategorie vyžadují aby \textit{systém} byl třída, dědicí od rozhraní nebo předka. Toto rozhraní nebo předek nabízí abstraktní metodu \verb|Update|, kterou je nutné přetížit. Při iteraci je v případě 4 metoda \verb|Update| volána na každou iterovanou \textit{entitu}, v případě 5 na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 6 na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
+
+\begin{enumerate}
+    \setcounter{enumi}{7}
     \item \verb|foreach (entity in entities) { /**/ }|
     \item \verb|foreach ((component1, component2) in entities) { /**/ }|
     \item \verb|for (int i = 0; i < entitiesCount; i++)|\\\verb|{ components1[i], components2[i], /**/ }|
 \end{enumerate}
 
-Tyto způsoby lze rozdělit do tří kategorií.
-
-Do první kategorie spadají způsoby 1--3. Knihovny, které využívají tyto způsoby mají většinou definovanou metodu \verb|Query| (neplést s \textit{query} jako objektem pro iterování \textit{entit}). Tato metoda bývá často implementována na \textit{query} nebo na \textit{world}. Této metodě se předává lambda funkce, která je v případě 1 volána na každou iterovanou \textit{entitu}, v případě 2 volána na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 3 volána na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
-
-Způsoby z druhé kategorie vyžadují aby \textit{systém} byl třída, dědicí od rozhraní nebo předka. Toto rozhraní nebo předek nabízí abstraktní metodu \verb|Update|, kterou je nutné přetížit. Do této kategorie spadají způsoby 4--6. Při iteraci je v případě 4 metoda \verb|Update| volána na každou iterovanou \textit{entitu}, v případě 5 na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 6 na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
-
-Třetí kategorie nabízí kolekce nebo iterátory, které lze iterovat. Tyto kolekce nebo iterátory lze získat voláním příslušné funkce na \textit{world} nebo \textit{query}. Do této kategorie spadají způsoby 7--9. V případě 7 tato kolekce nebo iterátor obsahuje všechny \textit{entity}, které chceme iterovat. V případě 8 tato kolekce nebo iterátor obsahuje n-tice žádoucích instancí \textit{komponent} každé iterované \textit{entity}. V případě 9 je namísto kolekce použita množina polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
+Třetí kategorie nabízí kolekce nebo iterátory, které lze iterovat. Tyto kolekce nebo iterátory lze získat voláním příslušné funkce na \textit{world} nebo \textit{query}. V případě 7 tato kolekce nebo iterátor obsahuje všechny \textit{entity}, které chceme iterovat. V případě 8 tato kolekce nebo iterátor obsahuje n-tice žádoucích instancí \textit{komponent} každé iterované \textit{entity}. V případě 9 je namísto kolekce použita množina polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
 
 \subsection{Inlinování funkce}
-Při pohledu na způsoby, kterými jednotlivé ECS knihovny reprezentují systémy přirozeně vyplývá pro každou entitu zavolat funkci (konkrétně na místě komentáře \verb|/**/|), která danou entitu zpracuje. Ovšem volání funkce nás stojí čas. Tento čas není moc velký a je většinou zanedbatelný s porovnáním s časem vykonávání funkce samotné. Ovšem my bychom chtěli volat funkci pro každou žádoucí entitu a v případě, že by tato funkce byla jednoduchá (její vykonání by trvalo malé množství času), tak se jednotlivé časy volání této funkce nasčítají a naše řešení by vedlo ke ztrátě na výkonu.
+Při pohledu na způsoby pro iterování entit z minulé sekce přirozeně vyplývá pro každou entitu zavolat funkci (konkrétně na místě komentáře \verb|/**/|), která danou entitu zpracuje. Ovšem volání funkce nás stojí čas. Tento čas není moc velký a je většinou zanedbatelný s porovnáním s časem vykonávání funkce samotné. Ovšem my bychom chtěli volat funkci pro každou žádoucí entitu a v případě, že by tato funkce byla jednoduchá (její vykonání by trvalo malé množství času), tak se jednotlivé časy volání této funkce nasčítají a naše řešení by vedlo ke ztrátě na výkonu. Předtím než si navrhneme samotné systémy, bude nutné si tuto problematiku více přiblížit.
 
 Některé ECS knihovny se snaží tomuto problému předejít tím, že namísto toho aby jejich systémy přijímali funkci, kterou zavolají na každou entitu, poskytnou uživateli kolekce nebo iterátory, které si uživatel sám zpracuje. Tím se volání funkce vyhnou úplně. Znamená to tedy, že náš způsob ublíží na výkonu pouze některým knihovnám a to by mělo vliv na naše porovnání. Konkrétně se jedná o způsoby 3, 6, 7, 8 a 9 z minulé sekce.
 
@@ -73,7 +79,7 @@ Tím jsme vyřešili různé reprezentace systému, ale ještě zbývá problém
 
 Nyní si vysvětlíme proč je pro nás důležité, že jednotlivé \verb|EntityProcessor| jsou struktury.
 
-Když se vytváří konkrétní specializace pro generickou třídu či metodu, tak v případě parametru, který je struktura, dochází k procesu zvanému \textit{monomorfizace} (\textit{monomorphization}) \xxx{link}. Při \textit{monomorfizaci} se pro daný generický argument, který je hodnotového datového typu, vytvoří specializace dané třídy či metody, ve které je generický argument přímo nahrazen daným typem. Je nutné poznamenat, že k \textit{monomorfizaci} dochází pouze v případě dosazení typu, který je hodnotového typu (neboli jedná se o strukturu). V případě referenčního datového typu se vytváří pouze jedna jediná specializace, která daný generický argument nahrazuje typem \verb|object|.
+Když se vytváří konkrétní specializace pro generickou třídu či metodu, tak v případě parametru, který je struktura, dochází k procesu zvanému \textit{monomorfizace} (\textit{monomorphization}). Při \textit{monomorfizaci} se pro daný generický argument, který je hodnotového datového typu, vytvoří specializace dané třídy či metody, ve které je generický argument přímo nahrazen daným typem. Je nutné poznamenat, že k \textit{monomorfizaci} dochází pouze v případě dosazení typu, který je hodnotového typu (neboli jedná se o strukturu). V případě referenčního datového typu se vytváří pouze jedna jediná specializace, která daný generický argument nahrazuje typem \verb|object|. Pro více informací o \textit{monomorfizaci} je možné nahlédnout do článku Generics in the runtime (C\# programming guide)~\cite{GenericsInTheRuntime} od firmy Microsoft.
 
 Při použití konkrétního systému, kterému předáme jako generický argument jeden z \verb|EntityProcessor| dojde tedy k \textit{monomorfizaci}. Konkrétně dojde k vytvoření specializace pro již zmiňovanou metodu \verb|Update|. Tato specializace iteruje jednotlivé entity a na každé z nich volá metodu \verb|Process| na konkrétním \verb|EntityProcessor|. Na tomto volání může JIT provést \textit{inlinování}.
 

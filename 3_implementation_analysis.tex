@@ -73,16 +73,14 @@ Tím jsme vyřešili různé reprezentace systému, ale ještě zbývá problém
 
 Nyní si vysvětlíme proč je pro nás důležité, že jednotlivé \verb|EntityProcessor| jsou struktury.
 
-Když se vytváří konkrétní specializace pro generickou třídu či metodu, tak v případě parametru, který je struktura, dochází k procesu zvanému \textit{monomorfizace} (\textit{monomorphization}). Při \textit{monomorfizaci} se pro daný generický argument, který je hodnotového datového typu, vytvoří specializace dané třídy či metody, ve které je generický argument přímo nahrazen daným typem. Je nutné poznamenat, že k \textit{monomorfizaci} dochází pouze v případě dosazení typu, který je hodnotového typu (neboli jedná se o strukturu). V případě referenčního datového typu se vytváří pouze jedna jediná specializace, která daný generický argument nahrazuje typem \verb|object|.
+Když se vytváří konkrétní specializace pro generickou třídu či metodu, tak v případě parametru, který je struktura, dochází k procesu zvanému \textit{monomorfizace} (\textit{monomorphization}) \xxx{link}. Při \textit{monomorfizaci} se pro daný generický argument, který je hodnotového datového typu, vytvoří specializace dané třídy či metody, ve které je generický argument přímo nahrazen daným typem. Je nutné poznamenat, že k \textit{monomorfizaci} dochází pouze v případě dosazení typu, který je hodnotového typu (neboli jedná se o strukturu). V případě referenčního datového typu se vytváří pouze jedna jediná specializace, která daný generický argument nahrazuje typem \verb|object|.
 
 Při použití konkrétního systému, kterému předáme jako generický argument jeden z \verb|EntityProcessor| dojde tedy k \textit{monomorfizaci}. Konkrétně dojde k vytvoření specializace pro již zmiňovanou metodu \verb|Update|. Tato specializace iteruje jednotlivé entity a na každé z nich volá metodu \verb|Process| na konkrétním \verb|EntityProcessor|. Na tomto volání může JIT provést \textit{inlinování}.
 
 Může se stát, že metoda \verb|Process| na konkrétním \verb|EntityProcessor| bude příliš velká a nedojde k jejímu \textit{inlinování}. Tomu můžeme napomoci s použitím atributu \verb|MethodImplOptions.AggressiveInlining|~\cite{MethodImplOptions}, který JITu napoví, že bychom chtěli konkrétní metodu \textit{inlinovat} při jakémkoliv volání. Jedním z efektů při použití tohoto atributu je, že dojde k navýšení velikosti kódu, při které je kód dané funkce považován za příliš velký pro \textit{inlinování}. Může se stát, že velikost kódu dané funkce bude i po použití tohoto atributu příliš vysoká. V takovém případě ale bude cena vykonání dané funkce výrazně vyšší než její volání. 
 
 \subsection{Component tag}
-Některé ECS knihovny potřebují před spuštěním hry vědět o typech komponent.
-
-Component tag jako řešení.
+Některé ECS knihovny potřebují před spuštěním hry vědět o typech všech komponent, které budou použity. Proto máme definovaný atribut \verb|Component|, který použijeme na každý typ komponenty, který definujeme. Pokud pracujeme s knihovnou, která vyžadujeme znát tyto typy postačí nám pomocí reflexe najít všechny datové typy s tímto atributem.
 
 \subsection{ECSFactory}
 Je nějak potřeba konstruovat implementace tříd z abstrakční vrstvy.

@@ -102,18 +102,18 @@ Abychom tyto problémy vyřešili, předáme zodpovědnost za konstrukci těchto
 Je také nutné zmínit, že konkrétní implementace abstrakční vrstvy musejí poskytovat vícero tříd dědicích od \verb|IECSSystem|, jelikož je nutné definovat systém co pracuje s jednou komponentou, poté co pracuje s dvěma komponentami a tak dále. \verb|ECSFactory| tedy v konstruktoru přijímá více typů systému a při zavolání \verb|CreateSystem| vybere jeden z nich na základě počtu generických argumentů na typu \verb|EntityProcessor|.
 
 \section{Analýza hry}
-...
+Nyní provedeme analýzu samotné hry, konkrétně se zaměříme na umělou inteligenci, použití ECS a na procedurální terén.
 
 \subsection{Umělá inteligence}
-Budeme chtít používat ai pro chování vesničanů.
-
-Způsoby reprezentace ai:
+Jak již víme naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity definovat je více, proto si je nyní rozebereme. Mezi běžné způsoby pro definici chování entity patří:
 
 \begin{enumerate}
-    \item Stavové automaty
-    \item Stromy chování
-    \item GOAP
+    \item \textbf{Stavové automaty} Nejpřímočařejší způsob je použít pro definici chování \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. Jednotlivé stavy v sobě také mohou mít definované přechody, pomocí nichž mohou přejít do jiného stavu. \textit{Stavové automaty} bývají často reprezentovány pomocí návrhového vzoru \textit{State}, více o něm je možné se dočíst ve stejnojmenné kapitole v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}.
+    
+    \item \textbf{Stromy chování} \textit{Stromy chování} jsou složeny z hierarchie vrcholů, která definuje chování dané entity. Listy \textit{stromu chování} představují konkrétní příkazy, které řídí entitu. Ostatní vrcholy slouží k tomu aby řídili jak se strom bude procházet. Více o \textit{stromech chování} je možné se dočíst ve článku \textit{Behavior trees for AI: How they work}~\cite{BehaviorTrees} od Chrise Simpsona.
 \end{enumerate}
+
+Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Proc jsme je nezvolili?
 
 Proč jsme zvolili stromy chování.
 

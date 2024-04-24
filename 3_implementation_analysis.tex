@@ -89,11 +89,17 @@ Může se stát, že metoda \verb|Process| na konkrétním \verb|EntityProcessor
 Některé ECS knihovny potřebují před spuštěním hry vědět o typech všech komponent, které budou použity. Proto máme definovaný atribut \verb|Component|, který použijeme na každý typ komponenty, který definujeme. Pokud pracujeme s knihovnou, která vyžadujeme znát tyto typy postačí nám pomocí reflexe najít všechny datové typy s tímto atributem.
 
 \subsection{ECSFactory}
-Je nějak potřeba konstruovat implementace tříd z abstrakční vrstvy.
+Každá implementace abstrakční vrstvy bude mít několik typů, které bude muset implementovat. Ovšem pro snazší práci s abstrakční vrstvou by bylo lepší kdyby bylo možné celou konkrétní implementaci reprezentovat jedním typem. Tento typ by byl zodpovědný za konstrukci jednotlivých typů z konkrétní implementace abstrakční vrstvy.
 
-Konstrukce systémů je ukecaná.
+Zavedeme si tedy abstraktní třídu \verb|ECSFactory|. Každá konkrétní implementace abstrakční vrstvy poskytne třídu, které bude dědit od \verb|ECSFactory|.
 
-ECSFactory jako řešení.
+Vzniká nám tu problém a to v tom, že pokud chceme vytvořit instanci systému (třídy, která dědí od \verb|IECSSystem|), je nutné ji předat krom typu konkrétního \verb|EntityProcessor| také typy jednotlivých komponent se kterými bude systém pracovat (musí je předat \texit{query}). Ovšem tato informace je redundantní jelikož typy těchto komponent jsou zřejmé z konkrétního \verb|EntityProcessor|, který předáváme. Tímto nám vznikají méně přehledné a zdlouhavé řádky kódu pro vytváření jednotlivých systémů. Například pokud bychom měli \verb|ArchSystem| jako typ systému ECS knihovny Arch~\cite{Arch} a \verb|PathFollowSystem| jako \verb|EntityProcessor|, který pracuje nad komponentami \verb|Location| (obsahuje informaci o pozici entity), \verb|Movement| (obsahuje informace o pohybu entity) a \verb|PathFollow| (obsahuje informace o pohybu entity po ceste), tak konstrukce instance tohoto systému by vypadala takto: \verb|var system = new ArchSystem<PathFollowSystem, Location, Movement, PathFollow>();|.
+
+Krom výše zmíněného problému je také další problém v tom, že třída zodpovědná za konstrukci těchto systémů musí vědět o tom jaký \verb|EntityProcessor| pracuje s jakými komponentami. Také pokud bychom chtěli pro nějaký \verb|EntityProcessor| nějakou komponentu přidat nebo odebrat, tak bychom museli tuto změnu provést na více místech (na místě definice daného \verb|EntityProcessor| a na místě jeho konstrukce).
+
+Abychom tyto problémy vyřešili, předáme zodpovědnost za konstrukci těchto systémů třídě \verb|ECSFactory|. Ta skrze konstruktor dostane datový typ systému. Tato třída bude obsahovat metodu \verb|CreateSystem|, která přijme instanci konkrétního \verb|EntityProcessor| a pomocí reflexe zkonstruuje konkrétní finální systém. Výše zmíněný příklad by tedy s tímto řešením vypadal takto: \verb|var system = factory.CreateSystem(new PathFollowSystem());|.
+
+Je také nutné zmínit, že konkrétní implementace abstrakční vrstvy musejí poskytovat vícero tříd dědicích od \verb|IECSSystem|, jelikož je nutné definovat systém co pracuje s jednou komponentou, poté co pracuje s dvěma komponentami a tak dále. \verb|ECSFactory| tedy v konstruktoru přijímá více typů systému a při zavolání \verb|CreateSystem| vybere jeden z nich na základě počtu generických argumentů na typu \verb|EntityProcessor|.
 
 \section{Analýza hry}
 Budeme chtít používat ai pro chování vesničanů.

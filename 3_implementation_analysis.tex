@@ -110,14 +110,29 @@ Jak již víme naše hra bude obsahovat vesničany. Každý vesničan bude repre
 \begin{enumerate}
     \item \textbf{Stavové automaty} Nejpřímočařejší způsob je použít pro definici chování \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. Jednotlivé stavy v sobě také mohou mít definované přechody, pomocí nichž mohou přejít do jiného stavu. \textit{Stavové automaty} bývají často reprezentovány pomocí návrhového vzoru \textit{State}, více o něm je možné se dočíst ve stejnojmenné kapitole v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}.
     
-    \item \textbf{Stromy chování} \textit{Stromy chování} jsou složeny z hierarchie vrcholů, která definuje chování dané entity. Listy \textit{stromu chování} představují konkrétní příkazy, které řídí entitu. Ostatní vrcholy slouží k tomu aby řídili jak se strom bude procházet. Více o \textit{stromech chování} je možné se dočíst ve článku \textit{Behavior trees for AI: How they work}~\cite{BehaviorTrees} od Chrise Simpsona.
+    \item \textbf{Stromy chování} \textit{Stromy chování} jsou složeny z hierarchie vrcholů, která popisuje chování dané entity. Listy \textit{stromu chování} představují konkrétní příkazy, které řídí entitu. Ostatní vrcholy slouží k tomu aby řídili jak se strom bude procházet. Více o \textit{stromech chování} je možné se dočíst ve článku \textit{Behavior trees for AI: How they work}~\cite{BehaviorTrees} od Chrise Simpsona.
 \end{enumerate}
 
-Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Proc jsme je nezvolili?
+Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Ovšem jak již bylo zmíněno chování našich vesničanů bude velmi jednoduché a pro jeho definování nám postačí tyto jednoduché způsoby.
 
-Proč jsme zvolili stromy chování.
+Pro definici chování pro naše vesničany zvolíme \textit{stromy chování}. Hlavním důvodem pro tuto volbu je to, že se jedná o mnohem přehlednější způsob pro definování chování entit. Jelikož hierarchie \textit{stromu chování} popisuje chování dané entity, je možné přímo z definice této hierarchie vidět jak chování funguje. Jako příklad použijeme část ze strom chování, který byl použit přímo pro naše vesničany:
 
-Použili jsme knihovnu na stromy chování.
+\begin{verbatim}
+FluentBuilder.Create<BehaviorContext>()
+  .Selector("root")
+    .Sequence("hunger")
+      .Condition("is hunger bellow threshold?", IsHungry)
+      .Condition("is there food?", IsThereFood(foodStockpile))
+      .Do("go to get food", MoveTo(foodStockpile))
+      // We need to check again because an another villager
+      // could take the food in the meantime.
+      .Condition("is there food?", IsThereFood(foodStockpile))
+      .Do("get food", GetFood(foodStockpile))
+      .Do("eat food", EatFood)
+    .End()
+  .End()
+  .Build();
+\end{verbatim}
 
 Umělou inteligenci je možné definovat také v systémech.
 

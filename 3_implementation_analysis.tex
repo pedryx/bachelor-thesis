@@ -16,14 +16,14 @@ Pro návrh abstrakční vrstvy bude nejprve nutné rozebrat jak jsou jednotlivé
 
     \item \textbf{World} \textit{World} je spravce \textit{entit} a \text{komponent}. Tento správce slouží jako kontejner pro všechny \textit{entity} a \textit{komponenty} v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivým entitám.
 
-    Některé ECS implementace reprezentují entity pomocí malé struktury, obsahující identifikátor dané entity společně s referencí na world do kterého patří. To umožňuje mít na této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání komponent.
+    Některé ECS implementace reprezentují \textit{entity} pomocí malé struktury, obsahující identifikátor dané \textit{entity} společně s referencí na \textit{world} do kterého patří. To umožňuje mít na této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání \textit{komponent}.
 
     \item \textbf{System} Reprezentace \textit{systémů} se v jednotlivých ECS implementacích dost liší. Některé vyžadují aby \textit{systém} byl třída dědicí od abstraktního předka, jiné zase volí opačný extrém a dovolují \textit{systém} reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entit s určitou množinou komponent.
 
     \item \textbf{Query} \textit{Query} je objekt, který lze použít pro iterování \textit{entit} s určitou množinou \textit{komponent}. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy \textit{komponent} bude \textit{query} pracovat. Je například možné mít \textit{query}, které pracuje nad \textit{komponentami} \verb|Movement| a \verb|Position|. Takové \textit{query} by pak bylo schopné iterovat nad všemi \textit{entitami} co mají \textit{komponenty} \verb|Movement| a \verb|Position|. Pomocí tohoto \textit{query} by bylo možné implementovat \verb|MovementSystem|, který by řídil logiku pohybu.
 \end{enumerate}
 
-Pro reprezentaci \textit{systémů} v naší abstrakční vrstvě bude nejprve nutné si přiblížit jak jednotlivé ECS knihovny reprezentují systémy. Jak již bylo zmíněno, reprezentace \textit{systémů} se v jednotlivých ECS knihovnách dost liší. Významný rozdíl spočívá ve způsobech, jakými iterují entity. Tyto způsoby se dají rozdělit do tří kategorií, kde každá kategorie obsahuje tři způsoby. Nyní si rozebereme jednotlivé kategorie a způsoby. Vždy prvně představíme pseudokód pro způsoby z této kategorie a poté danou kategorii popíšeme.
+Pro reprezentaci \textit{systémů} v naší abstrakční vrstvě bude nejprve nutné si přiblížit jak jednotlivé ECS knihovny reprezentují \textit{systémy}. Jak již bylo zmíněno, reprezentace \textit{systémů} se v jednotlivých ECS knihovnách dost liší. Významný rozdíl spočívá ve způsobech, jakými iterují \textit{entity}. Tyto způsoby se dají rozdělit do tří kategorií, kde každá kategorie obsahuje tři způsoby. Nyní si rozebereme jednotlivé kategorie a způsoby. Vždy prvně představíme pseudokód pro způsoby z této kategorie a poté danou kategorii popíšeme.
 
 \begin{enumerate}
     \item \verb|Query((entity) => { /**/ })|
@@ -79,30 +79,30 @@ Tím jsme vyřešili různé reprezentace systému, ale ještě zbývá problém
 
 Nyní si vysvětlíme proč je pro nás důležité, že jednotlivé \verb|EntityProcessor| jsou struktury.
 
-Při první konstrukci generického typu, který má hodnotový datový typ jako parametr se vytvoří specializace dané třídy, ve které je daný parametr nahrazen daným typem. Je nutné poznamenat, že k tomuto dochází pouze v případě dosazení hodnotového datového typu (struktury jsou hodnotové datové typy). V případě referenčních datových typů se vytváří pouze jedna jediná specializace ve které je daný argument nahrazen typem \verb|object|. Pro více informací o tomto procesu je možné nahlédnout do článku Generics in the runtime (C\# programming guide)~\cite{GenericsInTheRuntime} od firmy Microsoft.
+Při první konstrukci generického typu, který má hodnotový datový typ jako parametr se vytvoří specializace dané třídy, ve které je daný parametr nahrazen daným typem. Je nutné poznamenat, že k tomuto dochází pouze v případě dosazení hodnotového datového typu (struktury jsou hodnotové datové typy). V případě referenčních datových typů se vytváří pouze jedna jediná specializace ve které je daný argument nahrazen typem \verb|object|. Pro více informací o tomto procesu je možné nahlédnout do článku \textit{Generics in the runtime (C\# programming guide)}~\cite{GenericsInTheRuntime} od firmy Microsoft.
 
 Při použití konkrétního systému, kterému předáme jako generický argument jeden z \verb|EntityProcessor| dojde tedy k výše zmíněnému procesu. Konkrétně dojde k vytvoření specializace pro již zmiňovanou metodu \verb|Update|. Tato specializace iteruje jednotlivé entity a na každé z nich volá metodu \verb|Process| na konkrétním \verb|EntityProcessor|. Na tomto volání může JIT provést \textit{inlinování}.
 
 Může se stát, že metoda \verb|Process| na konkrétním \verb|EntityProcessor| bude příliš velká a nedojde k jejímu \textit{inlinování}. Tomu můžeme napomoci s použitím atributu \verb|MethodImplOptions.AggressiveInlining|~\cite{MethodImplOptions}, který JITu napoví, že bychom chtěli konkrétní metodu \textit{inlinovat} při jakémkoliv volání. Jedním z efektů při použití tohoto atributu je, že dojde k navýšení velikosti kódu, při které je kód dané funkce považován za příliš velký pro \textit{inlinování}. Může se stát, že velikost kódu dané funkce bude i po použití tohoto atributu příliš vysoká. V takovém případě ale bude cena vykonání dané funkce výrazně vyšší než její volání. 
-
-\subsection{Component tag}
-Některé ECS knihovny potřebují před spuštěním hry vědět o typech všech komponent, které budou použity. Proto máme definovaný atribut \verb|Component|, který použijeme na každý typ komponenty, který definujeme. Pokud pracujeme s knihovnou, která vyžadujeme znát tyto typy postačí nám pomocí reflexe najít všechny datové typy s tímto atributem.
 
 \subsection{ECSFactory}
 Každá implementace abstrakční vrstvy bude mít několik typů, které bude muset implementovat. Ovšem pro snazší práci s abstrakční vrstvou by bylo lepší kdyby bylo možné celou konkrétní implementaci reprezentovat jedním typem. Tento typ by byl zodpovědný za konstrukci jednotlivých typů z konkrétní implementace abstrakční vrstvy.
 
 Zavedeme si tedy abstraktní třídu \verb|ECSFactory|. Každá konkrétní implementace abstrakční vrstvy poskytne třídu, které bude dědit od \verb|ECSFactory|.
 
-Vzniká nám tu problém a to v tom, že pokud chceme vytvořit instanci systému (třídy, která dědí od \verb|IECSSystem|), je nutné ji předat krom typu konkrétního \verb|EntityProcessor| také typy jednotlivých komponent se kterými bude systém pracovat (musí je předat \textit{query}). Ovšem tato informace je redundantní jelikož typy těchto komponent jsou zřejmé z konkrétního \verb|EntityProcessor|, který předáváme. Tímto nám vznikají méně přehledné a zdlouhavé řádky kódu pro vytváření jednotlivých systémů. Například pokud bychom měli \verb|ArchSystem| jako typ systému ECS knihovny Arch~\cite{Arch} a \verb|PathFollowSystem| jako \verb|EntityProcessor|, který pracuje nad komponentami \verb|Location| (obsahuje informaci o pozici entity), \verb|Movement| (obsahuje informace o pohybu entity) a \verb|PathFollow| (obsahuje informace o pohybu entity po ceste), tak konstrukce instance tohoto systému by vypadala takto: \verb|new ArchSystem<PathFollowSystem, Location, Movement, PathFollow| \verb|>()|.
+Vzniká nám tu problém a to v tom, že pokud chceme vytvořit instanci systému (třídy, která dědí od \verb|IECSSystem|), je nutné ji předat krom typu konkrétního \verb|EntityProcessor| také typy jednotlivých komponent se kterými bude systém pracovat (musí je předat \textit{query}). Ovšem tato informace je redundantní jelikož typy těchto komponent jsou zřejmé z konkrétního \verb|EntityProcessor|, který předáváme. Tímto nám vznikají méně přehledné a zdlouhavé řádky kódu pro vytváření jednotlivých systémů. Například pokud bychom měli \verb|ArchSystem| jako typ systému ECS knihovny Arch~\cite{Arch} a \verb|PathFollowSystem| jako \verb|EntityProcessor|, který pracuje nad komponentami \verb|Location| (obsahuje informaci o pozici entity), \verb|Movement| (obsahuje informace o pohybu entity) a \verb|PathFollow| (obsahuje informace o pohybu entity po cestě), tak konstrukce instance tohoto systému by vypadala takto: \verb|new ArchSystem<PathFollowSystem, Location, Movement, PathFollow| \verb|>()|.
 
-Krom výše zmíněného problému je také další problém v tom, že třída zodpovědná za konstrukci těchto systémů musí vědět o tom jaký \verb|EntityProcessor| pracuje s jakými komponentami. Také pokud bychom chtěli přidat nebo odebrat komponentu pro nějaký \verb|EntityProcessor|, tak bychom museli tuto změnu provést na více místech (na místě definice daného \verb|EntityProcessor| a na místě jeho konstrukce).
+Kromě výše zmíněného problému je také další problém v tom, že třída zodpovědná za konstrukci těchto systémů musí vědět o tom jaký \verb|EntityProcessor| pracuje s jakými komponentami. Také pokud bychom chtěli přidat nebo odebrat komponentu pro nějaký \verb|EntityProcessor|, tak bychom museli tuto změnu provést na více místech (na místě definice daného \verb|EntityProcessor| a na místě jeho konstrukce).
 
 Abychom tyto problémy vyřešili, předáme zodpovědnost za konstrukci těchto systémů třídě \verb|ECSFactory|. Ta skrze konstruktor dostane datový typ systému. Tato třída bude obsahovat metodu \verb|CreateSystem|, která přijme instanci konkrétního \verb|EntityProcessor| a pomocí reflexe zkonstruuje konkrétní finální systém. Výše zmíněný příklad by tedy s tímto řešením vypadal takto: \verb|factory.CreateSystem(new PathFollowSystem())|.
 
 Je také nutné zmínit, že konkrétní implementace abstrakční vrstvy musejí poskytovat vícero tříd dědicích od \verb|IECSSystem|, jelikož je nutné definovat systém co pracuje s jednou komponentou, poté co pracuje s dvěma komponentami a tak dále. \verb|ECSFactory| tedy v konstruktoru přijímá více typů systému a při zavolání \verb|CreateSystem| vybere jeden z nich na základě počtu generických argumentů na typu \verb|EntityProcessor|.
 
+% \subsection{Component atribut}
+% Některé ECS knihovny potřebují před spuštěním hry vědět o typech všech komponent, které budou použity. Proto máme definovaný atribut \verb|ComponentAttribute|, který použijeme na každý typ komponenty, který definujeme. Pokud pracujeme s knihovnou, která vyžadujeme znát tyto typy postačí nám pomocí reflexe najít všechny datové typy s tímto atributem.
+
 \section{Analýza hry}
-Nyní provedeme analýzu samotné hry, konkrétně se zaměříme na umělou inteligenci, použití ECS a na procedurální terén.
+Nyní provedeme analýzu samotné hry, konkrétně se zaměříme na umělou inteligenci, generování terénu a \textit{path-finding}.
 
 \subsection{Umělá inteligence}
 Jak již víme naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity definovat je více, proto si je nyní rozebereme. Mezi běžné způsoby pro definici chování entity patří:
@@ -134,60 +134,50 @@ FluentBuilder.Create<BehaviorContext>()
   .Build();
 \end{verbatim}
 
-Umělou inteligenci je možné definovat také v systémech.
+% Umělou inteligenci je možné definovat také v systémech.
 
-Ne vždy je zřejmé co by mělo či nemělo být součástí umělé inteligence.
+% Ne vždy je zřejmé co by mělo či nemělo být součástí umělé inteligence.
 
-Tezba surovin: připsání do inventáře vs damage and drop systém.
+% Tezba surovin: připsání do inventáře vs damage and drop systém.
 
-Zpracování surovin: připsání do inventáře vs resource processing systém. 
+% Zpracování surovin: připsání do inventáře vs resource processing systém. 
 
-\subsection{ECS}
-Některé systémy proběhnou pro danou entitu pouze pokud je pro ní splněna určitá podmínka.
+% \subsection{ECS}
+% Některé systémy proběhnou pro danou entitu pouze pokud je pro ní splněna určitá podmínka.
 
-Podmínka je drahá operace protože pipeline flush.
+% Podmínka je drahá operace protože pipeline flush.
 
-Řešením můžou být eventy. EventQueue, EventReader/EventWriter, csharp events.
+% Řešením můžou být eventy. EventQueue, EventReader/EventWriter, csharp events.
 
-Další možné řešení jsou reaction systémy.
+% Další možné řešení jsou reaction systémy.
 
-Proč eventy a reaction systémy nemůžeme použít. Proč nepoužíváme csharp eventy.
+% Proč eventy a reaction systémy nemůžeme použít. Proč nepoužíváme csharp eventy.
 
-Proč tyto systémy nezpůsobují výkonnostní potíže při správných podmínkách (+ ty podmínky).
+% Proč tyto systémy nezpůsobují výkonnostní potíže při správných podmínkách (+ ty podmínky).
 
 \subsection{Procedurální terén}
-Terén generován pomocí simplex noise.
+Naše hra bude obsahovat procedurálně generovaný terén. Ten je možné generovat pomocí CPU nebo pomocí GPU. Obě možnosti si nyní rozebereme.
 
-\subsubsection{Generování terénu na CPU}
-Zápis do jedné nebo více textur.
+% \subsubsection{Generování terénu na CPU}
+Při generování terénu na CPU nám postačí terén vygenerovat pouze jednou při spuštění hry a výsledek si poté uložit do jedné nebo více textur. Tento přístup má ale dva problémy. Prvním problémem je, že pokud dojde k většímu přiblížení nebo oddálení kamery, dojde k deformaci těchto textur. To může způsobit různé vizuální artefakty. Druhým problémem je, že vytváření zmíněných textur může trvat delší dobu. To může vést k delšímu času spouštění hry.
 
-Rozmazání při přiblížení nebo oddálení.
+% \subsubsection{Generování terénu na GPU}
+Pro vygenerování terénu na GPU ja potřeba vytvořit shader. Tento shader vezme pozici a přiblížení kamery a vygeneruje pro tyto parametry terén. Díky vysoké paralelizace na GPU můžeme terén generovat za běhu. Při generování terénu za běhu nám nevzniknou výše zmíněné artefakty. Vyřeší se nám i druhý problém, jelikož nemusíme čekat na vygenerování výše zmíněné textury.
 
-Může trvat dlouho.
-
-\subsubsection{Generování terénu na GPU}
-Shadery jsou programy pro GPU. V této práci použijeme fragment shader a compute shader.
-
-Shader pro generování terénu.
-
-Je možné libovolně přiblížit nebo oddálit.
-
-Provádíme za běhu a velmi rychle.
-
-Z právě techto důvodů GPU.
+Je snadné nahlédnout, že generování terénu na GPU je pro nás výhodnější, proto si tento přístup zvolíme.
 
 \subsection{Path-finding pro vygenerovaný terén}
-Při CPU přístupu by stačilo číst z textury.
+Vesničané musejí často provádět \textit{path-finding}. Jedná se o proces při kterém je nutné najít cestu z bodu A do bodu B.
 
-Chceme pěkné cesty, takže výslednou cestu zkrášlujeme.
+V případě generování terénu na CPU by byl \textit{path-finding} velice jednoduchý, stačilo by nám vzít vygenerovanou texturu a najít danou cestu v ní. Ovšem jelikož generujeme terén pomocí GPU a my bychom potřebovali \textit{path-finding} vykonávat na CPU, vzniká nám tu problém jak tento \textit{path-finding} vykonávat.
 
-Vygenerovat texturu by trvalo dlouho, proto použijeme compute shader.
+Pro řešení problému s \textit{path-finding} si zavedeme \textit{compute shader}, který jako vstupní parametr přijme rozlišení. Výstupem tohoto \textit{compute shaderu} bude grid sestavený z nevzorkovaného terénu při daném rozlišení. Tento \textit{compute shader} nám tedy při spuštění hry vytvoří grid na GPU, ten si poté stáhneme na CPU a na něm poté můžeme provádět \textit{path-finding}.
 
-Zvolíme rozlišení, které předsamplujeme do pole, ve kterém poté provádíme path-finding.
+% Chceme pěkné cesty, takže výslednou cestu zkrášlujeme.
 
-Generování může trvat, protože přesun dat mezi GPU a CPU je drahý.
+% Generování může trvat, protože přesun dat mezi GPU a CPU je drahý.
 
-Je nutné použít fork MonoGame, který podporuje compute shadery.
+% Je nutné použít fork MonoGame, který podporuje compute shadery.
 
 
 

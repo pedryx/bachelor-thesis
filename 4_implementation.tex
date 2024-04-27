@@ -1,50 +1,68 @@
 \chapter{Popis Implementace}
-V této kapitole si představíme klíčové a zajímavé části implementace.
+V této kapitole si představíme klíčové a zajímavé části implementace naší hry. Pro více detailů o implementaci je možné nahlédnout do kódu, který obsahuje dokumentační komentáře.
+
+Pro tvorbu hry byl použit MonoGame framework~\cite{MonoGame}, ovšem základní MonoGame nemá podporu pro compute shadery, které jsme využili pro řešení problému s \textit{path-finding} v podsekci~\ref{subsection:path-finding}. Z toho důvodu byl použit fork~\cite{MonoGameCptMax}, který tuto podporu nabízí.
 
 \section{Páteřní kód}
-Páteřní kód naší hry se skládá z následujících tříd.
+Páteřní kód naší hry se skládá z následujících tříd:
 
 \begin{enumerate}
-    \item \verb|Game|
-    \item \verb|GameState|
-    \item \verb|LevelState|
-    \item \verb|Factory|
-    \item \verb|LevelFactory|
+    \item \textbf{Game:} Tato třída představuje samotnou hru. Dědí od třídy \verb|Microsoft.Xna.| \verb|Framework.Game| a přetěžuje od ní klíčové metody \verb|Update| a \verb|Draw|.
+
+    \item \textbf{GameState:} Abstraktní třída \verb|GameState| představuje herní obrazovku. Herní obrazovky můžou být například Menu, Nastavení, nebo Level. I přesto, že naše hra obsahuje pouze jednu herní obrazovku, díky této třídě by bylo jednoduché do hry výše zmíněné herní obrazovky přidat.
+
+    \verb|GameState| si v sobě uchovává všechny systémy, které jsou rozděleny do dvou kolekcí. První je kolekce \verb|renderSystems|, která obsahuje všechny systémy, které řeší vykreslování. Druhá kolekce je \verb|systems| a obsahuje všechny ostatní systémy.
+
+    \verb|GameState| má na sobě definované dvě klíčové metody a to \verb|Update| a \verb|Draw|. V \verb|Update| se zpracují všechny systémy z kolekce \verb|systems| a v \verb|Draw| se zpracují všechny systémy z kolekce \verb|renderSystems|.
+
+    Mezi Důležité členy, které \verb|GameState| obsahuje patří:
+
+    \begin{enumerate}
+        \item \textbf{ECSWorld:} Tento člen implementuje rozhraní \verb|IECSWorld| a jedná správce všech entit a komponent uvnitř jednoho \verb|GameState|.
+        \item \textbf{Camera:} Představuje herní kameru.
+        \item \textbf{UILayer:} Jedná se o správce prvků uživatelského rozhraní.
+    \end{enumerate}
+
+    \verb|GameState| obsahuje metodu \verb|Initialize| ve které jsou volány abstraktní metody \verb|CreateEntities|, \verb|CreateSystems|, \verb|CreateRenderSystems| a \verb|CreateUI|.
+
+    \item \textbf{LevelState:} Třída \verb|LevelState| dědí od třídy \verb|GameState| a reprezentuje herní obrazovku, která obsahuje samotný level.
+
+    \item \textbf{LevelFactory:} Třída \verb|LevelFactory| obsahuje metody pro vytváření jednotlivých entit, která jsou používané v \verb|LevelState|.
 \end{enumerate}
 
-\section{Abstrakční vrstva???}
+%\section{Abstrakční vrstva???}
 
 \section{Herní svět}
-Herní svět je reprezentován třídou \verb|GameWorld|.
+Herní svět je reprezentován třídou \verb|GameWorld|. Tato třída obsahuje grid s informacemi o terénu, který je použit pro \textit{path-finding}. Do herního světa je možné přidávat suroviny skrze metodu \verb|AddResource|. Je také možné se dotazovat na terén na konkrétní pozici v herním světě skrze metody \verb|GetTerrain|, \verb|IsWalkable|, \verb|IsBuildable|.
 
-O jeho generování se stará třída \verb|GameWorldGenerator|.
+O generování herního světa se stará třída \verb|GameWorldGenerator|. Při generování světa se nejprve vygeneruje samotný terén, poté dojde ke generování surovin a následně ke generování vesnic.
 
-Pro generování světa používáme 2 shadery.
+Pro generování světa používáme dva shadery, konkrétně fragment shader pro vykreslený terénu definovaný v souboru \textit{terrainDraw.fx} a compute shader pro generování gridu definovaný v souboru \textit{terrainGen.fx}. Oba shadery využívají společnou část definovanou v souboru \textit{terrain.fx}.
 
-Společná část obou shaderů.
+Společná část definovaná v souboru \textit{terrain.fx} je zodpovědná za generování terénu. Pro generování terénu je použit simplexův šum na jehož generování je využita knihovna lygia~\cite{lygia}. Pomocí simplexova šumu je vygenerována výšková mapa, která je poté namapována v příslušné budovy. Ve společné části jsou definované dvě důležité funkce a to \verb|CalcNoise|, která spočítá výšku pro specifikovanou pozici a \verb|GetTerrain|, která přijme výšku a na základě ní navrátí informace o daném biomu, který je pro tuto výšku mapován.
 
-Popis compute shaderu.
+Compute shader definovaný v souboru \textit{terrainGen.fx} přijímá parametry \verb|worldSize|, který představuje velikost světa a \verb|gridDistance|, který odpovídá vzdálenosti mezi jednotlivými body v gridu. Mezi výstup patří dva důležité buffery. Prvním je \verb|terrainBuffer|, který pro každý bod v gridu obsahuje identifikátor příslušného terénu. Druhým je \verb|resourceBuffer|, který obsahuje pozice na kterých bude vygenerována surovina.
 
-Popis fragment shaderu.
+Mezi vstupní parametry fragment shaderu patří velikost světa, rozlišení, scale a offset. Tento shader poté na základě těchto parametrů vygeneruje příslušný terén. Tento shader je krom vykreslování samotného terén použit také k vykreslení minimapy.
 
-\section{Herní data a jejich reprezentace}
-Popis co jsou herní data.
+% \section{Herní data a jejich reprezentace}
+% Popis co jsou herní data.
 
-Pro jejich správu používáme \verb|GlobalInstances|.
+% Pro jejich správu používáme \verb|GlobalInstances|.
 
-Popis třídy.
+% Popis třídy.
 
-Herní data v naší hře.
+% Herní data v naší hře.
 
-\begin{enumerate}
-    \item biomy
-    \item předměty
-    \item suroviny
-\end{enumerate}
+% \begin{enumerate}
+%     \item biomy
+%     \item předměty
+%     \item suroviny
+% \end{enumerate}
 
-\section{Umělá inteligence???}
+% \section{Umělá inteligence???}
 
-\section{Systémy a komponenty???}
+% \section{Systémy a komponenty???}
 
 
 

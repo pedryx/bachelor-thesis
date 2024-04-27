@@ -167,6 +167,7 @@ Pro vygenerování terénu na GPU ja potřeba vytvořit shader. Tento shader vez
 Je snadné nahlédnout, že generování terénu na GPU je pro nás výhodnější, proto si tento přístup zvolíme.
 
 \subsection{Path-finding pro vygenerovaný terén}
+\label{subsection:path-finding}
 Vesničané musejí často provádět \textit{path-finding}. Jedná se o proces při kterém je nutné najít cestu z bodu A do bodu B.
 
 V případě generování terénu na CPU by byl \textit{path-finding} velice jednoduchý, stačilo by nám vzít vygenerovanou texturu a najít danou cestu v ní. Ovšem jelikož generujeme terén pomocí GPU a my bychom potřebovali \textit{path-finding} vykonávat na CPU, vzniká nám tu problém jak tento \textit{path-finding} vykonávat.

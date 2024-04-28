@@ -4,23 +4,24 @@ V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementa
 
 % analyza abstrakce
 \section{Analýza abstrakční vrstvy}
+\label{section:abstract-layer-analysis}
 Abstrakční vrstva pro nás je důležitá, jelikož chceme aby naše hra byla nezávislá na konkrétní ECS knihovně. Program jako takový bude pracovat namísto ECS knihovny pouze s touto abstrakční vrstvou. Pro každou ECS knihovnu, kterou budeme měřit bude nutné vytvořit implementaci této vrstvy. K volbě konkrétní ECS knihovny dojde před spuštěním programu.
 
 \subsection{Rozhraní ECS knihoven}
 Pro návrh abstrakční vrstvy bude nejprve nutné rozebrat jak jsou jednotlivé prvky ECS reprezentovány při jejich implementaci. Krom základních členů, jako jsou \textit{entity}, \textit{komponenty} a \textit{systémy}, si představíme ještě \textit{world} a \textit{query}.
 
 \begin{enumerate}
-    \item \textbf{Component} \textit{Komponenty}, jako takové, bývají často reprezentovány třídou nebo strukturou. Jak již bylo zmíněno v úvodu, \textit{komponenty} obsahují pouze data, nikoliv žádnou logiku. Proto tyto třídy a struktury neobsahují žádné funkce.
+    \item \textbf{\textit{Component}:} \textit{Komponenty}, jako takové, bývají často reprezentovány třídou nebo strukturou. Jak již bylo zmíněno v úvodu, \textit{komponenty} obsahují pouze data, nikoliv žádnou logiku. Proto tyto třídy a struktury neobsahují žádné metody.
 
-    \item \textbf{Entity} \textit{Entita} by, podobně jako v návrhovém vzoru Component, mohla být reprezentována jako kolekce svých \textit{komponent}. Ovšem to se v praxi nedělá, namísto toho se používá řešení, které vede k lepšímu výkonu. Většina ECS implementacích reprezentuje \textit{entity} pouze jako jednoduchý identifikátor a jednotlivé \textit{komponenty} jsou na \textit{entity} mapovány skrze \textit{world}.
+    \item \textbf{\textit{Entity}:} \textit{Entita} by, podobně jako v návrhovém vzoru Component, mohla být reprezentována jako kolekce svých \textit{komponent}. Ovšem to se v praxi nedělá, namísto toho se používá řešení, které vede k lepšímu výkonu. Většina ECS implementacích reprezentuje \textit{entity} pouze jako jednoduchý identifikátor a jednotlivé \textit{komponenty} jsou na \textit{entity} mapovány skrze \textit{world}.
 
-    \item \textbf{World} \textit{World} je spravce \textit{entit} a \text{komponent}. Tento správce slouží jako kontejner pro všechny \textit{entity} a \textit{komponenty} v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivým entitám.
+    \item \textbf{\textit{World}:} \textit{World} je spravce \textit{entit} a \text{komponent}. Tento správce slouží jako kontejner pro všechny \textit{entity} a \textit{komponenty} v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé entity. Často obsahuje také funkce pro přidávání a odebírání komponent jednotlivým entitám.
 
     Některé ECS implementace reprezentují \textit{entity} pomocí malé struktury, obsahující identifikátor dané \textit{entity} společně s referencí na \textit{world} do kterého patří. To umožňuje mít na této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání \textit{komponent}.
 
-    \item \textbf{System} Reprezentace \textit{systémů} se v jednotlivých ECS implementacích dost liší. Některé vyžadují aby \textit{systém} byl třída dědicí od abstraktního předka, jiné zase volí opačný extrém a dovolují \textit{systém} reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entit s určitou množinou komponent.
+    \item \textbf{\textit{System}:} Reprezentace \textit{systémů} se v jednotlivých ECS implementacích dost liší. Některé vyžadují aby \textit{systém} byl třída dědicí od abstraktního předka, jiné zase volí opačný extrém a dovolují \textit{systém} reprezentovat téměř jakkoliv. Navzdory velkým odlišnostem se ve velkém počtu ECS implementací často objevuje objekt, který mohou používat jednotlivé systémy pro iterování entit s určitou množinou komponent.
 
-    \item \textbf{Query} \textit{Query} je objekt, který lze použít pro iterování \textit{entit} s určitou množinou \textit{komponent}. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy \textit{komponent} bude \textit{query} pracovat. Je například možné mít \textit{query}, které pracuje nad \textit{komponentami} \verb|Movement| a \verb|Position|. Takové \textit{query} by pak bylo schopné iterovat nad všemi \textit{entitami} co mají \textit{komponenty} \verb|Movement| a \verb|Position|. Pomocí tohoto \textit{query} by bylo možné implementovat \verb|MovementSystem|, který by řídil logiku pohybu.
+    \item \textbf{\textit{Query}:} \textit{Query} je objekt, který lze použít pro iterování \textit{entit} s určitou množinou \textit{komponent}. Pro jeho vytvoření je většinou nutné poskytnou informaci, nad jakými typy \textit{komponent} bude \textit{query} pracovat. Je například možné mít \textit{query}, které pracuje nad \textit{komponentami} \verb|Movement| a \verb|Position|. Takové \textit{query} by pak bylo schopné iterovat nad všemi \textit{entitami} co mají \textit{komponenty} \verb|Movement| a \verb|Position|. Pomocí tohoto \textit{query} by bylo možné implementovat \verb|MovementSystem|, který by řídil logiku pohybu.
 \end{enumerate}
 
 Pro reprezentaci \textit{systémů} v naší abstrakční vrstvě bude nejprve nutné si přiblížit jak jednotlivé ECS knihovny reprezentují \textit{systémy}. Jak již bylo zmíněno, reprezentace \textit{systémů} se v jednotlivých ECS knihovnách dost liší. Významný rozdíl spočívá ve způsobech, jakými iterují \textit{entity}. Tyto způsoby se dají rozdělit do tří kategorií, kde každá kategorie obsahuje tři způsoby. Nyní si rozebereme jednotlivé kategorie a způsoby. Vždy prvně představíme pseudokód pro způsoby z této kategorie a poté danou kategorii popíšeme.
@@ -71,8 +72,8 @@ Je nutné zmínit, že tyto články jsou již starší a nyní jsou pravidla pr
 Jak již bylo v minulé sekci naznačeno, každý systém bude mít tedy funkci, kterou bude volat na každou entitu. Zároveň každý systém iteruje jednotlivé entity jiným způsobem. Systémy tedy budeme reprezentovat tím, že si pořídíme dva typy.
 
 \begin{enumerate}
-    \item \textbf{EntityProcessor} Prvním bude \verb|EntityProcessor|. Ten bude mít na sobě již zmiňovanou funkci, nazvěme ji \verb|Process|, pro zpracování jedné entity.
-    \item \textbf{IECSSystem} Druhým bude rozhraní \verb|IECSSystem|. Pro každou ECS knihovnu, kterou budeme chtít měřit, implementujeme třídu, která hude dědit od tohoto rozhraní. Toto rozhraní bude nabízet metodu \verb|Update| ve které implementujeme iteraci přes jednotlivé entity. Každá instance takového systému bude mít také instanci \verb|EntityProcessor|, jejíž \verb|Process| metodu při iteraci zavolá na jednotlivé entity.
+    \item \textbf{\texttt{EntityProcessor}:} Tento typ bude mít na sobě již zmiňovanou funkci, nazvěme ji \verb|Process|, pro zpracování jedné entity.
+    \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Pro každou ECS knihovnu, kterou budeme chtít měřit, implementujeme třídu, která hude dědit od tohoto rozhraní. Toto rozhraní bude nabízet metodu \verb|Update| ve které implementujeme iteraci přes jednotlivé entity. Každá instance takového systému bude mít také instanci \verb|EntityProcessor|, jejíž metodu \verb|Process| při iteraci zavolá na jednotlivé entity.
 \end{enumerate}
 
 Tím jsme vyřešili různé reprezentace systému, ale ještě zbývá problém s \textit{inlinováním funkce}. Vyřešíme to tím, že jednotlivé \verb|EntityProcessor| budou struktury, které budou dědit od rozhraní \verb|IEntityProcesor|. Instance systému poté přijme typ konkrétního \verb|EntityProcessor| jako generický argument.
@@ -90,7 +91,7 @@ Každá implementace abstrakční vrstvy bude mít několik typů, které bude m
 
 Zavedeme si tedy abstraktní třídu \verb|ECSFactory|. Každá konkrétní implementace abstrakční vrstvy poskytne třídu, které bude dědit od \verb|ECSFactory|.
 
-Vzniká nám tu problém a to v tom, že pokud chceme vytvořit instanci systému (třídy, která dědí od \verb|IECSSystem|), je nutné ji předat krom typu konkrétního \verb|EntityProcessor| také typy jednotlivých komponent se kterými bude systém pracovat (musí je předat \textit{query}). Ovšem tato informace je redundantní jelikož typy těchto komponent jsou zřejmé z konkrétního \verb|EntityProcessor|, který předáváme. Tímto nám vznikají méně přehledné a zdlouhavé řádky kódu pro vytváření jednotlivých systémů. Například pokud bychom měli \verb|ArchSystem| jako typ systému ECS knihovny Arch~\cite{Arch} a \verb|PathFollowSystem| jako \verb|EntityProcessor|, který pracuje nad komponentami \verb|Location| (obsahuje informaci o pozici entity), \verb|Movement| (obsahuje informace o pohybu entity) a \verb|PathFollow| (obsahuje informace o pohybu entity po cestě), tak konstrukce instance tohoto systému by vypadala takto: \verb|new ArchSystem<PathFollowSystem, Location, Movement, PathFollow| \verb|>()|.
+Vzniká nám tu problém a to v tom, že pokud chceme vytvořit instanci systému (třídy, která dědí od \verb|IECSSystem|), je nutné ji předat krom typu konkrétního \verb|EntityProcessor| také typy jednotlivých komponent se kterými bude systém pracovat (musí je předat \textit{query}). Ovšem tato informace je redundantní jelikož typy těchto komponent jsou zřejmé z konkrétního \verb|EntityProcessor|, který předáváme. Tímto nám vznikají méně přehledné a zdlouhavé řádky kódu pro vytváření jednotlivých systémů. Například pokud bychom měli \verb|ArchSystem| jako typ systému ECS knihovny \textit{Arch}~\cite{Arch} a \verb|PathFollowSystem| jako \verb|EntityProcessor|, který pracuje nad komponentami \verb|Location| (obsahuje informaci o pozici entity), \verb|Movement| (obsahuje informace o pohybu entity) a \verb|PathFollow| (obsahuje informace o pohybu entity po cestě), tak konstrukce instance tohoto systému by vypadala takto: \texttt{new ArchSystem<PathFollowSystem, Location, Movement, PathFollow>()}.
 
 Kromě výše zmíněného problému je také další problém v tom, že třída zodpovědná za konstrukci těchto systémů musí vědět o tom jaký \verb|EntityProcessor| pracuje s jakými komponentami. Také pokud bychom chtěli přidat nebo odebrat komponentu pro nějaký \verb|EntityProcessor|, tak bychom museli tuto změnu provést na více místech (na místě definice daného \verb|EntityProcessor| a na místě jeho konstrukce).
 
@@ -98,19 +99,23 @@ Abychom tyto problémy vyřešili, předáme zodpovědnost za konstrukci těchto
 
 Je také nutné zmínit, že konkrétní implementace abstrakční vrstvy musejí poskytovat vícero tříd dědicích od \verb|IECSSystem|, jelikož je nutné definovat systém co pracuje s jednou komponentou, poté co pracuje s dvěma komponentami a tak dále. \verb|ECSFactory| tedy v konstruktoru přijímá více typů systému a při zavolání \verb|CreateSystem| vybere jeden z nich na základě počtu generických argumentů na typu \verb|EntityProcessor|.
 
-% \subsection{Component atribut}
-% Některé ECS knihovny potřebují před spuštěním hry vědět o typech všech komponent, které budou použity. Proto máme definovaný atribut \verb|ComponentAttribute|, který použijeme na každý typ komponenty, který definujeme. Pokud pracujeme s knihovnou, která vyžadujeme znát tyto typy postačí nám pomocí reflexe najít všechny datové typy s tímto atributem.
+\subsection{Komponenty jako třídy a komponenty jako struktury}
+Jednotlivé ECS knihovny mají různé požadavky na typech jednotlivých komponent. Některé chtějí aby tyto typy byli třídy, jiné zase chtějí aby tyto typy byli struktury a jiné povolují kombinaci obou variant.
+
+Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl třída a jeden struktura. Ovšem toto řešení by vedlo k duplicitnímu kódu.
+
+Řešení, které bylo použito na tento problém, je všechny typy komponent definovat jako struktury. V případě, že daná ECS knihovna vyžaduje aby jednotlivé typy komponent byli třídy, tak si definuje svou třídu \texttt{ComponentWrapper}, která jako generický argument přijme typ dané komponenty. Instance této třídy budou mít v sobě uloženou instanci konkrétní komponenty.
 
 \section{Analýza hry}
-Nyní provedeme analýzu samotné hry, konkrétně se zaměříme na umělou inteligenci, generování terénu a \textit{path-finding}.
+Nyní provedeme analýzu samotné hry, konkrétně se zaměříme na umělou inteligenci, generování terénu a hledání cest.
 
 \subsection{Umělá inteligence}
-Jak již víme naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity definovat je více, proto si je nyní rozebereme. Mezi běžné způsoby pro definici chování entity patří:
+Jak již víme naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity definovat je více, proto si je nyní rozebereme. Mezi tyto způsoby patří:
 
 \begin{enumerate}
-    \item \textbf{Stavové automaty} Nejpřímočařejší způsob je použít pro definici chování \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. Jednotlivé stavy v sobě také mohou mít definované přechody, pomocí nichž mohou přejít do jiného stavu. \textit{Stavové automaty} bývají často reprezentovány pomocí návrhového vzoru \textit{State}, více o něm je možné se dočíst ve stejnojmenné kapitole v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}.
+    \item \textbf{Stavové automaty:} Nejpřímočařejší způsob je použít pro definici chování \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. Jednotlivé stavy v sobě také mohou mít definované přechody, pomocí nichž mohou přejít do jiného stavu. \textit{Stavové automaty} bývají často reprezentovány pomocí návrhového vzoru \textit{State}, více o něm je možné se dočíst ve stejnojmenné kapitole v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}. Pro více informací o použití \textit{stavových automatů} pro umělou inteligenci je možné nahlédnout do materialu \textit{AI - Finite State Machines}~\cite{AIStateMachines} od \textit{Newcastle University}.
     
-    \item \textbf{Stromy chování} \textit{Stromy chování} jsou složeny z hierarchie vrcholů, která popisuje chování dané entity. Listy \textit{stromu chování} představují konkrétní příkazy, které řídí entitu. Ostatní vrcholy slouží k tomu aby řídili jak se strom bude procházet. Více o \textit{stromech chování} je možné se dočíst ve článku \textit{Behavior trees for AI: How they work}~\cite{BehaviorTrees} od Chrise Simpsona.
+    \item \textbf{Stromy chování:} \textit{Stromy chování} jsou složeny z hierarchie vrcholů, která popisuje chování dané entity. Listy \textit{stromu chování} představují konkrétní příkazy, které řídí entitu. Ostatní vrcholy slouží k tomu aby řídili jak se strom bude procházet. Více o \textit{stromech chování} je možné se dočíst ve článku \textit{Behavior trees for AI: How they work}~\cite{BehaviorTrees} od Chrise Simpsona.
 \end{enumerate}
 
 Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Ovšem jak již bylo zmíněno chování našich vesničanů bude velmi jednoduché a pro jeho definování nám postačí tyto jednoduché způsoby.
@@ -164,15 +169,15 @@ Při generování terénu na CPU nám postačí terén vygenerovat pouze jednou 
 % \subsubsection{Generování terénu na GPU}
 Pro vygenerování terénu na GPU ja potřeba vytvořit shader. Tento shader vezme pozici a přiblížení kamery a vygeneruje pro tyto parametry terén. Díky vysoké paralelizace na GPU můžeme terén generovat za běhu. Při generování terénu za běhu nám nevzniknou výše zmíněné artefakty. Vyřeší se nám i druhý problém, jelikož nemusíme čekat na vygenerování výše zmíněné textury.
 
-Je snadné nahlédnout, že generování terénu na GPU je pro nás výhodnější, proto si tento přístup zvolíme.
+Je snadné nahlédnout, že generování terénu na GPU je pro nás výhodnější, proto tento přístup zvolíme.
 
-\subsection{Path-finding pro vygenerovaný terén}
+\subsection{Hledání cesty ve vygenerovaném terénu}
 \label{subsection:path-finding}
-Vesničané musejí často provádět \textit{path-finding}. Jedná se o proces při kterém je nutné najít cestu z bodu A do bodu B.
+Vesničané musejí často vyhledávat cestu z bodu A do bodu B. Například potřebují dojít ke svému pracovnímu místu, nebo odnést předmět do skladiště.
 
-V případě generování terénu na CPU by byl \textit{path-finding} velice jednoduchý, stačilo by nám vzít vygenerovanou texturu a najít danou cestu v ní. Ovšem jelikož generujeme terén pomocí GPU a my bychom potřebovali \textit{path-finding} vykonávat na CPU, vzniká nám tu problém jak tento \textit{path-finding} vykonávat.
+V případě generování terénu na CPU by bylo hledání cesty velice jednoduché. Stačilo by nám vzít vygenerovanou texturu a najít danou cestu v ní. Ovšem problém spočívá v tom, že terén generujeme pomocí GPU a vyhledávání cesty musíme vykonávat na CPU.
 
-Pro řešení problému s \textit{path-finding} si zavedeme \textit{compute shader}, který jako vstupní parametr přijme rozlišení. Výstupem tohoto \textit{compute shaderu} bude grid sestavený z nevzorkovaného terénu při daném rozlišení. Tento \textit{compute shader} nám tedy při spuštění hry vytvoří grid na GPU, ten si poté stáhneme na CPU a na něm poté můžeme provádět \textit{path-finding}.
+Pro řešení problému s hledáním cesty si zavedeme \textit{compute shader}, který jako vstupní parametr přijme rozlišení. Výstupem tohoto \textit{compute shaderu} bude dvourozměrné pole sestavené z nevzorkovaného terénu při daném rozlišení. Tento \textit{compute shader} nám tedy při spuštění hry vytvoří dvourozměrné pole na GPU, to si poté stáhneme na CPU a v něm poté můžeme provádět vyhledávání cesty.
 
 % Chceme pěkné cesty, takže výslednou cestu zkrášlujeme.
 

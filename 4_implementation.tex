@@ -26,7 +26,7 @@ Některé typy z abstrakční vrstvy jsme si již představili v sekci \ref{sect
 Páteřní kód naší hry se skládá z následujících tříd:
 
 \begin{enumerate}
-    \item \textbf{\texttt{Game}:} Tato třída představuje samotnou hru. Dědí od třídy \texttt{Microsoft.Xna.Framework.Game } a přetěžuje od ní klíčové metody \verb|Update| a \verb|Draw|. Tato třída přijímá jako generický argument typ, který implementuje rozhraní \texttt{IECSFactory}. Pomocí tohoto typy je možné zvolit konkrétní implementaci abstrakční vrstvy neboli konkrétní ECS knihovnu se kterou ude hra pracovat.
+    \item \textbf{\texttt{Game}:} Tato třída představuje samotnou hru. Dědí od třídy \texttt{Microsoft.Xna} \texttt{.Framework.Game} a přetěžuje od ní klíčové metody \verb|Update| a \verb|Draw|. Tato třída přijímá jako generický argument typ, který implementuje rozhraní \texttt{IECSFactory}. Pomocí tohoto typy je možné zvolit konkrétní implementaci abstrakční vrstvy neboli konkrétní ECS knihovnu se kterou ude hra pracovat.
 
     \item \textbf{\texttt{GameState}:} Abstraktní třída \verb|GameState| představuje herní obrazovku. Herní obrazovky můžou být například Menu, Nastavení, nebo Level. I přesto, že naše hra obsahuje pouze jednu herní obrazovku, díky této třídě by bylo jednoduché do hry výše zmíněné herní obrazovky přidat.
 
@@ -62,27 +62,69 @@ Společná část definovaná v souboru \textit{terrain.fx} je zodpovědná za g
 
 Compute shader definovaný v souboru \textit{terrainGen.fx} přijímá vstupní parametry velikost světa vzdálenost mezi jednotlivými body v gridu. Mezi výstupy patří dva důležité buffery. Prvním je \verb|terrainBuffer|, který pro každý bod v gridu obsahuje identifikátor příslušného terénu. Druhým je \verb|resourceBuffer|, který obsahuje pozice na kterých bude vygenerována surovina.
 
-Fragment shader definovaný v soubor \textit{terrainDraw.tx} je zodpovědný za vykreslení oblasti z herního světa. Mezi jeho vstupní parametry patří velikost světa, rozlišení, přiblížení kamery a pozice kamery. Tento shader je použit kromě vykreslování samotného herního světa také k vykreslení minimapy.
+Fragment shader definovaný v souboru \textit{terrainDraw.fx} je zodpovědný za vykreslení oblasti z herního světa. Mezi jeho vstupní parametry patří velikost světa, rozlišení, přiblížení kamery a pozice kamery. Tento shader je použit kromě vykreslování samotného herního světa také k vykreslení minimapy.
 
-\section{Herní data a jejich reprezentace???}
-% Popis co jsou herní data.
+O samotné vykreslování herního světa se stará \texttt{TerrainRenderSystem}, který pro vykreslení volá fragment shader definovaný v souboru \textit{terrainDraw.fx}.
 
-% Pro jejich správu používáme \verb|GlobalInstances|.
+\section{Herní data a jejich reprezentace}
+Pro reprezentaci některých dat v naší hře, může být užitečné mít zavedené datové typy, pro které budeme mít globální přístup ke každé instanci těchto typů. Mezi tyto data mohou patřit například suroviny (třída \texttt{ResourceType}), předměty (třída \texttt(ItemType)), nebo biomy (třída \texttt{TerrainType}).
 
-% Popis třídy.
+Pro reprezentaci těchto dat je zavedena třída \texttt{GlobalInstances}, která jako generický argument \texttt{TDerived} přijímá typ, který od této třídy dědí. Tato třída má interní statickou kolekci, ve které jsou uloženy všechny vytvořené instance třídy \texttt{TDerived}. Třída \texttt{GlobalInstances} je také zodpovědná za generování číselného identifikátoru pro každou instanci \texttt{TDerived}. Tento identifikátor slouží zároveň jako index dané instance. Konkrétní instanci lze získat skrze metodu \texttt{Get}, která navrátí instanci podle specifikovaného indexu.
 
-% Herní data v naší hře.
+Jednotlivé typy, které dědí od \texttt{GlobalInstances} mají privátní konstruktor a všechny své instance definují přímo v sobě jako veřejné readonly statické členy.
 
-% \begin{enumerate}
-%     \item biomy
-%     \item předměty
-%     \item suroviny
-% \end{enumerate}
+Následující kód je definicí surovin z naší hry a slouží jako příklad použití \texttt{GlobalInstances}:
 
-\section{Vesnice a vesničané???}
+\begin{verbatim}
+/// <summary>
+/// Represent a type of natural resource, which can be
+/// harvested to obtain resources.
+/// </summary>
+internal sealed class ResourceType 
+  : GlobalInstances<ResourceType>
+{
+  /// <summary>
+  /// The item obtained upon harvesting resource.
+  /// </summary>
+  public ItemType HarvestItem { get; init; }
+  /// <summary>
+  /// The number of items obtained upon harvesting the
+  /// resource.
+  /// </summary>
+  public int HarvestQuantity { get; init; }
+  /// <summary>
+  /// Time it takes to harvest the resource in seconds.
+  /// </summary>
+  public float HarvestTime { get; init; }
 
-
-
+  private ResourceType() : base() { }
+  
+  public readonly static ResourceType Tree = new()
+  {
+    HarvestItem = ItemType.Wood,
+    HarvestQuantity = 1,
+    HarvestTime = 3.0f,
+  };
+  public readonly static ResourceType Rock = new()
+  {
+    HarvestItem = ItemType.Stone,
+    HarvestQuantity = 1,
+    HarvestTime = 5.0f,
+  };
+  public readonly static ResourceType Deposit = new()
+  {
+    HarvestItem = ItemType.Ore,
+    HarvestQuantity = 1,
+    HarvestTime = 7.0f,
+  };
+  public readonly static ResourceType Deer = new()
+  {
+    HarvestItem = ItemType.Meat,
+    HarvestQuantity = 1,
+    HarvestTime = 9.0f,
+  };
+}
+\end{verbatim}
 
 
 

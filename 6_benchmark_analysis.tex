@@ -1,37 +1,42 @@
 \chapter{Analýza měření}
-V této kapitole provedeme analýzu rozhodnutí, která byla vykonána během implementace měření. Prvně nahlédneme na framework, který jsme k měření použili. Následně si rozebereme přístupy pro měření výkonu hry. Nakonec si řekneme na které věci při našem měření nebereme ohled.
+V této kapitole provedeme analýzu rozhodnutí, která byla vykonána během implementace měření. Prvně si rozebereme přístupy pro měření výkonu hry. Nakonec si řekneme, které věci při našem měření nebereme v potaz.
 
-\section{Benchmark.NET}
-Měření výkonu je komplexní proces, který by mohl být prací sám o sobě.
+Pro měření výkonu jsme použili Benchmark.NET~\cite{BenchmarkDotNet}. Byl zvolen, jelikož se jedná o populární framework, který se běžně používá pro měření výkonu v aplikacích, které používají platformu .NET.
 
-Benchmark.NET je populární framework pro platformu .NET, který lze použít k měření výkonu.
+\section{Game loop}
+Před rozborem jednotlivých přístupů si nejprve popíšeme co to je \textit{game loop} a představíme si pojmy, které s ním souvisí. Později se na ně budeme odkazovat při rozboru přístupů.
+
+\textit{Game loop} si můžeme představit jako cyklus, který běží dokud nedojde k ukončení hry. Pseudokód pro \textit{game loop} může vypadat například takto:
+
+\begin{verbatim}
+  while (!shouldExit) 
+  {
+    Update();
+    Draw();
+  }
+\end{verbatim}
+
+Jak je možné nahlédnout, při každé iteraci \textit{game loop} dochází k volání funkcí \texttt{Update} a  \texttt{Draw}. \texttt{Update} se stará o zpracování herní logiky a \texttt{Draw} se stará o vykreslování.
+
+V případě naší hry dojde při každém zavolání funkce \texttt{Draw} také k zavolání metody \texttt{Update} na všech systémech, které se starají o vykreslování. Podobně při každém zavolání funkce \texttt{Update} dojde také k zavolání metody \texttt{Update} na všech ostatních systémech.
 
 \section{Přístupy k měření výkonu}
+Nejpřímočařejší způsob pro měření výkonu hry je změřit jak dlouho trvá jedna iterace \textit{game loop}. Ovšem tento způsob je pro nás velice nevhodný, jelikož časy trvání každé iterace \textit{game loop} se můžou výrazně lišit.
 
-Nejprve je nutné si říct co to je vlastně game loop.
+Lepší způsob by bylo změřit čas trvání vícero iterací a následně spočítat jejich průměr. Při dostatečně velkém počtu iterací, tím získáme průměrný čas trvání jedné iterace \textit{game loop}. Toto je zároveň způsob, který jsme zvolili.
 
-Nejpřímočařejší způsob je změřit jak dlouho trvá jedna iterace.
+Dalším způsobem, kterým by lze měřit výkon, by bylo změřit průměrný čas trvání \texttt{Update} pro každý systém naší hry. Tento přístup by měl výhodu v tom, že by bylo možné nahlédnout na rychlost jednotlivých knihoven pro jednotlivé části hry. Ovšem náš zajímá celkový výkon, proto jsme tento přístup nezvolili.
 
-Lepší způsob by tedy bylo změřit n iterací a spočítat jejich průměr. To je také způsob, který jsme zvolili.
+Výkon hry by také bylo možné měřit během samotného hraní. To by nám pomohlo sledovat například to, jak se výkon hry mění v závislostí na akcích, která hráč provádí. Ovšem v naší hře je hráč pouze pozorovatelem a má velmi malí vliv na průběh hry, tím pádem pro nás tento přístup není moc užitečný.
 
-Rendering může být časově náročnější proces, rozeberme si jestli by měl či neměl být součástí měření.
+\section{Věci, které při měření nebereme v potaz}
+Nyní si řekneme jaké věci při měření nebereme v potaz a u každé si odůvodníme proč.
 
-Dalším způsobem jak měřit výkon, je změřit iterace jednotlivých systémů. Větší insight ale nevidíme overall výkon, ale mohl by být pomocný.
+Mezi funkcionality, které některé ECS knihovny nabízejí patří takzvané \textit{reaction systémy}. Jedná se o speciální typ systému, který stejně jako jiné systémy pracují nad entitami, které obsahují žádoucí n-tici komponent. Ovšem tyto systémy v každé své iteraci zpracují pouze ty entity u kterých došlo ke změně na některé z žádoucí n-tice komponent.
 
-Výkon je také možné měřit během hraní samotné hry. Poskytuje insight pro jiné věci než chceme ale mohl by být pomocný.
+V naší hře zmiňované \textit{reaction systémy} nepoužíváme. Problém je v tom, že jejich podporu nabízejí pouze některé ECS knihovny, tím pádem, pokud bychom je chtěli používat, nemohli bychom pak naši hru použít pro měření výkonu knihoven, které jejich podporu nenabízejí.
 
-\section{Co při měření nebereme v potaz}
-Některé ECS knihovny pro získání lepšího výkonu používají paralelní queries.
-
-Naše hra je nepoužívá protože je z jednoduchosti navržena single threaded.
-
-Další častá optimalizace, co některé ECS knihovny nabízejí jsou již zmiňované reaction systémy.
-
-My je nepoužíváme protože je né každá ecs knihovna podporuje.
-
-Jednotlivé ECS knihovny často používají další specifické výkonnostní funkcionality.
-
-My je nepoužíváme protože jsou ecs knihovna specific.
+Kromě zmiňovaných \textit{reaction systémů} existuje i spoustu dalších funkcionalit, které některé ECS knihovny nabízejí pro zlepšení výkonu. My je ovšem v naší hře nepoužíváme a to ze stejného důvodu, kvůli kterému nepoužíváme \textit{reaction systémy}.
 
 
 

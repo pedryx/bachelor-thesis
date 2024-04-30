@@ -35,7 +35,7 @@ Pro reprezentaci \textit{systémů} v naší abstrakční vrstvě bude nejprve n
 Způsoby z této kategorie mají většinou definovanou metodu \verb|Query| (neplést s \textit{query} jako objektem pro iterování \textit{entit}). Tato metoda bývá často implementována na \textit{query} nebo na \textit{world}. Této metodě se předává lambda funkce, která je v případě 1 volána na každou iterovanou \textit{entitu}, v případě 2 volána na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 3 volána na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
 
 \begin{enumerate}
-    \setcounter{enumi}{4}
+    \setcounter{enumi}{3}
     \item \verb|void Update(entity) { /**/ }|
     \item \verb|void Update(component1, component2) { /**/ }|
     \item \verb|void Update(components1[], components2[]) { /**/ }|
@@ -44,7 +44,7 @@ Způsoby z této kategorie mají většinou definovanou metodu \verb|Query| (nep
 Způsoby z druhé kategorie vyžadují aby \textit{systém} byl třída, dědicí od rozhraní nebo předka. Toto rozhraní nebo předek nabízí abstraktní metodu \verb|Update|, kterou je nutné přetížit. Při iteraci je v případě 4 metoda \verb|Update| volána na každou iterovanou \textit{entitu}, v případě 5 na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 6 na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
 
 \begin{enumerate}
-    \setcounter{enumi}{7}
+    \setcounter{enumi}{6}
     \item \verb|foreach (entity in entities) { /**/ }|
     \item \verb|foreach ((component1, component2) in entities) { /**/ }|
     \item \verb|for (int i = 0; i < entitiesCount; i++)|\\\verb|{ components1[i], components2[i], /**/ }|
@@ -57,7 +57,7 @@ Při pohledu na způsoby pro iterování entit z minulé sekce přirozeně vypl�
 
 Některé ECS knihovny se snaží tomuto problému předejít tím, že namísto toho aby jejich systémy přijímali funkci, kterou zavolají na každou entitu, poskytnou uživateli kolekce nebo iterátory, které si uživatel sám zpracuje. Tím se volání funkce vyhnou úplně. Znamená to tedy, že náš způsob ublíží na výkonu pouze některým knihovnám a to by mělo vliv na naše porovnání. Konkrétně se jedná o způsoby 3, 6, 7, 8 a 9 z minulé sekce.
 
-JIT používá optimalizace, při které se nahradí místo volání funkce samotným obsahem dané funkce. Díky tomu může být volání takovéto funkce zadarmo. Konkrétně se jedná o takzvané \textit{inlinování funkce} (\textit{inline expansion}). Ovšem JIT tuto optimalizaci ne vždy provede, jelikož v některých případech se to nevyplatí nebo to dokonce udělat nemůže.
+JIT používá optimalizaci, při které se nahradí místo volání funkce samotným obsahem dané funkce. Díky tomu může být volání takovéto funkce zadarmo. Konkrétně se jedná o takzvané \textit{inlinování funkce} (\textit{inline expansion}). Ovšem JIT tuto optimalizaci ne vždy provede, jelikož v některých případech se to nevyplatí nebo to dokonce udělat nemůže.
 
 Pro více informací o tom kdy dochází a nedochází k \textit{inlinování funkcí}, je možné nahlédnout do článků od Davida Notaria~\cite{Notario_2004} a Vance Morrisona~\cite{Morrison_2008}. Konkrétně pro nás jsou důležité dva body.
 
@@ -72,7 +72,7 @@ Je nutné zmínit, že tyto články jsou již starší a nyní jsou pravidla pr
 Jak již bylo v minulé sekci naznačeno, každý systém bude mít tedy funkci, kterou bude volat na každou entitu. Zároveň každý systém iteruje jednotlivé entity jiným způsobem. Systémy tedy budeme reprezentovat tím, že si pořídíme dva typy.
 
 \begin{enumerate}
-    \item \textbf{\texttt{EntityProcessor}:} Tento typ bude mít na sobě již zmiňovanou funkci, nazvěme ji \verb|Process|, pro zpracování jedné entity.
+    \item \textbf{\texttt{EntityProcessor}:} Tento typ bude mít na sobě již zmiňovanou funkci pro zpracování jedné entity. Nazvěme ji \verb|Process|.
     \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Pro každou ECS knihovnu, kterou budeme chtít měřit, implementujeme třídu, která hude dědit od tohoto rozhraní. Toto rozhraní bude nabízet metodu \verb|Update| ve které implementujeme iteraci přes jednotlivé entity. Každá instance takového systému bude mít také instanci \verb|EntityProcessor|, jejíž metodu \verb|Process| při iteraci zavolá na jednotlivé entity.
 \end{enumerate}
 
@@ -82,7 +82,7 @@ Nyní si vysvětlíme proč je pro nás důležité, že jednotlivé \verb|Entit
 
 Při první konstrukci generického typu, který má hodnotový datový typ jako parametr se vytvoří specializace dané třídy, ve které je daný parametr nahrazen daným typem. Je nutné poznamenat, že k tomuto dochází pouze v případě dosazení hodnotového datového typu (struktury jsou hodnotové datové typy). V případě referenčních datových typů se vytváří pouze jedna jediná specializace ve které je daný argument nahrazen typem \verb|object|. Pro více informací o tomto procesu je možné nahlédnout do článku \textit{Generics in the runtime (C\# programming guide)}~\cite{GenericsInTheRuntime} od firmy Microsoft.
 
-Při použití konkrétního systému, kterému předáme jako generický argument jeden z \verb|EntityProcessor| dojde tedy k výše zmíněnému procesu. Konkrétně dojde k vytvoření specializace pro již zmiňovanou metodu \verb|Update|. Tato specializace iteruje jednotlivé entity a na každé z nich volá metodu \verb|Process| na konkrétním \verb|EntityProcessor|. Na tomto volání může JIT provést \textit{inlinování}.
+Při použití konkrétního systému, kterému předáme jako generický argument jeden z \verb|EntityProcessor|, dojde tedy k výše zmíněnému procesu. Konkrétně dojde k vytvoření specializace pro již zmiňovanou metodu \verb|Update|. Tato specializace iteruje jednotlivé entity a na každé z nich volá metodu \verb|Process| na konkrétním \verb|EntityProcessor|. Na tomto volání může JIT provést \textit{inlinování}.
 
 Může se stát, že metoda \verb|Process| na konkrétním \verb|EntityProcessor| bude příliš velká a nedojde k jejímu \textit{inlinování}. Tomu můžeme napomoci s použitím atributu \verb|MethodImplOptions.AggressiveInlining|~\cite{MethodImplOptions}, který JITu napoví, že bychom chtěli konkrétní metodu \textit{inlinovat} při jakémkoliv volání. Jedním z efektů při použití tohoto atributu je, že dojde k navýšení velikosti kódu, při které je kód dané funkce považován za příliš velký pro \textit{inlinování}. Může se stát, že velikost kódu dané funkce bude i po použití tohoto atributu příliš vysoká. V takovém případě ale bude cena vykonání dané funkce výrazně vyšší než její volání. 
 
@@ -120,7 +120,7 @@ Jak již víme naše hra bude obsahovat vesničany. Každý vesničan bude repre
 
 Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Ovšem jak již bylo zmíněno chování našich vesničanů bude velmi jednoduché a pro jeho definování nám postačí tyto jednoduché způsoby.
 
-Pro definici chování pro naše vesničany zvolíme \textit{stromy chování}. Hlavním důvodem pro tuto volbu je to, že se jedná o mnohem přehlednější způsob pro definování chování entit. Jelikož hierarchie \textit{stromu chování} popisuje chování dané entity, je možné přímo z definice této hierarchie vidět jak chování funguje. Jako příklad použijeme část ze strom chování, který byl použit přímo pro naše vesničany:
+Pro definici chování pro naše vesničany zvolíme \textit{stromy chování}. Hlavním důvodem pro tuto volbu je to, že se jedná o mnohem přehlednější způsob pro definování chování entit. Jelikož hierarchie \textit{stromu chování} popisuje chování dané entity, je možné přímo z definice této hierarchie vidět jak chování funguje. Jako příklad použijeme část ze stromu chování, který byl použit přímo pro naše vesničany:
 
 \begin{verbatim}
 FluentBuilder.Create<BehaviorContext>()

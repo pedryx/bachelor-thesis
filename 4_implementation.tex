@@ -7,7 +7,7 @@ Pro tvorbu hry byl použit MonoGame framework~\cite{MonoGame}, ovšem základní
 Některé typy z abstrakční vrstvy jsme si již představili v sekci \ref{section:abstract-layer-analysis}. Pro připomenutí si nyní tyto typy lehce představíme znovu a zároveň si popíšeme další důležité typy z abstrakční vrstvy:
 
 \begin{enumerate}
-    \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Typy, které implementují toto rozhraní představují kompletní systém. Tyto typy obsahují logiku pro iteraci přes jednotlivé entity. O zpracování jednotlivých entit se stará \texttt{EntityProcessor}. Každá instance kompletního systému má na sobě právě jeden \texttt{EntityProcessor}. Například \texttt{ArchSystem<TEntityProcessor, TComponent>} je systém, který obsahuje logiku pro procházení entit z ECS knihovny \textit{Arch}~\cite{Arch}.
+    \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Instance typů, které implementují toto rozhraní představují kompletní systém. Tyto typy obsahují logiku pro iteraci přes jednotlivé entity. O zpracování jednotlivých entit se stará \texttt{EntityProcessor}. Každá instance kompletního systému má na sobě právě jeden \texttt{EntityProcessor}. Například \texttt{ArchSystem<TEntityProcessor, TComponent>} je systém, který obsahuje logiku pro procházení entit z ECS knihovny \textit{Arch}~\cite{Arch}.
 
     \item \textbf{\texttt{IEntityProcesor}:} Jedná se o rozhraní, které ma na sobě klíčovou metodu \texttt{Process}. Typy, které implementují toto rozhraní obsahují herní logiku, která zpracovává jednotlivé entity. Například \verb|MovementSystem| ve své metodě \verb|Process| zpracuje pohyb pro danou entitu.
 
@@ -28,15 +28,15 @@ Páteřní kód naší hry se skládá z následujících tříd:
 \begin{enumerate}
     \item \textbf{\texttt{Game}:} Tato třída představuje samotnou hru. Dědí od třídy \texttt{Microsoft.Xna} \texttt{.Framework.Game} a přetěžuje od ní klíčové metody \verb|Update| a \verb|Draw|. Tato třída přijímá jako generický argument typ, který implementuje rozhraní \texttt{IECSFactory}. Pomocí tohoto typu je možné zvolit konkrétní implementaci abstrakční vrstvy neboli konkrétní ECS knihovnu se kterou bude hra pracovat.
 
-    \item \textbf{\texttt{GameState}:} Abstraktní třída \verb|GameState| představuje herní obrazovku. Herní obrazovky můžou být například Menu, Nastavení, nebo Level. I přesto, že naše hra obsahuje pouze jednu herní obrazovku, díky této třídě by bylo jednoduché do hry výše zmíněné herní obrazovky přidat.
+    \item \textbf{\texttt{GameState}:} Abstraktní třída \verb|GameState| představuje herní obrazovku. Herní obrazovky mohou být například Menu, Nastavení, nebo Level. I přesto, že naše hra obsahuje pouze jednu herní obrazovku, díky této třídě by bylo jednoduché do hry výše zmíněné herní obrazovky přidat.
 
     \verb|GameState| si v sobě uchovává všechny systémy, které jsou rozděleny do dvou kolekcí. První je kolekce \verb|renderSystems|, která obsahuje všechny systémy, které řeší vykreslování. Druhá kolekce je \verb|systems|, která obsahuje všechny ostatní systémy.
 
     \verb|GameState| má na sobě definované dvě klíčové metody a to \verb|Update| a \verb|Draw|. V \verb|Update| se zpracují všechny systémy z kolekce \verb|systems| a v \verb|Draw| se zpracují všechny systémy z kolekce \verb|renderSystems|.
 
-    \texttt{Game} má v jeden moment aktivní pouze jeden herní stav pro který ve své metodě \texttt{Update} volá \texttt{Update} na tomto herním stavu a ve své metodě \texttt{Draw} volá \texttt{Draw} na tomto herním stavu.
+    \texttt{Game} má v jeden moment aktivní pouze jedenu herní obrazovku pro kterou ve své metodě \texttt{Update} volá \texttt{Update} na této herní obrazovce a ve své metodě \texttt{Draw} volá \texttt{Draw} na této herní obrazovce.
 
-    Mezi Důležité členy, které \verb|GameState| obsahuje patří:
+    Mezi důležité členy, které \verb|GameState| obsahuje patří:
 
     \begin{enumerate}
         \item \textbf{\texttt{ECSWorld}:} Tento člen implementuje rozhraní \verb|IECSWorld| a představuje správce všech entit a komponent uvnitř jednoho \verb|GameState|.
@@ -44,7 +44,7 @@ Páteřní kód naší hry se skládá z následujících tříd:
         \item \textbf{\texttt{UILayer}:} Jedná se o správce prvků uživatelského rozhraní uvnitř jednoho \verb|GameState|.
     \end{enumerate}
 
-    \verb|GameState| obsahuje metodu \verb|Initialize| ve které jsou volány abstraktní metody \verb|CreateEntities|, \verb|CreateSystems|, \verb|CreateRenderSystems| a \verb|CreateUI|.
+    \verb|GameState| obsahuje metodu \verb|Initialize| ve které jsou volány abstraktní metody \verb|CreateEntities|, \verb|CreateSystems|, \verb|CreateRenderSystems| a \verb|CreateUI|, pomocí kterých jednotlivý potomci vytvářejí své entity, systémy a prvky uživatelského rozhraní.
 
     \item \textbf{\texttt{LevelState}:} Třída \verb|LevelState| dědí od třídy \verb|GameState| a reprezentuje herní obrazovku, která obsahuje samotný level.
 
@@ -52,11 +52,11 @@ Páteřní kód naší hry se skládá z následujících tříd:
 \end{enumerate}
 
 \section{Herní svět}
-Herní svět je reprezentován třídou \verb|GameWorld|. Tato třída obsahuje grid s informacemi o terénu, který je použit pro hledání cest. Do herního světa je možné přidávat suroviny skrze metodu \verb|AddResource|. Je také možné se dotazovat na informace ohledně terénu na konkrétní pozici v herním světě skrze metody \verb|GetTerrain|, \verb|IsWalkable|, \verb|IsBuildable|.
+Herní svět je reprezentován třídou \verb|GameWorld|. Tato třída obsahuje grid s informacemi o terénu, který je použit pro hledání cest. Do herního světa je možné přidávat suroviny skrze metodu \verb|AddResource|. Je také možné se dotazovat na informace ohledně terénu na konkrétní pozici v herním světě skrze metody \verb|GetTerrain|, \verb|CanWalkAt|, \verb|CanBuildAt|.
 
 O generování herního světa se stará třída \verb|GameWorldGenerator|. Při generování světa se nejprve vygeneruje samotný terén, poté dojde ke generování surovin a následně ke generování vesnic.
 
-Pro generování světa používáme dva shadery, konkrétně fragment shader pro vykreslování terénu, definovaný v souboru \textit{terrainDraw.fx} a compute shader pro generování gridu, definovaný v souboru \textit{terrainGen.fx}. Oba shadery využívají společnou část definovanou v souboru \textit{terrain.fx}.
+Pro generování světa používáme dva shadery, konkrétně fragment shader pro vykreslování terénu, definovaný v souboru \textit{terrainDraw.fx} a compute shader pro generování dvourozměrného pole, které se používá pro hledání cest, definovaný v souboru \textit{terrainGen.fx}. Oba shadery využívají společnou část definovanou v souboru \textit{terrain.fx}.
 
 Společná část definovaná v souboru \textit{terrain.fx} je zodpovědná za generování terénu. Pro generování terénu je použit simplexův šum na jehož generování je využita knihovna lygia~\cite{lygia}. Pomocí simplexova šumu je vygenerována výšková mapa, která je poté namapována v příslušné biomy. Ve společné části jsou definované dvě důležité funkce a to \verb|CalcNoise|, která spočítá výšku pro specifikovanou pozici a \verb|GetTerrain|, která přijme výšku a na základě ní navrátí informace o daném biomu, který je pro tuto výšku mapován.
 
@@ -77,28 +77,27 @@ Následující kód je definicí surovin z naší hry a slouží jako příklad 
 
 \begin{verbatim}
 /// <summary>
-/// Represent a type of natural resource, which can be
-/// harvested to obtain resources.
+/// Represent a type of a natural resource, which can
+/// be harvested to obtain items.
 /// </summary>
-internal sealed class ResourceType 
+internal sealed class ResourceType
   : GlobalInstances<ResourceType>
 {
   /// <summary>
-  /// The item obtained upon harvesting resource.
+  /// The item obtained upon harvesting the resource.
   /// </summary>
   public ItemType HarvestItem { get; init; }
   /// <summary>
-  /// The number of items obtained upon harvesting the
-  /// resource.
+  /// The number of items obtained upon harvesting
+  /// the resource.
   /// </summary>
   public int HarvestQuantity { get; init; }
   /// <summary>
-  /// Time it takes to harvest the resource in seconds.
+  /// How much time it takes to harvest the resource
+  /// in seconds.
   /// </summary>
   public float HarvestTime { get; init; }
-
   private ResourceType() : base() { }
-  
   public readonly static ResourceType Tree = new()
   {
     HarvestItem = ItemType.Wood,

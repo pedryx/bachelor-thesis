@@ -14,7 +14,7 @@ Aby nám naše hra napomohla ke splnění práce, budeme chtít aby splňovala n
 
     \item \textbf{Hra by neměla využívat častého přidávání a odebírání komponent:} Přidaní a odebraní komponenty představuje pro některé ECS knihovny náročnější operaci. Ovšem to jestli hra využívá častého přidávání a odebírání komponent je závislé čistě na implementaci. Kdyby naše hra používala častého přidávání a odebírání komponent, došlo by k znevýhodnění některých ECS knihoven, které by jinak na tom mohli být výkonnostně lépe.
     
-    Ukažme si to na příkladu proč je přidávání a odebírání komponent závislé čistě na implementaci. Konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pokud by nám časté přidávání a odebírání komponent nevadilo, tak by jeden z typických přístupů byl vytvořit \verb|Starvation| komponentu a přidat jí na každou entitu, která začne hladovět. V případě, že se příslušná entita nasytí jídlem, tak přestane hladovět a dojde k odebrání této komponenty. Pokud bychom chtěli stejnou mechaniku navrhnout bez častého přidávání a odebírání komponent, tak jeden z možných způsobů by byl dát každé entitě co může hladovět \texttt{Hunger} komponentu, ve které by byl flag \verb|Starvation| který by rozhodoval o tom jestli daná entita hladoví či nikoliv.
+    Ukažme si na příkladu, proč je přidávání a odebírání komponent závislé čistě na implementaci. Konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pokud by nám časté přidávání a odebírání komponent nevadilo, tak by jeden z typických přístupů byl vytvořit \verb|Starvation| komponentu a přidat jí na každou entitu, která začne hladovět. V případě, že se příslušná entita nasytí jídlem, tak přestane hladovět a dojde k odebrání této komponenty. Pokud bychom chtěli stejnou mechaniku navrhnout bez častého přidávání a odebírání komponent, tak jeden z možných způsobů by byl dát každé entitě co může hladovět \texttt{Hunger} komponentu, ve které by byl flag \verb|Starvation| který by rozhodoval o tom jestli daná entita hladoví či nikoliv.
     
     \item \textbf{Velký počet entit:} Velký počet entit nám usnadní měření výkonu naší hry. Také nám zaručí, že systémy budou vykonávat netriviální množství práce. Zároveň si tím vyzkoušíme velký výkon, kterým ECS disponuje. Velký počet entit nám také implikuje větší herní svět.
     
@@ -38,7 +38,7 @@ Aby nám naše hra napomohla ke splnění práce, budeme chtít aby splňovala n
 \subsection{Simulace}
 Žánrem naší hry bude simulace, ale řekněme si nejprve co to vlastně je. Simulace je žánr video her, který se snaží simulovat agenty v jejich prostředí. U nás agenti budou vesničané a jejich prostředí bude příroda.
 
-Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostatním žánrům) vymyslet herní design, který má velký počet entit a netriviálně velký svět. Další velkou výhodou je malí vliv uživatele na průběh hry, to nám umožní lépe provádět měření. Konkrétně v naší hře hráč bude spíše pozorovatel, který sleduje jak simulace probíhá.
+Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostatním žánrům) vymyslet herní design, který má velký počet entit a netriviálně velký svět. Další velkou výhodou je malí vliv uživatele na průběh hry, to nám umožní lépe provádět měření. Konkrétně v naší hře bude hráč spíše pozorovatel, který sleduje jak simulace probíhá.
 
 % \\
 % \xxx{Proc jsme zvolili simulaci?}
@@ -49,7 +49,7 @@ Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostat
 
 \section{Herní specifikace}
 % intro
-Nyní si představíme specifikaci naší hry. Cela hra se dá rozdělit na dva hlavní prvky. Konkrétně svět a vesnice. Specifikujeme si tedy každý z nich.
+Nyní si představíme specifikaci naší hry. Celá hra se dá rozdělit na dva hlavní prvky. Konkrétně svět a vesnice. Specifikujeme si tedy každý z nich.
 
 Prvně než si začneme specifikovat jednotlivé prvky, je nutné říci, že se jedná o 2D hru. Hráč v této hře zastává roli pozorovatele a celí svět pozoruje skrze kameru pohledem ze shora. Ovládá pouze pozici a přiblížení této kamery.
 
@@ -78,7 +78,7 @@ Jak již bylo zmíněno v jednotlivých biomech se můžou nacházet suroviny. S
     \item \textit{Strom} (\verb|Tree|): Po pokácení \textit{stromu} lze získat předmět \textit{dřeva}. \textit{Stromy} se nacházejí ve velkém množství v biomu \textit{lesa}.
     \item \textit{Naleziště kamene} (\verb|Rock|): Sklizením \textit{naleziště kamene} je možné získat předmět \textit{kamene}. \textit{Naleziště kamene} se nacházejí v biomu \textit{hory}.
     \item \textit{Naleziště železné rudy} (\verb|Deposit|): Po sklizení \textit{naleziště železné rudy} je možné získat předmět \textit{železná ruda}. \textit{Naleziště železné rudy} se objevuje v biomu \textit{vysoká hora}.
-    \item \textit{Jelen} (\verb|Deer|): \textit{Jeleni} na rozdíl od jiných typů surovin umí chodit. Náhodně se pohybují po biomu \textit{louky}, ve které se také objevují. Po sklizení jelena je možné získat předmět \textit{masa}.
+    \item \textit{Jelen} (\verb|Deer|): \textit{Jeleni}, na rozdíl od jiných typů surovin, umí chodit. Náhodně se pohybují po biomu \textit{louky}, ve které se také objevují. Po sklizení jelena je možné získat předmět \textit{masa}.
 \end{enumerate}
 
 Předměty získané skrze sklizení suroviny, je dále možné zpracovat v příslušné budově. Každý předmět se může zpracovávat jinak dlouho. Hra obsahuje následující předměty:

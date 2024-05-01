@@ -61,7 +61,7 @@ Prvně než si začneme specifikovat jednotlivé prvky, je nutné říci, že se
 % - - rocks
 % - - iron
 \subsection{Herní svět}
-Herní svět je náhodně generovaný s pevnou velikostí a skládá se z několika biomů. Každý biom je reprezentován jinou barvou a nacházejí se v něm odlišné suroviny. Zároveň pro každý biom je určeno zda po něm můžou vesničané chodit nebo stavět. Herní svět obsahuje následující biomy:
+Herní svět je náhodně generovaný s pevnou velikostí a skládá se z několika biomů. Každý biom je reprezentován jinou barvou a nacházejí se v něm odlišné suroviny. Zároveň pro každý biom je určeno zda po něm mohou vesničané chodit nebo stavět. Herní svět obsahuje následující biomy:
 
 \begin{enumerate}
     \item \textit{Voda} (\verb|Water|): Reprezentuje vodní plochu. Není na ní možné chodit ani stavět.
@@ -72,7 +72,7 @@ Herní svět je náhodně generovaný s pevnou velikostí a skládá se z někol
     \item \textit{Vysoká hora} (\verb|High Mountain|): \textit{Vysoká hora je vždy obklopena \textit{horou}}. Je pokryta sněhovou plochou. Je možné na ní chodit ale není možné na ní stavět. Nachází se na ní \textit{naleziště železné rudy}.
 \end{enumerate}
 
-Jak již bylo zmíněno v jednotlivých biomech se můžou nacházet suroviny. Suroviny se rozdělují do několika typů. Typ suroviny udává jak dlouho trvá ji sklidit, jaký předmět lze získat po jejím sklizení a počet těchto předmětů, který lze získat po jejím sklizení. Hra obsahuje následující suroviny:
+Jak již bylo zmíněno v jednotlivých biomech se mohou nacházet suroviny. Suroviny se rozdělují do několika typů. Typ suroviny udává jak dlouho trvá ji sklidit, jaký předmět lze získat po jejím sklizení a počet těchto předmětů, který lze získat po jejím sklizení. Hra obsahuje následující suroviny:
 
 \begin{enumerate}
     \item \textit{Strom} (\verb|Tree|): Po pokácení \textit{stromu} lze získat předmět \textit{dřeva}. \textit{Stromy} se nacházejí ve velkém množství v biomu \textit{lesa}.
@@ -109,7 +109,7 @@ Každý vesničan má svoje \textit{pracovní místo} (\verb|WorkPlace|). Vesni�
     \item \textit{Lovec} (\verb|Hunter|): Obstarává \textit{jídlo}.
 \end{enumerate}
 
-Všechny vesnice začínají s \textit{hlavní budovou}, \textit{skladištěm} a \textit{budovou dřevorubce}. Budovy lze rozdělit do dvou kategorii a to speciální a budovy pro zpracování předmětů. V budovách pro zpracování předmětů je možné přepracovat předměty v jiné předměty, zároveň slouží jako \textit{pracovní místo} pro vesničany. Vždy když je postavena nová budova pro zpracování předmětů, objeví se nový vesničan, kterému bude přidělena příslušná profese podle této budovy. Speciální budovy slouží ke speciálním účelům a patří mezi ně všechny ostatní budovy. V každé vesnici se můžou nacházet následující typy budov:
+Všechny vesnice začínají s \textit{hlavní budovou}, \textit{skladištěm} a \textit{budovou dřevorubce}. Budovy lze rozdělit do dvou kategorii a to speciální a budovy pro zpracování předmětů. V budovách pro zpracování předmětů je možné přepracovat předměty v jiné předměty, zároveň slouží jako \textit{pracovní místo} pro vesničany. Vždy když je postavena nová budova pro zpracování předmětů, objeví se nový vesničan, kterému bude přidělena příslušná profese podle této budovy. Speciální budovy slouží ke speciálním účelům a patří mezi ně všechny ostatní budovy. V každé vesnici se mohou nacházet následující typy budov:
 
 \begin{enumerate}
     \item \textit{Hlavní budova} (\verb|MainBuilding|): Jedná se o speciální budovu, která reprezentuje danou vesnici. Každá vesnice má právě jednu hlavní budovu. Nemá žádný jiný zvláštní účel.

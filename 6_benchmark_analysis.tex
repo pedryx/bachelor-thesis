@@ -21,7 +21,8 @@ Jak je možné nahlédnout, při každé iteraci \textit{game loop} dochází k 
 V případě naší hry dojde při každém zavolání funkce \texttt{Draw} také k zavolání metody \texttt{Update} na všech systémech, které se starají o vykreslování. Podobně při každém zavolání funkce \texttt{Update} dojde také k zavolání metody \texttt{Update} na všech ostatních systémech.
 
 \section{Přístupy k měření výkonu}
-Nejpřímočařejší způsob pro měření výkonu hry je změřit jak dlouho trvá jedna iterace \textit{game loop}. Ovšem tento způsob je pro nás velice nevhodný, jelikož časy trvání každé iterace \textit{game loop} se můžou výrazně lišit.
+\label{sec:performance-measurements}
+Nejpřímočařejší způsob pro měření výkonu hry je změřit jak dlouho trvá jedna iterace \textit{game loop}. Ovšem tento způsob je pro nás velice nevhodný, jelikož časy trvání každé iterace \textit{game loop} se mohou výrazně lišit.
 
 Lepší způsob by bylo změřit čas trvání vícero iterací a následně spočítat jejich průměr. Při dostatečně velkém počtu iterací, tím získáme průměrný čas trvání jedné iterace \textit{game loop}. Toto je zároveň způsob, který jsme zvolili.
 

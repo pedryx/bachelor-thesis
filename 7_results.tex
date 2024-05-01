@@ -1,19 +1,28 @@
 \chapter{Experimenty a výsledky}
-V této kapitole si nejprve představíme jak provádíme náš experiment. Následně budeme prezentovat jeho výsledky.
+V této kapitole si nejprve shrneme jak provádíme náš experiment. Následně budeme prezentovat jeho výsledky.
 
 \section{Popis experimentů}
-Shrneme si jak vlastně provádíme měření.
+V sekci~\ref{sec:performance-measurements} bylo řečeno, že měříme průměrný čas trvání jedné iterace \textit{game loop}. Ovšem ve skutečnosti měříme celkové trvání pevného počtu iterací. Výsledek je stejný, akorat je větší o násobek počtu iterací. To nám ale nevadí, jelikož tento počet iterací je stejný pro každou měřenou knihovnu.
 
-Zvládneme měřit velký počet knihoven ale nyní se zaměříme pouze na následující, kterými se zabýval původní test a jsou také populárními ecs knihovnami pro csharp.
+Před samotným měřením provádíme přípravu. Během přípravy vytvoříme instanci hry, kterou následně inicializujeme a poté necháme běžet pevný počet iterací. Poté co doběhne příprava tak probíhá samotné měření, při kterém  necháváme hru běžet pevný počet iterací (ne nutně stejný jako při přípravě).
+
+Zvládneme měřit velký počet knihoven, ale vytvářet porovnání budeme pouze z knihoven, které jsou něčím zajímavé. Mezi důvody zařazení patří například velký/malý výkon nebo popularita. Konkrétně budeme měřit výkon u následujících knihoven:
 
 \begin{enumerate}
     \item Arch~\cite{Arch}
     \item DefaultEcs~\cite{DefaultEcs}
     \item Entitas~\cite{Entitas}
+    \item FrifloEngineEcs~\cite{FrifloEngine}
     \item HypEcs~\cite{HypEcs}
     \item LeoECS~\cite{LeoECS}
-    \item \xxx{Další knihovny???}
+    \item LeoEcsLite~\cite{LeoEcsLite}
+    \item MonoGame.Extended.Entities~\cite{MonoGameExtended}
+    \item RelEcs~\cite{RelEcs}
 \end{enumerate}
+
+V sekci~\ref{sec:abstract-layer} jsme si říkali, že konkrétní ECS knihovna je reprezentována třídou implementující rozhraní \texttt{IECSFactory}. Tato třída je při spuštění hry předána jako generický parametr třídě \texttt{Game}. Tím dojde k výběru konkrétní ECS knihovny.
+
+Náš test přijímá jako parametr typ, který je právě výše zmíněná třída. Náš test tedy postupně spouštíme z třídami, které reprezentují jednotlivé ECS knihovny.
 
 \section{Výsledky}
 Následující přehled zobrazuje jednotlivé ECS knihovny a jejich výsledky.

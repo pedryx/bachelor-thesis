@@ -8,7 +8,7 @@ Pro tvorbu hry byl použit MonoGame framework~\cite{MonoGame}, ovšem základní
 Některé typy z abstrakční vrstvy jsme si již představili v sekci \ref{section:abstract-layer-analysis}. Pro připomenutí si nyní tyto typy lehce představíme znovu a zároveň si popíšeme další důležité typy z abstrakční vrstvy:
 
 \begin{enumerate}
-    \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Instance typů, které implementují toto rozhraní představují kompletní systém. Tyto typy obsahují logiku pro iteraci přes jednotlivé entity. O zpracování jednotlivých entit se stará \texttt{EntityProcessor}. Každá instance kompletního systému má na sobě právě jeden \texttt{EntityProcessor}. Například \texttt{ArchSystem<TEntityProcessor, TComponent>} je systém, který obsahuje logiku pro procházení entit z ECS knihovny \textit{Arch}~\cite{Arch}.
+    \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Instance typů, které implementují toto rozhraní, představují kompletní systém. Tyto typy obsahují logiku pro iteraci přes jednotlivé entity. O zpracování jednotlivých entit se stará \texttt{EntityProcessor}. Každá instance kompletního systému má na sobě právě jeden \texttt{EntityProcessor}. Například \texttt{ArchSystem<TEntityProcessor, TComponent>} je systém, který obsahuje logiku pro procházení entit z ECS knihovny \textit{Arch}~\cite{Arch}.
 
     \item \textbf{\texttt{IEntityProcesor}:} Jedná se o rozhraní, které ma na sobě klíčovou metodu \texttt{Process}. Typy, které implementují toto rozhraní obsahují herní logiku, která zpracovává jednotlivé entity. Například \verb|MovementSystem| ve své metodě \verb|Process| zpracuje pohyb pro danou entitu.
 
@@ -20,14 +20,14 @@ Některé typy z abstrakční vrstvy jsme si již představili v sekci \ref{sect
 
     \item \textbf{\texttt{IEntity}:} Jedná se o rozhraní. Typy, které implementují toto rozhraní představují entitu v konkrétní ECS knihovně.
 
-    \item \textbf{\texttt{ComponentAttribute}:}. Některé ECS knihovny potřebují před spuštěním hry vědět o typech všech komponent, které budou ve hře používány. Proto typ jakékoliv komponenty, je označen tímto atributem a v případě, že některá ECS knihovna bude potřebovat znát typy jednotlivých komponent, může si skrze reflexi najít všechny typy s tímto atributem.
+    \item \textbf{\texttt{ComponentAttribute}:}. Některé ECS knihovny potřebují před spuštěním hry vědět o typech všech komponent, které budou ve hře používány. Proto je typ jakékoliv komponenty označen tímto atributem a v případě, že některá ECS knihovna bude potřebovat znát typy jednotlivých komponent, může si skrze reflexi najít všechny typy s tímto atributem.
 \end{enumerate}
 
 \section{Páteřní kód}
 Páteřní kód naší hry se skládá z následujících tříd:
 
 \begin{enumerate}
-    \item \textbf{\texttt{Game}:} Tato třída představuje samotnou hru. Dědí od třídy \texttt{Microsoft.Xna} \texttt{.Framework.Game} a přetěžuje od ní klíčové metody \verb|Update| a \verb|Draw|. Tato třída přijímá jako generický argument typ, který implementuje rozhraní \texttt{IECSFactory}. Pomocí tohoto typu je možné zvolit konkrétní implementaci abstrakční vrstvy neboli konkrétní ECS knihovnu se kterou bude hra pracovat.
+    \item \textbf{\texttt{Game}:} Tato třída představuje samotnou hru. Dědí od třídy \texttt{Microsoft.Xna} \texttt{.Framework.Game} a přetěžuje od ní klíčové metody \verb|Update| a \verb|Draw|. Tato třída přijímá skrze konstruktor instanci typu, který implementuje rozhraní \texttt{IECSFactory}. Pomocí této instance je možné zvolit konkrétní implementaci abstrakční vrstvy neboli konkrétní ECS knihovnu se kterou bude hra pracovat.
 
     \item \textbf{\texttt{GameState}:} Abstraktní třída \verb|GameState| představuje herní obrazovku. Herní obrazovky mohou být například Menu, Nastavení, nebo Level. I přesto, že naše hra obsahuje pouze jednu herní obrazovku, díky této třídě by bylo jednoduché do hry výše zmíněné herní obrazovky přidat.
 

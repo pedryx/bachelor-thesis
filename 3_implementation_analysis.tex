@@ -91,7 +91,7 @@ Každá implementace abstrakční vrstvy bude mít několik typů, které bude m
 
 Zavedeme si tedy abstraktní třídu \verb|ECSFactory|. Každá konkrétní implementace abstrakční vrstvy poskytne třídu, které bude dědit od \verb|ECSFactory|.
 
-Vzniká nám tu problém a to v tom, že pokud chceme vytvořit instanci systému (třídy, která dědí od \verb|IECSSystem|), je nutné ji předat krom typu konkrétního \verb|EntityProcessor| také typy jednotlivých komponent se kterými bude systém pracovat (musí je předat \textit{query}). Ovšem tato informace je redundantní jelikož typy těchto komponent jsou zřejmé z konkrétního \verb|EntityProcessor|, který předáváme. Tímto nám vznikají méně přehledné a zdlouhavé řádky kódu pro vytváření jednotlivých systémů. Například pokud bychom měli \verb|ArchSystem| jako typ systému ECS knihovny \textit{Arch}~\cite{Arch} a \verb|PathFollowSystem| jako \verb|EntityProcessor|, který pracuje nad komponentami \verb|Location| (obsahuje informaci o pozici entity), \verb|Movement| (obsahuje informace o pohybu entity) a \verb|PathFollow| (obsahuje informace o pohybu entity po cestě), tak konstrukce instance tohoto systému by vypadala takto: \texttt{new ArchSystem<PathFollowSystem, Location, Movement, PathFollow>()}.
+Vzniká nám tu problém a to v tom, že pokud chceme vytvořit instanci systému (třídy, která dědí od \verb|IECSSystem|), je nutné ji předat kromě typu konkrétního \verb|EntityProcessor| také typy jednotlivých komponent se kterými bude systém pracovat (musí je předat \textit{query}). Ovšem tato informace je redundantní jelikož typy těchto komponent jsou zřejmé z konkrétního \verb|EntityProcessor|, který předáváme. Tímto nám vznikají méně přehledné a zdlouhavé řádky kódu pro vytváření jednotlivých systémů. Například pokud bychom měli \verb|ArchSystem| jako typ systému ECS knihovny \textit{Arch}~\cite{Arch} a \verb|PathFollowSystem| jako \verb|EntityProcessor|, který pracuje nad komponentami \verb|Location| (obsahuje informaci o pozici entity), \verb|Movement| (obsahuje informace o pohybu entity) a \verb|PathFollow| (obsahuje informace o pohybu entity po cestě), tak konstrukce instance tohoto systému by vypadala takto: \texttt{new ArchSystem<PathFollowSystem, Location, Movement, PathFollow>()}.
 
 Kromě výše zmíněného problému je také další problém v tom, že třída zodpovědná za konstrukci těchto systémů musí vědět o tom jaký \verb|EntityProcessor| pracuje s jakými komponentami. Také pokud bychom chtěli přidat nebo odebrat komponentu pro nějaký \verb|EntityProcessor|, tak bychom museli tuto změnu provést na více místech (na místě definice daného \verb|EntityProcessor| a na místě jeho konstrukce).
 
@@ -106,6 +106,8 @@ Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl
 
 Řešení, které bylo použito na tento problém, je všechny typy komponent definovat jako struktury. V případě, že daná ECS knihovna vyžaduje aby jednotlivé typy komponent byli třídy, tak si definuje svou třídu \texttt{ComponentWrapper}, která jako generický argument přijme typ dané komponenty. Instance této třídy budou mít v sobě uloženou instanci konkrétní komponenty.
 
+Některé ECS knihovny také požadují aby jednotlivé komponenty implementovali specifické rozhraní nebo atribut. V případě těchto knihoven nám postačí toto rozhraní nebo atribut implementovat na příslušný \texttt{ComponentWrapper} (ten nemusí být nutně třídou).
+
 \section{Analýza hry}
 Nyní provedeme analýzu samotné hry, konkrétně se zaměříme na umělou inteligenci, generování terénu a hledání cest.
 
@@ -118,7 +120,7 @@ Jak již víme naše hra bude obsahovat vesničany. Každý vesničan bude repre
     \item \textbf{Stromy chování:} \textit{Stromy chování} jsou složeny z hierarchie vrcholů, která popisuje chování dané entity. Listy \textit{stromu chování} představují konkrétní příkazy, které řídí entitu. Ostatní vrcholy slouží k tomu aby řídili jak se strom bude procházet. Více o \textit{stromech chování} je možné se dočíst ve článku \textit{Behavior trees for AI: How they work}~\cite{BehaviorTrees} od Chrise Simpsona.
 \end{enumerate}
 
-Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Ovšem jak již bylo zmíněno chování našich vesničanů bude velmi jednoduché a pro jeho definování nám postačí tyto jednoduché způsoby.
+Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Ovšem jak již bylo zmíněno chování našich vesničanů bude velmi jednoduché a pro jeho definování nám postačí tyto zmíněné způsoby.
 
 Pro definici chování pro naše vesničany zvolíme \textit{stromy chování}. Hlavním důvodem pro tuto volbu je to, že se jedná o mnohem přehlednější způsob pro definování chování entit. Jelikož hierarchie \textit{stromu chování} popisuje chování dané entity, je možné přímo z definice této hierarchie vidět jak chování funguje. Jako příklad použijeme část ze stromu chování, který byl použit přímo pro naše vesničany:
 
@@ -167,7 +169,7 @@ Naše hra bude obsahovat procedurálně generovaný terén. Ten je možné gener
 Při generování terénu na CPU nám postačí terén vygenerovat pouze jednou při spuštění hry a výsledek si poté uložit do jedné nebo více textur. Tento přístup má ale dva problémy. Prvním problémem je, že pokud dojde k většímu přiblížení nebo oddálení kamery, dojde k deformaci těchto textur. To může způsobit různé vizuální artefakty. Druhým problémem je, že vytváření zmíněných textur může trvat delší dobu. To může vést k delšímu času spouštění hry.
 
 % \subsubsection{Generování terénu na GPU}
-Pro vygenerování terénu na GPU ja potřeba vytvořit shader. Tento shader vezme pozici a přiblížení kamery a vygeneruje pro tyto parametry terén. Díky vysoké paralelizace na GPU můžeme terén generovat za běhu. Při generování terénu za běhu nám nevzniknou výše zmíněné artefakty. Vyřeší se nám i druhý problém, jelikož nemusíme čekat na vygenerování výše zmíněné textury.
+Pro vygenerování terénu na GPU ja potřeba vytvořit shader. Tento shader vezme pozici a přiblížení kamery a vygeneruje pro tyto parametry terén. Díky vysoké paralelizace na GPU můžeme terén generovat za běhu. Při generování terénu za běhu nám nevzniknou výše zmíněné vizuální artefakty. Vyřeší se nám i druhý problém, jelikož nemusíme čekat na vygenerování výše zmíněné textury.
 
 Je snadné nahlédnout, že generování terénu na GPU je pro nás výhodnější, proto tento přístup zvolíme.
 

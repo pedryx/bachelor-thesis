@@ -187,8 +187,12 @@ Pro řešení problému s hledáním cesty si zavedeme \textit{compute shader}, 
 
 % Je nutné použít fork MonoGame, který podporuje compute shadery.
 
+\subsection{Owner komponenta}
+Při práci s ECS je někdy potřeba získat identifikátor příslušné entity. Ovšem v kontextu systému, který pouze iteruje přes komponenty na jednotlivých entitách to může být problematické.
 
+Řešení, které některé ECS knihovny nabízejí je možnost iterovat identifikátory entit společně s jejich komponentami. Ovšem ne každá ECS knihovna to umí, proto je potřeba zvolit jiný přístup.
 
+Přístup, který jsme zvolili je zavedení \texttt{Owner} komponenty. Jednotlivé entity jsou v naší hře reprezentovány třídou dědicí od \texttt{IEntity}. \texttt{Owner} komponenta má pouze jeden jediný člen a to referenci na \texttt{IEntity}, která představuje jejího majitele.
 
 
 

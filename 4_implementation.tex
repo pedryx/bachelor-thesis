@@ -126,9 +126,25 @@ internal sealed class ResourceType
 }
 \end{verbatim}
 
+\section{Herní mechaniky}
+Implementace jednotlivých herních mechanik je možné najít v jednotlivých systémech (myšleno typech dědicích od \texttt{IEntityProcesor}) a komponentách. Všechny komponenty se nacházejí ve jmenném prostoru \texttt{WorldSimulator.Components}. Všechny systémy v \texttt{WorldSimulator.Systems}.
 
+Některé systémy se zabývají vykreslováním hry. Tyto systémy se reprezentují stejným způsobem jako běžné systémy, akorát k jejich vytvoření dojde v metodě \texttt{GameState.CreateRenderSystems} namísto metody \texttt{GameState.CreateSystems}, ve které se běžně vytvářejí systémy. Za implementaci obou těchto metod jsou zodpovědní potomci třídy \texttt{GameSystem}.
 
+\section{Vesnice a vesničané}
+Jednotlivé vesnice jsou reprezentovány jako entity. Tyto entity na sobě mají \texttt{Village} komponentu, ve které si uchovávají seznam svých budov.
 
+Budovy jsou také reprezentovány jako entity. Entity budov na sobě mají \texttt{Building} komponentu, ve které si uchovávají entitu vesnice, do které spadají.
+
+Budovy pro zpracování surovin na sobě navíc mají \texttt{ResourceProcessor} komponentu. Tyto budovy se starají o zpracování surovin podle daného receptu, který mají uložen v této komponentě. Mechaniku pro zpracování surovin řeší \texttt{ResourceProcessingSystem}.
+
+Budovy pro zpracování surovin mají na sobě také \texttt{VillagerSpawner} komponentu. Ta je společně s \texttt{VillagerSpawningSystem} zodpovědná za mechaniku spawnování vesničanů. Tato komponenta v sobě uchovává informace o tom jak dlouho trvá než dojde ke spawnutí vesničana a o profesi, která bude spawnutému vesničanovi přidělena. V případě, že vesničan zemře, začne odpočet a po jeho ukončení dojde ke spawnutí nového vesničana.
+
+village building system
+
+villagers
+
+\xxx{TODO}
 
 % \chapter{Popis implementace}
 % V této kapitole si blíže představíme implementaci naší hry.

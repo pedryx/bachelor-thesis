@@ -26,11 +26,15 @@ Pro návrh abstrakční vrstvy bude nejprve nutné rozebrat jak jsou jednotlivé
 
 Pro reprezentaci \textit{systémů} v naší abstrakční vrstvě bude nejprve nutné si přiblížit jak jednotlivé ECS knihovny reprezentují \textit{systémy}. Jak již bylo zmíněno, reprezentace \textit{systémů} se v jednotlivých ECS knihovnách dost liší. Významný rozdíl spočívá ve způsobech, jakými iterují \textit{entity}. Tyto způsoby se dají rozdělit do tří kategorií, kde každá kategorie obsahuje tři způsoby. Nyní si rozebereme jednotlivé kategorie a způsoby. Vždy prvně představíme pseudokód pro způsoby z této kategorie a poté danou kategorii popíšeme.
 
+\subsubsection{1. kategorie}
+
 \begin{enumerate}
     \item \verb|Query((entity) => { /**/ })|
     \item \verb|Query((component1, component2) => { /**/ })|
     \item \verb|Query((components1[], components2[]) => { /**/ })|
 \end{enumerate}
+
+\subsubsection{2. kategorie}
 
 Způsoby z této kategorie mají většinou definovanou metodu \verb|Query| (neplést s \textit{query} jako objektem pro iterování \textit{entit}). Tato metoda bývá často implementována na \textit{query} nebo na \textit{world}. Této metodě se předává lambda funkce, která je v případě 1 volána na každou iterovanou \textit{entitu}, v případě 2 volána na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 3 volána na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
 
@@ -40,6 +44,8 @@ Způsoby z této kategorie mají většinou definovanou metodu \verb|Query| (nep
     \item \verb|void Update(component1, component2) { /**/ }|
     \item \verb|void Update(components1[], components2[]) { /**/ }|
 \end{enumerate}
+
+\subsubsection{3. kategorie}
 
 Způsoby z druhé kategorie vyžadují aby \textit{systém} byl třída, dědicí od rozhraní nebo předka. Toto rozhraní nebo předek nabízí abstraktní metodu \verb|Update|, kterou je nutné přetížit. Při iteraci je v případě 4 metoda \verb|Update| volána na každou iterovanou \textit{entitu}, v případě 5 na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 6 na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
 
@@ -100,11 +106,11 @@ Abychom tyto problémy vyřešili, předáme zodpovědnost za konstrukci těchto
 Je také nutné zmínit, že konkrétní implementace abstrakční vrstvy musejí poskytovat vícero tříd dědicích od \verb|IECSSystem|, jelikož je nutné definovat systém co pracuje s jednou komponentou, poté co pracuje s dvěma komponentami a tak dále. \verb|ECSFactory| tedy v konstruktoru přijímá více typů systému a při zavolání \verb|CreateSystem| vybere jeden z nich na základě počtu generických argumentů na typu \verb|EntityProcessor|.
 
 \subsection{Komponenty jako třídy a komponenty jako struktury}
-Jednotlivé ECS knihovny mají různé požadavky na typech jednotlivých komponent. Některé chtějí aby tyto typy byli třídy, jiné zase chtějí aby tyto typy byli struktury a jiné povolují kombinaci obou variant.
+Jednotlivé ECS knihovny mají různé požadavky na typech jednotlivých komponent. Některé chtějí aby tyto typy byli třídy, jiné zase chtějí, aby tyto typy byly struktury a jiné povolují kombinaci obou variant.
 
 Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl třída a jeden struktura. Ovšem toto řešení by vedlo k duplicitnímu kódu.
 
-Řešení, které bylo použito na tento problém, je všechny typy komponent definovat jako struktury. V případě, že daná ECS knihovna vyžaduje aby jednotlivé typy komponent byli třídy, tak si definuje svou třídu \texttt{ComponentWrapper}, která jako generický argument přijme typ dané komponenty. Instance této třídy budou mít v sobě uloženou instanci konkrétní komponenty.
+Řešení, které bylo použito na tento problém, je všechny typy komponent definovat jako struktury. V případě, že daná ECS knihovna vyžaduje aby jednotlivé typy komponent byly třídy, tak si definuje svou třídu \texttt{ComponentWrapper}, která jako generický argument přijme typ dané komponenty. Instance této třídy budou mít v sobě uloženou instanci konkrétní komponenty.
 
 Některé ECS knihovny také požadují aby jednotlivé komponenty implementovali specifické rozhraní nebo atribut. V případě těchto knihoven nám postačí toto rozhraní nebo atribut implementovat na příslušný \texttt{ComponentWrapper} (ten nemusí být nutně třídou).
 
@@ -112,7 +118,7 @@ Některé ECS knihovny také požadují aby jednotlivé komponenty implementoval
 Nyní provedeme analýzu samotné hry, konkrétně se zaměříme na umělou inteligenci, generování terénu a hledání cest.
 
 \subsection{Umělá inteligence}
-Jak již víme naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity definovat je více, proto si je nyní rozebereme. Mezi tyto způsoby patří:
+Jak již víme ze sekce~\ref{subsec:villages}, naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity definovat je více, proto si je nyní rozebereme. Mezi tyto způsoby patří:
 
 \begin{enumerate}
     \item \textbf{Stavové automaty:} Nejpřímočařejší způsob je použít pro definici chování \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. Jednotlivé stavy v sobě také mohou mít definované přechody, pomocí nichž mohou přejít do jiného stavu. \textit{Stavové automaty} bývají často reprezentovány pomocí návrhového vzoru \textit{State}, více o něm je možné se dočíst ve stejnojmenné kapitole v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}. Pro více informací o použití \textit{stavových automatů} pro umělou inteligenci je možné nahlédnout do materialu \textit{AI - Finite State Machines}~\cite{AIStateMachines} od \textit{Newcastle University}.

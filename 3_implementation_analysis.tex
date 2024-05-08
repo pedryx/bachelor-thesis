@@ -1,6 +1,25 @@
 % Proc jsem delali rozhodnuti kdyz vznikala ta implementace.
 \chapter{Analýza implementace}
-V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementace a odůvodníme jejich zvolení. Prvně nahlédneme na abstrakční vrstvu a poté na samotnou hru.
+V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementace a odůvodníme jejich zvolení.
+
+% Prvně nahlédneme na abstrakční vrstvu a poté na samotnou hru.
+
+\section{Volba frameworku/enginu}
+Jedním z cílů této práce je udělat hru. V sekci~\ref{sec:ecs-libs} jsme si říkali, že danou hru budeme chtíp použít pro měření ECS knihoven, které používají programovací jazyk C\#. Proto C\# také zvolíme jako programovací jazyk pro naši hru.
+
+Pro tvorbu naší hry bude nutné zvolit herní engine nebo framework.
+% --------
+% volba framework/engine
+%
+% - potrebujeme udelat hru pro csharp
+% - mohli bychom zvolit herni engine jako unity nebo godot
+% - game loop odbocka
+% - enginy nas od game loop odstinuji
+% - framework je pro nas vhodnejsi protoze lepsi low level control
+% - nabizi se MonoGame, FNA, dalsi?
+% - background (xna)
+% - syntaxe vicemene stejna
+% - monogame: lepsi dokumentace, dalsi vyhody?
 
 % analyza abstrakce
 \section{Analýza abstrakční vrstvy}

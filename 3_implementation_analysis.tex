@@ -5,21 +5,13 @@ V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementa
 % Prvně nahlédneme na abstrakční vrstvu a poté na samotnou hru.
 
 \section{Volba frameworku/enginu}
-Jedním z cílů této práce je udělat hru. V sekci~\ref{sec:ecs-libs} jsme si říkali, že danou hru budeme chtíp použít pro měření ECS knihoven, které používají programovací jazyk C\#. Proto C\# také zvolíme jako programovací jazyk pro naši hru.
+Jedním z cílů této práce je udělat hru pomocí ECS. V sekci~\ref{sec:ecs-libs} jsme si říkali, že danou hru budeme chtít použít pro měření výkonu ECS knihoven, které používají programovací jazyk C\#. Proto C\# také zvolíme jako programovací jazyk pro naši hru. 
 
-Pro tvorbu naší hry bude nutné zvolit herní engine nebo framework.
-% --------
-% volba framework/engine
-%
-% - potrebujeme udelat hru pro csharp
-% - mohli bychom zvolit herni engine jako unity nebo godot
-% - game loop odbocka
-% - enginy nas od game loop odstinuji
-% - framework je pro nas vhodnejsi protoze lepsi low level control
-% - nabizi se MonoGame, FNA, dalsi?
-% - background (xna)
-% - syntaxe vicemene stejna
-% - monogame: lepsi dokumentace, dalsi vyhody?
+Pro tvorbu naší hry bude nutné zvolit herní engine nebo framework. Jak jsme si říkali v sekci~\ref{sec:abstract-layer} naše hra bude namísto konkrétní ECS knihovny, pracovat pouze s abstrakční vrstvou. Budeme tedy chtít aby pro pro naši hru běžící s tímto enginem či frameworkem bylo možné specifikovat konkrétní implementaci abstrakční vrstvy, se kterou hra bude pracovat. Dále tuto hru budeme chtít použít pro vytvoření porovnání různých ECS knihoven. Budeme tedy požadovat aby ji bylo možné spouštět z jednoho měření s různými implementacemi abstrakční vrstvy, které budou odpovídat daným ECS knihovnám.
+
+Herní enginy, jako je například Unity, nám schovávají low-level části hry, jako je například game loop. Také často přebírají kontrolu nad projektem. Mohlo by tedy být problematické naši hru spouštět nebo využívat její části z jiného kódu. To by nám mohlo dělat potíže v případě specifikace konkrétní implementace abstrakční vrstvy nebo při provádění našeho porovnání, ze kterého bychom chtěli naši hru spouštět s různými implementacemi abstrakční vrstvy.
+
+Zaměřme se tedy na namísto herních enginů, na herní frameworky. Pokud nahlédneme na vydané hry na platformě Steam, tak nejpopulárnějším herním frameworkem pro C\# je Microsoft XNA. Bohuzel tento framework už není delší dobou firmou Microsoft, která je jeho autorem, podporován. Ovšem jelikož byl Microsoft XNA framework velice populární, po skončení jeho podpory vzniklo několik open source reimplementací, které v podpoře a vývoji tohoto herního frameworku pokračují. Mezi nejpopulárnější z nich patří FNA~\cite{FNA} a MonoGame~\cite{MonoGame}. Oba tyto frameworky jsou si syntaxí velice podobné, my pro implementaci naši hry zvolíme MonoGame z důvodů osobní preference autora.
 
 % analyza abstrakce
 \section{Analýza abstrakční vrstvy}

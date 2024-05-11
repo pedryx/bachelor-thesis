@@ -127,56 +127,28 @@ Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl
 
 Některé ECS knihovny také požadují aby jednotlivé komponenty implementovali specifické rozhraní nebo atribut. V případě těchto knihoven nám postačí toto rozhraní nebo atribut implementovat na příslušný \texttt{ComponentWrapper} (ten nemusí být nutně třídou).
 
+\xxx{rozbor jednotlivých ECS knihoven?}
+
 \section{Umělá inteligence}
-Jak již víme ze sekce~\ref{subsec:villages}, naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity definovat je více, proto si je nyní rozebereme. Mezi tyto způsoby patří:
+Jak již víme ze sekce~\ref{subsec:villages}, naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Každý vesničan na sobě bude mít \texttt{Behavior} komponentu, která bude popisovat jeho chování. Také zde bude \texttt{BehaviorSystem}, který bude zpracovávat logiku umělé inteligence pro každou entitu s \texttt{Behavior} komponentou.
+
+Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity popsat nebo definovat je více, proto si je nyní rozebereme. Mezi tyto způsoby patří:
 
 \begin{enumerate}
-    \item \textbf{Stavové automaty:} Nejpřímočařejší způsob je použít pro definici chování \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. Jednotlivé stavy v sobě také mohou mít definované přechody, pomocí nichž mohou přejít do jiného stavu. \textit{Stavové automaty} bývají často reprezentovány pomocí návrhového vzoru \textit{State}, více o něm je možné se dočíst ve stejnojmenné kapitole v již zmiňované knize Game Programming Patterns~\cite{nystrom2014game}. Pro více informací o použití \textit{stavových automatů} pro umělou inteligenci je možné nahlédnout do materialu \textit{AI - Finite State Machines}~\cite{AIStateMachines} od \textit{Newcastle University}.
+    \item \textbf{Stavové automaty:} Přímočarý způsob, kterým lze definovat chování entit je \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. Jednotlivé stavy v sobě také mohou mít definované přechody, pomocí nichž mohou přejít do jiného stavu. Pro více informací o použití \textit{stavových automatů} pro umělou inteligenci je možné nahlédnout do materialu \textit{AI - Finite State Machines}~\cite{AIStateMachines} od \textit{Newcastle University}.
     
     \item \textbf{Stromy chování:} \textit{Stromy chování} jsou složeny z hierarchie vrcholů, která popisuje chování dané entity. Listy \textit{stromu chování} představují konkrétní příkazy, které řídí entitu. Ostatní vrcholy slouží k tomu aby řídili jak se strom bude procházet. Více o \textit{stromech chování} je možné se dočíst ve článku \textit{Behavior trees for AI: How they work}~\cite{BehaviorTrees} od Chrise Simpsona.
 \end{enumerate}
 
 Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Ovšem jak již bylo zmíněno chování našich vesničanů bude velmi jednoduché a pro jeho definování nám postačí tyto zmíněné způsoby.
 
-Pro definici chování pro naše vesničany zvolíme \textit{stromy chování}. Hlavním důvodem pro tuto volbu je to, že se jedná o mnohem přehlednější způsob pro definování chování entit. Jelikož hierarchie \textit{stromu chování} popisuje chování dané entity, je možné přímo z definice této hierarchie vidět jak chování funguje. Jako příklad použijeme část ze stromu chování, který byl použit přímo pro naše vesničany:
+V případě \textit{stavových automatů} by byl \textit{stavový automat} pro každého vesničana uložen přímo v již zmíněné \texttt{Behavior} komponentě. V případě \textit{stromů chování} by se \textit{strom chování} nacházel přímo v \texttt{Behavior} komponentě. Již zmiňovaný \texttt{BehaviorSystem} poté zpracuje příslušnou strukturu na každé \texttt{Behavior} komponentě.
 
-\begin{verbatim}
-FluentBuilder.Create<BehaviorContext>()
-  .Selector("root")
-    .Sequence("hunger")
-      .Condition("is hunger bellow threshold?", IsHungry)
-      .Condition("is there food?", IsThereFood(foodStockpile))
-      .Do("go to get food", MoveTo(foodStockpile))
-      // We need to check again because an another villager
-      // could take the food in the meantime.
-      .Condition("is there food?", IsThereFood(foodStockpile))
-      .Do("get food", GetFood(foodStockpile))
-      .Do("eat food", EatFood)
-    .End()
-  .End()
-  .Build();
-\end{verbatim}
+Porovnání \textit{stavových automatů} a \textit{stromů chování} je možné nalézt ve článku \textit{Finite State Machine \& Behavior Tree in Robotics}~\cite{FMTAndBTInRobotics} od Mingu Kwona. I přesto, že tento článek porovnává oba způsoby v robotice, tak dané poznatky jsou použitelné i v oblasti umělé inteligence.
 
-% Umělou inteligenci je možné definovat také v systémech.
+Ve výše zmíněném článku je možné se dočíst, že mezi nevýhody \textit{stavových automatů} patří rychle rostoucí komplexita při přidávání nových stavů a přechodů a limitovaná schopnost spravovat chování závislé na kontextu. Tyto nevýhody by nám mohli způsobit komplikace při definici chování našich vesničanů.
 
-% Ne vždy je zřejmé co by mělo či nemělo být součástí umělé inteligence.
-
-% Tezba surovin: připsání do inventáře vs damage and drop systém.
-
-% Zpracování surovin: připsání do inventáře vs resource processing systém. 
-
-% \subsection{ECS}
-% Některé systémy proběhnou pro danou entitu pouze pokud je pro ní splněna určitá podmínka.
-
-% Podmínka je drahá operace protože pipeline flush.
-
-% Řešením mohou být eventy. EventQueue, EventReader/EventWriter, csharp events.
-
-% Další možné řešení jsou reaction systémy.
-
-% Proč eventy a reaction systémy nemůžeme použít. Proč nepoužíváme csharp eventy.
-
-% Proč tyto systémy nezpůsobují výkonnostní potíže při správných podmínkách (+ ty podmínky).
+Výše zmíněný článek také říká, že mezi výhody \textit{stromů chování} patří snadná rozšiřitelnost a schopnost efektivně zvládat chování závislé na kontextu. Obě tyto výhody kompenzují výše zmíněné nevýhody \textit{stavových automatů}. Proto také \textit{stromy chování} použijeme pro definici chovaní našich vesničanů.
 
 \section{Procedurální terén}
 \label{sec:terrain}

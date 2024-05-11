@@ -7,14 +7,16 @@ V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementa
 \section{Volba frameworku/enginu}
 Jedním z cílů této práce je udělat hru pomocí ECS. V sekci~\ref{sec:ecs-libs} jsme si říkali, že danou hru budeme chtít použít pro měření výkonu ECS knihoven, které používají programovací jazyk C\#. Proto C\# také zvolíme jako programovací jazyk pro naši hru. 
 
-Pro tvorbu naší hry bude nutné zvolit herní engine nebo framework. Jak jsme si říkali v sekci~\ref{sec:abstract-layer} naše hra bude namísto konkrétní ECS knihovny, pracovat pouze s abstrakční vrstvou. Budeme tedy chtít aby pro pro naši hru běžící s tímto enginem či frameworkem bylo možné specifikovat konkrétní implementaci abstrakční vrstvy, se kterou hra bude pracovat. Dále tuto hru budeme chtít použít pro vytvoření porovnání různých ECS knihoven. Budeme tedy požadovat aby ji bylo možné spouštět z jednoho měření s různými implementacemi abstrakční vrstvy, které budou odpovídat daným ECS knihovnám.
+Pro tvorbu naší hry bude nutné zvolit herní engine nebo framework. Jak jsme si říkali v sekci~\ref{sec:abstract-layer} naše hra bude namísto konkrétní ECS knihovny, pracovat pouze s abstrakční vrstvou. Budeme tedy chtít aby pro pro naši hru běžící s tímto enginem či frameworkem bylo možné specifikovat konkrétní implementaci abstrakční vrstvy, se kterou bude hra pracovat. Dále tuto hru budeme chtít použít pro vytvoření porovnání různých ECS knihoven. Budeme tedy požadovat aby ji bylo možné spouštět z jednoho měření s různými implementacemi abstrakční vrstvy, které budou odpovídat daným ECS knihovnám.
 
 Herní enginy, jako je například Unity, nám schovávají low-level části hry, jako je například game loop. Také často přebírají kontrolu nad projektem. Mohlo by tedy být problematické naši hru spouštět nebo využívat její části z jiného kódu. To by nám mohlo dělat potíže v případě specifikace konkrétní implementace abstrakční vrstvy nebo při provádění našeho porovnání, ze kterého bychom chtěli naši hru spouštět s různými implementacemi abstrakční vrstvy.
 
 Zaměřme se tedy na namísto herních enginů, na herní frameworky. Pokud nahlédneme na vydané hry na platformě Steam, tak nejpopulárnějším herním frameworkem pro C\# je Microsoft XNA. Bohuzel tento framework už není delší dobou firmou Microsoft, která je jeho autorem, podporován. Ovšem jelikož byl Microsoft XNA framework velice populární, po skončení jeho podpory vzniklo několik open source reimplementací, které v podpoře a vývoji tohoto herního frameworku pokračují. Mezi nejpopulárnější z nich patří FNA~\cite{FNA} a MonoGame~\cite{MonoGame}. Oba tyto frameworky jsou si syntaxí velice podobné, my pro implementaci naši hry zvolíme MonoGame z důvodů osobní preference autora.
 
+V pozdější sekci~\ref{sec:terrain} provedeme analýzu generování terénu. Na základě této analýzy vybereme přístup, který bude vyžadovat compute shader. Ovšem nativní MonoGame nemá podporu pro compute shadery, tím pádem použití nativního MonoGame by nám volbu tohoto přístupu znemožnilo. Z toho důvodu použijeme fork~\ref{MonoGameCptMax} MonoGame frameworku, který tuto podporu nabízí.
+
 % analyza abstrakce
-\section{Analýza abstrakční vrstvy}
+\section{Abstrakční vrstvy}
 \label{section:abstract-layer-analysis}
 Abstrakční vrstva pro nás je důležitá, jelikož chceme aby naše hra byla nezávislá na konkrétní ECS knihovně. Program jako takový bude pracovat namísto ECS knihovny pouze s touto abstrakční vrstvou. Pro každou ECS knihovnu, kterou budeme měřit bude nutné vytvořit implementaci této vrstvy. K volbě konkrétní ECS knihovny dojde před spuštěním programu.
 
@@ -125,10 +127,7 @@ Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl
 
 Některé ECS knihovny také požadují aby jednotlivé komponenty implementovali specifické rozhraní nebo atribut. V případě těchto knihoven nám postačí toto rozhraní nebo atribut implementovat na příslušný \texttt{ComponentWrapper} (ten nemusí být nutně třídou).
 
-\section{Analýza hry}
-Nyní provedeme analýzu samotné hry, konkrétně se zaměříme na umělou inteligenci, generování terénu a hledání cest.
-
-\subsection{Umělá inteligence}
+\section{Umělá inteligence}
 Jak již víme ze sekce~\ref{subsec:villages}, naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity definovat je více, proto si je nyní rozebereme. Mezi tyto způsoby patří:
 
 \begin{enumerate}
@@ -179,7 +178,8 @@ FluentBuilder.Create<BehaviorContext>()
 
 % Proč tyto systémy nezpůsobují výkonnostní potíže při správných podmínkách (+ ty podmínky).
 
-\subsection{Procedurální terén}
+\section{Procedurální terén}
+\label{sec:terrain}
 Naše hra bude obsahovat procedurálně generovaný terén. Ten je možné generovat pomocí CPU nebo pomocí GPU. Obě možnosti si nyní rozebereme.
 
 % \subsubsection{Generování terénu na CPU}
@@ -190,7 +190,7 @@ Pro vygenerování terénu na GPU ja potřeba vytvořit shader. Tento shader vez
 
 Je snadné nahlédnout, že generování terénu na GPU je pro nás výhodnější, proto tento přístup zvolíme.
 
-\subsection{Hledání cesty ve vygenerovaném terénu}
+\section{Hledání cesty ve vygenerovaném terénu}
 \label{subsection:path-finding}
 Vesničané musejí často vyhledávat cestu z bodu A do bodu B. Například potřebují dojít ke svému pracovnímu místu, nebo odnést předmět do skladiště.
 
@@ -204,7 +204,7 @@ Pro řešení problému s hledáním cesty si zavedeme \textit{compute shader}, 
 
 % Je nutné použít fork MonoGame, který podporuje compute shadery.
 
-\subsection{Owner komponenta}
+\section{Owner komponenta}
 Při práci s ECS je někdy potřeba získat identifikátor příslušné entity. Ovšem v kontextu systému, který pouze iteruje přes komponenty na jednotlivých entitách to může být problematické.
 
 Řešení, které některé ECS knihovny nabízejí je možnost iterovat identifikátory entit společně s jejich komponentami. Ovšem ne každá ECS knihovna to umí, proto je potřeba zvolit jiný přístup.

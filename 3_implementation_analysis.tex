@@ -16,7 +16,7 @@ Zaměřme se tedy na namísto herních enginů, na herní frameworky. Pokud nahl
 V pozdější sekci~\ref{sec:terrain} provedeme analýzu generování terénu. Na základě této analýzy vybereme přístup, který bude vyžadovat compute shader. Ovšem nativní MonoGame nemá podporu pro compute shadery, tím pádem použití nativního MonoGame by nám volbu tohoto přístupu znemožnilo. Z toho důvodu použijeme fork~\ref{MonoGameCptMax} MonoGame frameworku, který tuto podporu nabízí.
 
 % analyza abstrakce
-\section{Abstrakční vrstvy}
+\section{Abstrakční vrstva}
 \label{section:abstract-layer-analysis}
 Abstrakční vrstva pro nás je důležitá, jelikož chceme aby naše hra byla nezávislá na konkrétní ECS knihovně. Program jako takový bude pracovat namísto ECS knihovny pouze s touto abstrakční vrstvou. Pro každou ECS knihovnu, kterou budeme měřit bude nutné vytvořit implementaci této vrstvy. K volbě konkrétní ECS knihovny dojde před spuštěním programu.
 
@@ -150,25 +150,60 @@ Ve výše zmíněném článku je možné se dočíst, že mezi nevýhody \texti
 
 Výše zmíněný článek také říká, že mezi výhody \textit{stromů chování} patří snadná rozšiřitelnost a schopnost efektivně zvládat chování závislé na kontextu. Obě tyto výhody kompenzují výše zmíněné nevýhody \textit{stavových automatů}. Proto také \textit{stromy chování} použijeme pro definici chovaní našich vesničanů.
 
-\section{Procedurální terén}
+\section{Generovaný svět}
 \label{sec:terrain}
-Naše hra bude obsahovat procedurálně generovaný terén. Ten je možné generovat pomocí CPU nebo pomocí GPU. Obě možnosti si nyní rozebereme.
+Jak jsme si říkali v sekci~\ref{sec:game-world} svět v naší hře bude náhodně generovaný. Konkrétně bude obsahovat náhodně generovaný terén ve kterém budou náhodně umístěny suroviny a vesnice.
 
-% \subsubsection{Generování terénu na CPU}
-Při generování terénu na CPU nám postačí terén vygenerovat pouze jednou při spuštění hry a výsledek si poté uložit do jedné nebo více textur. Tento přístup má ale dva problémy. Prvním problémem je, že pokud dojde k většímu přiblížení nebo oddálení kamery, dojde k deformaci těchto textur. To může způsobit různé vizuální artefakty. Druhým problémem je, že vytváření zmíněných textur může trvat delší dobu. To může vést k delšímu času spouštění hry.
+Náš terén budeme reprezentovat texturou. Každý pixel této textury bude mít barvu odpovídající danému biomu. Například biom vody může mít modrou barvu a biom louky zelenou barvu. Poté všechny modré pixely v naší textuře budou odpovídat biomu vody a všechny zelené biomu louky.
 
-% \subsubsection{Generování terénu na GPU}
-Pro vygenerování terénu na GPU ja potřeba vytvořit shader. Tento shader vezme pozici a přiblížení kamery a vygeneruje pro tyto parametry terén. Díky vysoké paralelizace na GPU můžeme terén generovat za běhu. Při generování terénu za běhu nám nevzniknou výše zmíněné vizuální artefakty. Vyřeší se nám i druhý problém, jelikož nemusíme čekat na vygenerování výše zmíněné textury.
+Naši hru budeme používat převážně pro měření výkonu ECS knihoven, tím pádem nemáme na generování našeho terénu žádné složité požadavky. Mezi naše požadavky patří:
 
-Je snadné nahlédnout, že generování terénu na GPU je pro nás výhodnější, proto tento přístup zvolíme.
+\begin{enumerate}
+    \item \textbf{Generování terénu by nemělo trvat příliš dlouho:} Pokud by generování terénu trvalo příliš dlouho, vedlo by to k delšímu času spouštění naší hry. Vzhledem k tomu, že hru budeme používat pro měření výkonu ECS knihoven a pro každou knihovnu ji pouštět znovu, delší čas spouštění hry by nám zbytečně natahoval dobu vykonávání jednoho měření.
+    \item \textbf{Spojitost:} Budeme chtít aby terén byl v jistém smyslu spojitý. Konkrétně chceme aby jednotlivé biomy tvořili nepřerušované oblasti.
+    \item \textbf{Možnost navigace:} Ze sekce~\ref{subsec:villages} víme, že hra bude obsahovat vesničany. Pro vesničany bude důležité aby byli schopni se v náhodně vygenerovaném terénu navigovat. Pokud vesničan bude například chtít jít pokácet strom, bude se chtít po cestě k němu vyhnout vodě.
+    \item \textbf{Žádné větší vizuální artefakty:} Nutně nevyžadujeme hodne dobře vypadající terén, ale zároveň nechceme větší vizuální artefakty.
+\end{enumerate}
 
-\section{Hledání cesty ve vygenerovaném terénu}
-\label{subsection:path-finding}
-Vesničané musejí často vyhledávat cestu z bodu A do bodu B. Například potřebují dojít ke svému pracovnímu místu, nebo odnést předmět do skladiště.
+\subsection{Způsoby pro generování terénu}
 
-V případě generování terénu na CPU by bylo hledání cesty velice jednoduché. Stačilo by nám vzít vygenerovanou texturu a najít danou cestu v ní. Ovšem problém spočívá v tom, že terén generujeme pomocí GPU a vyhledávání cesty musíme vykonávat na CPU.
+Wave function collapse
 
-Pro řešení problému s hledáním cesty si zavedeme \textit{compute shader}, který jako vstupní parametr přijme rozlišení. Výstupem tohoto \textit{compute shaderu} bude dvourozměrné pole sestavené z nevzorkovaného terénu při daném rozlišení. Tento \textit{compute shader} nám tedy při spuštění hry vytvoří dvourozměrné pole na GPU, to si poté stáhneme na CPU a v něm poté můžeme provádět vyhledávání cesty.
+noise height map
+
+\subsection{Generování terénu na CPU vs. GPU}
+
+CPU
+
+GPU
+
+
+
+
+
+
+
+
+
+
+
+% Naše hra bude obsahovat procedurálně generovaný terén. Ten je možné generovat pomocí CPU nebo pomocí GPU. Obě možnosti si nyní rozebereme.
+
+% % \subsubsection{Generování terénu na CPU}
+% Při generování terénu na CPU nám postačí terén vygenerovat pouze jednou při spuštění hry a výsledek si poté uložit do jedné nebo více textur. Tento přístup má ale dva problémy. Prvním problémem je, že pokud dojde k většímu přiblížení nebo oddálení kamery, dojde k deformaci těchto textur. To může způsobit různé vizuální artefakty. Druhým problémem je, že vytváření zmíněných textur může trvat delší dobu. To může vést k delšímu času spouštění hry.
+
+% % \subsubsection{Generování terénu na GPU}
+% Pro vygenerování terénu na GPU ja potřeba vytvořit shader. Tento shader vezme pozici a přiblížení kamery a vygeneruje pro tyto parametry terén. Díky vysoké paralelizace na GPU můžeme terén generovat za běhu. Při generování terénu za běhu nám nevzniknou výše zmíněné vizuální artefakty. Vyřeší se nám i druhý problém, jelikož nemusíme čekat na vygenerování výše zmíněné textury.
+
+% Je snadné nahlédnout, že generování terénu na GPU je pro nás výhodnější, proto tento přístup zvolíme.
+
+% \section{Hledání cesty ve vygenerovaném terénu}
+% \label{subsection:path-finding}
+% Vesničané musejí často vyhledávat cestu z bodu A do bodu B. Například potřebují dojít ke svému pracovnímu místu, nebo odnést předmět do skladiště.
+
+% V případě generování terénu na CPU by bylo hledání cesty velice jednoduché. Stačilo by nám vzít vygenerovanou texturu a najít danou cestu v ní. Ovšem problém spočívá v tom, že terén generujeme pomocí GPU a vyhledávání cesty musíme vykonávat na CPU.
+
+% Pro řešení problému s hledáním cesty si zavedeme \textit{compute shader}, který jako vstupní parametr přijme rozlišení. Výstupem tohoto \textit{compute shaderu} bude dvourozměrné pole sestavené z nevzorkovaného terénu při daném rozlišení. Tento \textit{compute shader} nám tedy při spuštění hry vytvoří dvourozměrné pole na GPU, to si poté stáhneme na CPU a v něm poté můžeme provádět vyhledávání cesty.
 
 % Chceme pěkné cesty, takže výslednou cestu zkrášlujeme.
 

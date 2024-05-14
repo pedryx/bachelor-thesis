@@ -40,7 +40,7 @@ Poté, co budeme mít tuto hru k dispozici, bude možné vytvořit výkonnostní
 % Zároveň takto vytvořená hra pro nás bude velice užitečná neboť nám pomůže při průzkumu možností návrhové vzoru ECS, což je jedním z cílů této práce.
 
 \section{Abstrakční vrstva}
-\label{sec:abstract-layer}
+\label{sec:abstract-layer-intro}
 Vzhledem k tomu, že plánovanou hru budeme chtít využít k porovnávání různých ECS knihoven, je nezbytné navrhnout ji tak, aby fungovala nezávisle na konkrétní ECS knihovně. S ohledem na odlišné API jednotlivých ECS knihoven je nezbytné vytvořit abstrakční vrstvu pro ECS. Pro každou knihovnu, kterou budeme chtít porovnávat, poskytneme implementaci této vrstvy. Samotná hra poté pracuje s touto abstrakční vrstvou.
 
 Vytvoření takovéto vrstvy představuje netriviální úkol, navzdory podobnosti rozhraní jednotlivých ECS knihoven. Významný rozdíl spočívá v rozhraní systémů, které se výrazně liší mezi jednotlivými knihovnami.

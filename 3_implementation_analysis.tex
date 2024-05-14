@@ -7,13 +7,13 @@ V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementa
 \section{Volba frameworku/enginu}
 Jedním z cílů této práce je udělat hru pomocí ECS. V sekci~\ref{sec:ecs-libs} jsme si říkali, že danou hru budeme chtít použít pro měření výkonu ECS knihoven, které používají programovací jazyk C\#. Proto C\# také zvolíme jako programovací jazyk pro naši hru. 
 
-Pro tvorbu naší hry bude nutné zvolit herní engine nebo framework. Jak jsme si říkali v sekci~\ref{sec:abstract-layer} naše hra bude namísto konkrétní ECS knihovny, pracovat pouze s abstrakční vrstvou. Budeme tedy chtít aby pro pro naši hru běžící s tímto enginem či frameworkem bylo možné specifikovat konkrétní implementaci abstrakční vrstvy, se kterou bude hra pracovat. Dále tuto hru budeme chtít použít pro vytvoření porovnání různých ECS knihoven. Budeme tedy požadovat aby ji bylo možné spouštět z jednoho měření s různými implementacemi abstrakční vrstvy, které budou odpovídat daným ECS knihovnám.
+Pro tvorbu naší hry bude nutné zvolit herní engine nebo framework. Jak jsme si říkali v sekci~\ref{sec:abstract-layer-intro} naše hra bude namísto konkrétní ECS knihovny, pracovat pouze s abstrakční vrstvou. Budeme tedy chtít aby pro pro naši hru, běžící se zvoleným enginem či frameworkem, bylo možné specifikovat konkrétní implementaci abstrakční vrstvy, se kterou bude hra pracovat. Dále tuto hru budeme chtít použít pro vytvoření porovnání různých ECS knihoven. Budeme tedy požadovat aby ji bylo možné spouštět z jednoho měření s různými implementacemi abstrakční vrstvy, které budou odpovídat daným ECS knihovnám.
 
 Herní enginy, jako je například Unity, nám schovávají low-level části hry, jako je například game loop. Také často přebírají kontrolu nad projektem. Mohlo by tedy být problematické naši hru spouštět nebo využívat její části z jiného kódu. To by nám mohlo dělat potíže v případě specifikace konkrétní implementace abstrakční vrstvy nebo při provádění našeho porovnání, ze kterého bychom chtěli naši hru spouštět s různými implementacemi abstrakční vrstvy.
 
 Zaměřme se tedy na namísto herních enginů, na herní frameworky. Pokud nahlédneme na vydané hry na platformě Steam, tak nejpopulárnějším herním frameworkem pro C\# je Microsoft XNA. Bohuzel tento framework už není delší dobou firmou Microsoft, která je jeho autorem, podporován. Ovšem jelikož byl Microsoft XNA framework velice populární, po skončení jeho podpory vzniklo několik open source reimplementací, které v podpoře a vývoji tohoto herního frameworku pokračují. Mezi nejpopulárnější z nich patří FNA~\cite{FNA} a MonoGame~\cite{MonoGame}. Oba tyto frameworky jsou si syntaxí velice podobné, my pro implementaci naši hry zvolíme MonoGame z důvodů osobní preference autora.
 
-V pozdější sekci~\ref{sec:terrain} provedeme analýzu generování terénu. Na základě této analýzy vybereme přístup, který bude vyžadovat compute shader. Ovšem nativní MonoGame nemá podporu pro compute shadery, tím pádem použití nativního MonoGame by nám volbu tohoto přístupu znemožnilo. Z toho důvodu použijeme fork~\ref{MonoGameCptMax} MonoGame frameworku, který tuto podporu nabízí.
+V pozdější sekci~\ref{sec:terrain} provedeme analýzu generování terénu. Na základě této analýzy vybereme přístup, který bude vyžadovat compute shader. Ovšem nativní MonoGame nemá podporu pro compute shadery, tím pádem použití nativního MonoGame by nám volbu tohoto přístupu znemožnilo. Z toho důvodu použijeme fork~\cite{MonoGameCptMax} MonoGame frameworku, který tuto podporu nabízí.
 
 % analyza abstrakce
 \section{Abstrakční vrstva}
@@ -165,13 +165,29 @@ Naši hru budeme používat převážně pro měření výkonu ECS knihoven, tí
     \item \textbf{Žádné větší vizuální artefakty:} Nutně nevyžadujeme hodne dobře vypadající terén, ale zároveň nechceme větší vizuální artefakty.
 \end{enumerate}
 
-\subsection{Způsoby pro generování terénu}
+\subsection{Generování terénu}
+Pro generování terénu se běžně používají výškové mapy vygenerované za pomoci šumové funkce. Proto si nejprve jednotlivé šumové funkce představíme a následně jednu z nich zvolíme. Poté si představíme způsob, kterým zvolenou šumovou funkci budeme používat pro generování terénu. Mezi nejpoužívanější šumové funkce patří:
 
-Wave function collapse
+\begin{enumerate}
+    \item \textbf{Perlinův šum:} Jedná se o známou šumovou funkci. Tato šumová funkce je rychlá a také jednoduchá na implementaci. Nejčastěji se používá ve druhé a třetí dimenzi. Více o Perlinovu šumu je možné se dočíst v diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise} od \textit{Tuoma Hyttinena}.
 
-noise height map
+    \item \textbf{Simplexový šum:} \textit{Simplexový šum} je velmi podobný \textit{Perlinovu šumu}. Oproti \textit{Perlinovu šumu} je rychlejší a produkuje výsledky, které vypadají více přirozeně. Více o \textit{Simplexovém šumu} je možné se dočíst v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}.
+\end{enumerate}
+
+My si pro tuto práci zvolíme \textit{Simplexový šum}, jelikož je rychlejší a produkuje více přirozené výsledky. Konkrétně jej budeme používat ve druhé dimenzi.
+
+Nyní za pomoci \textit{Simplexového šumu} vygenerujeme výškovou mapu. Pro generování výškové mapy se často používá Fraktální součet nebo Turbulence. Jedná se o techniky pro generování více komplexních vzorů. O obou technikách je možné se více dočíst v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}. Obě techniky jsou pro nás dobré, ale autorovi práce se více líbí vzhled terénu vygenerovaný Fraktálním součtem, proto jej zvolíme.
+
+Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Pro generování zvolíme přímočarou a běžně populární techniku. Jak jsme si říkali náš terén bude textura, kde barva jednotlivých pixelů bude odpovídat danému biomu. Každý biom bude mít definovaný výškový interval a barvu. Pro souřadnice každého pixelu si necháme vygenerovat výšku z výškové mapy. Poté na základě této výšky a výškových intervalů jednotlivých biomů získáme příslušný biom. Poté barvu daného pixelu nastavíme na barvu daného biomu. O této technice a také o tom jak ji použít pro 3D terén je možné se více dočíst ve článku \textit{Making maps with noise functions}~\cite{TerrainHeightMap} ze stránky \textit{Red Blob Games}.
+
+% \begin{figure}
+%     \centering
+%     \includegraphics[scale=0.15]{img/perlin}
+%     \caption{TODO}
+% \end{figure}
 
 \subsection{Generování terénu na CPU vs. GPU}
+Za použití techniky z minulé sekce jsme získali vygenerovaný terén. Tato technika splňuje požadavky na rychlost a spojitost, ovšem zbylé dva požadavky (možnost navigace a absence vizuálních artefaktů) mohou být porušeny v závislosti na tom zda terén budeme generovat na CPU nebo na GPU. Proto si nyní oba přístupy rozebereme.
 
 CPU
 
@@ -211,12 +227,12 @@ GPU
 
 % Je nutné použít fork MonoGame, který podporuje compute shadery.
 
-\section{Owner komponenta}
-Při práci s ECS je někdy potřeba získat identifikátor příslušné entity. Ovšem v kontextu systému, který pouze iteruje přes komponenty na jednotlivých entitách to může být problematické.
+% \section{Owner komponenta}
+% Při práci s ECS je někdy potřeba získat identifikátor příslušné entity. Ovšem v kontextu systému, který pouze iteruje přes komponenty na jednotlivých entitách to může být problematické.
 
-Řešení, které některé ECS knihovny nabízejí je možnost iterovat identifikátory entit společně s jejich komponentami. Ovšem ne každá ECS knihovna to umí, proto je potřeba zvolit jiný přístup.
+% Řešení, které některé ECS knihovny nabízejí je možnost iterovat identifikátory entit společně s jejich komponentami. Ovšem ne každá ECS knihovna to umí, proto je potřeba zvolit jiný přístup.
 
-Přístup, který jsme zvolili je zavedení \texttt{Owner} komponenty. Jednotlivé entity jsou v naší hře reprezentovány třídou dědicí od \texttt{IEntity}. \texttt{Owner} komponenta má pouze jeden jediný člen a to referenci na \texttt{IEntity}, která představuje jejího majitele.
+% Přístup, který jsme zvolili je zavedení \texttt{Owner} komponenty. Jednotlivé entity jsou v naší hře reprezentovány třídou dědicí od \texttt{IEntity}. \texttt{Owner} komponenta má pouze jeden jediný člen a to referenci na \texttt{IEntity}, která představuje jejího majitele.
 
 
 

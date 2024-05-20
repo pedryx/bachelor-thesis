@@ -5,15 +5,25 @@ V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementa
 % Prvně nahlédneme na abstrakční vrstvu a poté na samotnou hru.
 
 \section{Volba frameworku/enginu}
-Jedním z cílů této práce je udělat hru pomocí ECS. V sekci~\ref{sec:ecs-libs} jsme si říkali, že danou hru budeme chtít použít pro měření výkonu ECS knihoven, které používají programovací jazyk C\#. Proto C\# také zvolíme jako programovací jazyk pro naši hru. 
+Chceme vytvořit hru a s její pomocí porovnat výkon ECS knihoven. Implementace se tedy bude skládat ze dvou částí a to samotné hry a měření, které pomocí naší hry bude měřit výkon jednotlivých ECS knihoven.
 
-Pro tvorbu naší hry bude nutné zvolit herní engine nebo framework. Jak jsme si říkali v sekci~\ref{sec:abstract-layer-intro} naše hra bude namísto konkrétní ECS knihovny, pracovat pouze s abstrakční vrstvou. Budeme tedy chtít aby pro pro naši hru, běžící se zvoleným enginem či frameworkem, bylo možné specifikovat konkrétní implementaci abstrakční vrstvy, se kterou bude hra pracovat. Dále tuto hru budeme chtít použít pro vytvoření porovnání různých ECS knihoven. Budeme tedy požadovat aby ji bylo možné spouštět z jednoho měření s různými implementacemi abstrakční vrstvy, které budou odpovídat daným ECS knihovnám.
+Nyní provedeme volbu engninu/frameworku, který použijeme pro naši hru. Pro tuto volbu si nejprve rozeberme požadavky, které od engninu/frameworku chceme:
 
-Herní enginy, jako je například Unity, nám schovávají low-level části hry, jako je například game loop. Také často přebírají kontrolu nad projektem. Mohlo by tedy být problematické naši hru spouštět nebo využívat její části z jiného kódu. To by nám mohlo dělat potíže v případě specifikace konkrétní implementace abstrakční vrstvy nebo při provádění našeho porovnání, ze kterého bychom chtěli naši hru spouštět s různými implementacemi abstrakční vrstvy.
+\begin{enumerate}
+    \item \textbf{Podpora pro programovací jazyk C\#:} V sekci~\ref{sec:ecs-libs} jsme si uvedli, že se zaměříme na knihovny pro programovací jazyk C\#. Proto tento programovací jazyk budeme chtít použít pro naši hru.
+    \item \textbf{Podpora pro 2D hry s pohledem shora:} Tento požadavek vyplývá ze specifikace hry, konkrétně ze sekce~\ref{sec:game-spec}.
+    \item \textbf{Možnost spouštět hru vícekrát po sobě a z jiného C\# projektu} Kromě naší hry budeme mít také měření, které pomocí naší hry změří výkon různých ECS knihoven. Jak naše hra tak i naše měření budou samostatné C\# projekty. Od enginu budeme vyžadovat aby nám umožnil spouštět hru vícekrát po sobě s různými implementacemi abstrakční vrstvy z našeho měření, které je v jiném C\# projektu než naše hra.    
+\end{enumerate}
 
-Zaměřme se tedy na namísto herních enginů, na herní frameworky. Pokud nahlédneme na vydané hry na platformě Steam, tak nejpopulárnějším herním frameworkem pro C\# je Microsoft XNA. Bohuzel tento framework už není delší dobou firmou Microsoft, která je jeho autorem, podporován. Ovšem jelikož byl Microsoft XNA framework velice populární, po skončení jeho podpory vzniklo několik open source reimplementací, které v podpoře a vývoji tohoto herního frameworku pokračují. Mezi nejpopulárnější z nich patří FNA~\cite{FNA} a MonoGame~\cite{MonoGame}. Oba tyto frameworky jsou si syntaxí velice podobné, my pro implementaci naši hry zvolíme MonoGame z důvodů osobní preference autora.
+V přehledu~\cite{SteamDB} technologií používaných hrami v herním obchodě Steam~\cite{Steam} je možné nahlédnou, že mezi nejpopulárnější herní enginy/frameworky pro C\# patří Unity~\cite{Unity}, Godot~\cite{Godot} a Microsoft XNA Framework.
 
-V pozdější sekci~\ref{sec:terrain} provedeme analýzu generování terénu. Na základě této analýzy vybereme přístup, který bude vyžadovat compute shader. Ovšem nativní MonoGame nemá podporu pro compute shadery, tím pádem použití nativního MonoGame by nám volbu tohoto přístupu znemožnilo. Z toho důvodu použijeme fork~\cite{MonoGameCptMax} MonoGame frameworku, který tuto podporu nabízí.
+Unity a Godot jsou velké herní enginy s vlastním editorem. Oba dva podporují 2D hry s pohledem shora. Ovšem tyto enginy odstiňují uživatele od některých nízkoúrovňových částí implementace a přebírají kontrolu na C\# projektem. Bylo by pro nás problematické s nimi splnit třetí požadavek (Možnost spouštět hru vícekrát po sobě a z jiného C\# projektu).
+
+Microsoft XNA Framework je pouze knihovna tříd bez vlastního editoru. Tento framework je vhodný pro 2D hry s pohledem shora a oproti herním enginům Unity a Godot tento framework volí nízkoúrovňoví přístup, díky kterému uživatel není odstíněn od nízkoúrovňových částí implementace a má plnou kontrolu nad projektem. Tím pádem tento framework splňuje všechny naše požadavky.
+
+Ačkoliv by tento framework byl vhodným kandidátem, bohužel již není delší dobou firmou Microsoft podporován. Ale jelikož se jednalo o velice populární herní framework, tak po skončení jeho podpory vzniklo několik open source reimplementací, které v podpoře a vývoji tohoto herního frameworku pokračují. Mezi nejpopulárnější z nich patří FNA~\cite{FNA} a MonoGame~\cite{MonoGame}. Oba tyto frameworky mají téměř identické API, my pro implementaci naši hry zvolíme MonoGame z důvodů osobní preference autora.
+
+% V pozdější sekci~\ref{sec:terrain} provedeme analýzu generování terénu. Na základě této analýzy vybereme přístup, který bude vyžadovat compute shader. Ovšem nativní MonoGame nemá podporu pro compute shadery, tím pádem použití nativního MonoGame by nám volbu tohoto přístupu znemožnilo. Z toho důvodu použijeme fork~\cite{MonoGameCptMax} MonoGame frameworku, který tuto podporu nabízí.
 
 % analyza abstrakce
 \section{Abstrakční vrstva}

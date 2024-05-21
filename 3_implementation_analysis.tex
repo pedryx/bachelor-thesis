@@ -137,43 +137,73 @@ Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl
 
 Některé ECS knihovny také požadují aby jednotlivé komponenty implementovali specifické rozhraní nebo atribut. V případě těchto knihoven nám postačí toto rozhraní nebo atribut implementovat na příslušný \texttt{ComponentWrapper} (ten nemusí být nutně třídou).
 
-\xxx{rozbor jednotlivých ECS knihoven?}
-
 \section{Umělá inteligence}
 Jak již víme ze sekce~\ref{subsec:villages}, naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Každý vesničan na sobě bude mít \texttt{Behavior} komponentu, která bude popisovat jeho chování. Také zde bude \texttt{BehaviorSystem}, který bude zpracovávat logiku umělé inteligence pro každou entitu s \texttt{Behavior} komponentou.
 
-Ovšem způsobů, kterými lze umělou inteligenci aneb chování dané entity popsat nebo definovat je více, proto si je nyní rozebereme. Mezi tyto způsoby patří:
+Způsobů, kterými lze umělou inteligenci aneb chování dané entity popsat nebo definovat je více, my se ale zaměříme pouze na ty používanější, které jsou dostatečné pro implementaci umělé inteligence pro naše vesničany:
+
+% stavove automaty
+%    co to je
+%    jak by to konkretne vypadalo v nasi hre (staci cast)
+%    jak to bude pracovat s ECS
+% stromy chovani
+%    co to je
+%    jak by to konkretne vypadalo v nasi hre (staci cast)
+%    jak to bude pracovat s ECS
 
 \begin{enumerate}
-    \item \textbf{Stavové automaty:} Přímočarý způsob, kterým lze definovat chování entit je \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. Jednotlivé stavy v sobě také mohou mít definované přechody, pomocí nichž mohou přejít do jiného stavu. Pro více informací o použití \textit{stavových automatů} pro umělou inteligenci je možné nahlédnout do materialu \textit{AI - Finite State Machines}~\cite{AIStateMachines} od \textit{Newcastle University}.
-    
+    \item \textbf{Stavové automaty:} Přímočarý způsob, kterým lze definovat chování entit je \textit{stavový automat}. Každý stav tohoto automatu reprezentuje činnost, kterou může entita provést. K jednotlivým stavům mohou být také definované přechody. Pro více informací o použití \textit{stavových automatů} pro umělou inteligenci je možné nahlédnout do materialu \textit{AI - Finite State Machines}~\cite{AIStateMachines} od \textit{Newcastle University}.
+
+    Ve vývoji her bývá pro implementaci \textit{stavových automatů} pro AI často použit návrhový vzor \texttt{State} (více o něm je možné se dočíst v již zmiňované knize \textit{Game Programming Patterns}~\cite{nystrom2014game}).
+
+    V případě naší hry bychom měli pro každý stav \textit{stavového automatu} třídu nebo strukturu s metodou \texttt{Update}. Každý vesničan by měl ve své \texttt{Behavior} komponentě uloženou instanci na svuj současný stav. Přechod na jiný stav by byl reprezentován přiřazením instance jiného stavu.
+
+    Mezi stavy našich vesničanů by mohlo patřit:
+    \begin{enumerate}
+        \item \textbf{\texttt{MoveToState}:} Tento stav by nastavil příslušná data v \texttt{Movement} komponentě a poté by čekal než vesničan dojde na specifikovanou pozici. Poté by nastal přechod na specifikovaný stav.
+
+        \item \textbf{\texttt{FindNearestResourceState}:} Stav zodpovědný za nalezení nejbližší suroviny daného typu. Po jejím nalezení by nastal přechod na \texttt{MoveToState} pomocí kterého by vesničan došel k příslušné surovině.
+
+        \item \textbf{\texttt{HarvestResourceState}:} Tento stav by nastavil entitu suroviny, která se má sklidit jako \texttt{Target} do příslušné komponenty. Poté by vyčkal na její sklizení. Po jejím sklizení by nastal přechod na \texttt{MoveState} pomocí kterému by vesničan došel ke svému \texttt{Workplace}.
+
+        \item \textbf{\texttt{ProcessResourceState}:} Tento stav by pouze přesunul suroviny pro zpracování do příslušné budovy a poté by vyčkal než budou zpracovány, po jejich zpracování by z ní přesunul zpracované předměty do inventáře vesničana a nastal by přechod na \texttt{MoveState}, pomocí kterého by vesničan došel ke skladišti.
+
+        \item \textbf{\texttt{StoreInStockpile}:} Tento stav by přesunul příslušné předměty do skladiště a poté by nastal přechod na \texttt{FindNearestResourceState}.
+    \end{enumerate}
+
     \item \textbf{Stromy chování:} \textit{Stromy chování} jsou složeny z hierarchie vrcholů, která popisuje chování dané entity. Listy \textit{stromu chování} představují konkrétní příkazy, které řídí entitu. Ostatní vrcholy slouží k tomu aby řídili jak se strom bude procházet. Více o \textit{stromech chování} je možné se dočíst ve článku \textit{Behavior trees for AI: How they work}~\cite{BehaviorTrees} od Chrise Simpsona.
+
+    Jednotlivé \textit{stromy chování} bývají často reprezentovány třídou nebo strukturou. Jednotlivé vrcholy bývají reprezentovány metodami. Pro konstrukci \textit{stromů chování} se často používá návrhový vzor \textit{Builder} (více o něm je možné se dočíst v knize \textit{Design Patterns: Elements of Reusable Object-Oriented Software}~\cite{gamma1994design}).
+    
+    Každý vesničan by měl svou instanci \textit{stromu chování} uloženou v \texttt{Behavior} komponentě. Příklad definice chování vesničana by mohl vypadat takto:
+
+    \begin{verbatim}
+Builder.Create()
+  .Sequence("villager job sequence")
+    .Do("find resource", FindResource(resourceType))
+    .Do("move to resource", MoveTo(null))
+    .Do("harvest resource", HarvestResource)
+    .Do("move to workplace", MoveTo(workplace))
+    .Do("process resource", ProcessResource(workplace))
+    .Do("move to stockpile", MoveTo(stockpile))
+    .Do("store items", StoreItems(stockpile))
+  .End()
+    \end{verbatim}
+
+    V tomto příkladu je kořenový vrchol \texttt{villager job sequence}, který prochází své potomky zleva do prava. Vrcholy s prefixem \texttt{move to} nastaví pohyb vesničana na příslušnou pozici a poté čekají než k ní vesničan dojde. Vrchol \texttt{find resource} nalezne nejbližší surovinu daného typu. Vrchol \texttt{harvest resource} nastaví entitu dané suroviny jako \texttt{Target} v dané komponentě, poté vyčká na její sklizení. Vrchol \texttt{process resource} přesune dané předměty do budovy na zpracování surovin, poté vyčká na jejich zpracování a poté z této budovy přesune zpracované předměty do inventáře vesničana. Vrchol \texttt{store items} přesunu dané předměty do skladiště.
 \end{enumerate}
 
-Je nutné zmínit, že existuje mnoho dalších způsobů, kterými by se dalo chování entity definovat. Ovšem jak již bylo zmíněno chování našich vesničanů bude velmi jednoduché a pro jeho definování nám postačí tyto zmíněné způsoby.
+Za zpracování AI by byl zodpovědný \texttt{BehaviorSystem}, který by prošel všechny \texttt{Behavior} komponenty. V obou přístupech by byla v této komponentě uložena instance buďto \textit{stavového automatu} nebo \textit{stromu chování}. \texttt{BehaviorSystem} by zavolal příslušnou metodu pro zpracovaní na každé takové instanci.
 
-V případě \textit{stavových automatů} by byl \textit{stavový automat} pro každého vesničana uložen přímo v již zmíněné \texttt{Behavior} komponentě. V případě \textit{stromů chování} by se \textit{strom chování} nacházel přímo v \texttt{Behavior} komponentě. Již zmiňovaný \texttt{BehaviorSystem} poté zpracuje příslušnou strukturu na každé \texttt{Behavior} komponentě.
+% porovnani stavovych automatu a stromu chovani
+%    zminit clanek a vytahnout z nej relevantni body
+%    ukazat na nich proc jsme zvolili stromy chovani (idealne to ukazat na prikladech z rozboru vyse)
 
 Porovnání \textit{stavových automatů} a \textit{stromů chování} je možné nalézt ve článku \textit{Finite State Machine \& Behavior Tree in Robotics}~\cite{FMTAndBTInRobotics} od Mingu Kwona. I přesto, že tento článek porovnává oba způsoby v robotice, tak dané poznatky jsou použitelné i v oblasti umělé inteligence.
 
-Ve výše zmíněném článku je možné se dočíst, že mezi nevýhody \textit{stavových automatů} patří rychle rostoucí komplexita při přidávání nových stavů a přechodů a limitovaná schopnost spravovat chování závislé na kontextu. Tyto nevýhody by nám mohli způsobit komplikace při definici chování našich vesničanů.
+Ve výše zmíněném článku je možné se dočíst, že mezi nevýhody \textit{stavových automatů} patří rychle rostoucí komplexita při přidávání nových stavů a přechodů a limitovaná schopnost spravovat chování závislé na kontextu. Výše uvedené příklady jsou zjednodušeny a v implementaci bude chování vesničanů složitější (bude například obsahovat navíc logiku kolem hladovění vesničanů). Pro toto složitější chování by nám obě nevýhody působili komplikace.
 
 Výše zmíněný článek také říká, že mezi výhody \textit{stromů chování} patří snadná rozšiřitelnost a schopnost efektivně zvládat chování závislé na kontextu. Obě tyto výhody kompenzují výše zmíněné nevýhody \textit{stavových automatů}. Proto také \textit{stromy chování} použijeme pro definici chovaní našich vesničanů.
-
-\section{Generovaný svět}
-\label{sec:terrain}
-Jak jsme si říkali v sekci~\ref{sec:game-world} svět v naší hře bude náhodně generovaný. Konkrétně bude obsahovat náhodně generovaný terén ve kterém budou náhodně umístěny suroviny a vesnice.
-
-Náš terén budeme reprezentovat texturou. Každý pixel této textury bude mít barvu odpovídající danému biomu. Například biom vody může mít modrou barvu a biom louky zelenou barvu. Poté všechny modré pixely v naší textuře budou odpovídat biomu vody a všechny zelené biomu louky.
-
-Naši hru budeme používat převážně pro měření výkonu ECS knihoven, tím pádem nemáme na generování našeho terénu žádné složité požadavky. Mezi naše požadavky patří:
-
-\begin{enumerate}
-    \item \textbf{Generování terénu by nemělo trvat příliš dlouho:} Pokud by generování terénu trvalo příliš dlouho, vedlo by to k delšímu času spouštění naší hry. Vzhledem k tomu, že hru budeme používat pro měření výkonu ECS knihoven a pro každou knihovnu ji pouštět znovu, delší čas spouštění hry by nám zbytečně natahoval dobu vykonávání jednoho měření.
-    \item \textbf{Spojitost:} Budeme chtít aby terén byl v jistém smyslu spojitý. Konkrétně chceme aby jednotlivé biomy tvořili nepřerušované oblasti.
-    \item \textbf{Možnost navigace:} Ze sekce~\ref{subsec:villages} víme, že hra bude obsahovat vesničany. Pro vesničany bude důležité aby byli schopni se v náhodně vygenerovaném terénu navigovat. Pokud vesničan bude například chtít jít pokácet strom, bude se chtít po cestě k němu vyhnout vodě.
-    \item \textbf{Žádné větší vizuální artefakty:} Nutně nevyžadujeme hodne dobře vypadající terén, ale zároveň nechceme větší vizuální artefakty.
-\end{enumerate}
 
 \subsection{Generování terénu}
 Pro generování terénu se běžně používají výškové mapy vygenerované za pomoci šumové funkce. Proto si nejprve jednotlivé šumové funkce představíme a následně jednu z nich zvolíme. Poté si představíme způsob, kterým zvolenou šumovou funkci budeme používat pro generování terénu. Mezi nejpoužívanější šumové funkce patří:

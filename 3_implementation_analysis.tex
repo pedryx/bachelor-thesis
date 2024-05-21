@@ -205,26 +205,40 @@ Ve výše zmíněném článku je možné se dočíst, že mezi nevýhody \texti
 
 Výše zmíněný článek také říká, že mezi výhody \textit{stromů chování} patří snadná rozšiřitelnost a schopnost efektivně zvládat chování závislé na kontextu. Obě tyto výhody kompenzují výše zmíněné nevýhody \textit{stavových automatů}. Proto také \textit{stromy chování} použijeme pro definici chovaní našich vesničanů.
 
-\subsection{Generování terénu}
-Pro generování terénu se běžně používají výškové mapy vygenerované za pomoci šumové funkce. Proto si nejprve jednotlivé šumové funkce představíme a následně jednu z nich zvolíme. Poté si představíme způsob, kterým zvolenou šumovou funkci budeme používat pro generování terénu. Mezi nejpoužívanější šumové funkce patří:
+\section{Generovaný svět}
+\label{sec:terrain}
+Jak jsme si říkali v sekci~\ref{sec:game-world} svět v naší hře bude náhodně generovaný. Konkrétně bude obsahovat náhodně generovaný terén ve kterém budou náhodně umístěny suroviny a vesnice.
+
+Vygenerovaný terén bude 2D plocha, která se bude skládat ze spojitých oblastí. Každá oblast bude odpovídat nějakému biomu a bude mít barvu podle tohoto biomu (například oblast odpovídající biomu vody bude modrá). Některé oblasti mezi sebou budou mít závislosti (například oblast, která reprezentuje biom vysoké hory, bude obklopena oblastí, která reprezentuje biom hory). Je nutné zmínit, že nechceme políčka, ale opravdu spojité oblasti.
+
+Naši hru budeme používat převážně pro měření výkonu ECS knihoven, tím pádem nemáme na generování našeho terénu žádné složité požadavky. Mezi naše požadavky patří:
 
 \begin{enumerate}
-    \item \textbf{Perlinův šum:} Jedná se o známou šumovou funkci. Tato šumová funkce je rychlá a také jednoduchá na implementaci. Nejčastěji se používá ve druhé a třetí dimenzi. Více o Perlinovu šumu je možné se dočíst v diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise} od \textit{Tuoma Hyttinena}.
+    \item \textbf{Generování terénu by nemělo trvat příliš dlouho:} Pokud by generování terénu trvalo příliš dlouho, vedlo by to k delšímu času spouštění naší hry. Vzhledem k tomu, že hru budeme používat pro měření výkonu ECS knihoven a pro každou knihovnu ji pouštět znovu, delší čas spouštění hry by nám zbytečně natahoval dobu vykonávání jednoho měření.
 
-    \item \textbf{Simplexový šum:} \textit{Simplexový šum} je velmi podobný \textit{Perlinovu šumu}. Oproti \textit{Perlinovu šumu} je rychlejší a produkuje výsledky, které vypadají více přirozeně. Více o \textit{Simplexovém šumu} je možné se dočíst v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}.
+    \item \textbf{Možnost navigace:} Ze sekce~\ref{subsec:villages} víme, že hra bude obsahovat vesničany. Pro vesničany bude důležité aby byli schopni se v náhodně vygenerovaném terénu navigovat. Pokud vesničan bude například chtít jít pokácet strom, bude se chtít po cestě k němu vyhnout vodě.
+
+    \item \textbf{Žádné vizuální artefakty:} Chceme se vyhnout vizuálním artefaktům, díky kterým by náš terén nevypadal dobře.
 \end{enumerate}
 
-My si pro tuto práci zvolíme \textit{Simplexový šum}, jelikož je rychlejší a produkuje více přirozené výsledky. Konkrétně jej budeme používat ve druhé dimenzi.
+\subsection{Generování terénu}
+Jedním ze způsobů jak generovat terén je použít výškové mapy vygenerované za pomoci šumové funkce. Proto si nejprve jednotlivé šumové funkce představíme a následně jednu z nich zvolíme. Poté si představíme způsob, kterým zvolenou šumovou funkci budeme používat pro generování terénu. Mezi nejpoužívanější šumové funkce patří:
 
-Nyní za pomoci \textit{Simplexového šumu} vygenerujeme výškovou mapu. Pro generování výškové mapy se často používá Fraktální součet nebo Turbulence. Jedná se o techniky pro generování více komplexních vzorů. O obou technikách je možné se více dočíst v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}. Obě techniky jsou pro nás dobré, ale autorovi práce se více líbí vzhled terénu vygenerovaný Fraktálním součtem, proto jej zvolíme.
+\begin{enumerate}
+    \item \textbf{Perlinův šum:} Jedná se o známou šumovou funkci. Tato šumová funkce je rychlá a také jednoduchá na implementaci. Je jí možné použít v libovolné dimenzi, ale nejčastěji se používá ve druhé nebo třetí. Přehledné vysvětlení o tom co to je Perlinův šum a jak se používá pro generování terénu je možné nalézt v diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise} od \textit{Tuoma Hyttinena}.
 
-Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Pro generování zvolíme přímočarou a běžně populární techniku. Jak jsme si říkali náš terén bude textura, kde barva jednotlivých pixelů bude odpovídat danému biomu. Každý biom bude mít definovaný výškový interval a barvu. Pro souřadnice každého pixelu si necháme vygenerovat výšku z výškové mapy. Poté na základě této výšky a výškových intervalů jednotlivých biomů získáme příslušný biom. Poté barvu daného pixelu nastavíme na barvu daného biomu. O této technice a také o tom jak ji použít pro 3D terén je možné se více dočíst ve článku \textit{Making maps with noise functions}~\cite{TerrainHeightMap} ze stránky \textit{Red Blob Games}.
+    \item \textbf{Simplexový šum:} \textit{Simplexový šum} je velmi podobný \textit{Perlinovu šumu}. Přehledné vysvětlení o tom co to je \textit{Simplexový šum} a jak se používá pro generování terénu je možné nalézt v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}. V této práci je možné se dočíst, že oproti \textit{Perinovu šumu} je \textit{Simplexový šum} rychlejší a produkuje výsledky, které vypadají více přirozeně. Ovšem má jednu velkou nevýhodu a to patent, který omezuje jeho použití pro komerční účely. Z toho důvodu se v praxi tolik nepoužívá.
+\end{enumerate}
 
-% \begin{figure}
-%     \centering
-%     \includegraphics[scale=0.15]{img/perlin}
-%     \caption{TODO}
-% \end{figure}
+I přesto je \textit{Simplexový šum} nabízí výhody oproti \textit{Perlinovu šumu}, pro implementaci zvolíme \textit{Perlinův šum} z důvodů již zmíněného patentu. Konkrétně jej budeme používat ve druhé dimenzi.
+
+Nyní za pomoci \textit{Simplexového šumu} vygenerujeme výškovou mapu. Pro generování výškové mapy lze použít Fraktální součet nebo TurbulencI. Jedná se o techniky pro generování více komplexních vzorů. O obou technikách je možné se více dočíst v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}.
+
+Pro zvolení techniky autor práce provedl experiment a nechal vygenerovat terén pomocí obou technik. Z výsledných terénů autor více preferoval terén vygenerovaný Fraktálním součtem, proto jej zvolíme.
+
+\xxx{obrazky k experimentu + nejaky popis???}
+
+Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Jak jsme si říkali náš terén bude 2D plocha. Tuto plochu si rozdělíme na velmi malé části (například pixely) a těmto částem přiřadíme souřadnice. Barva každé části bude odpovídat danému biomu. Každý biom bude mít definovaný výškový interval a barvu. Pro souřadnice každé části si necháme vygenerovat výšku z výškové mapy. Poté na základě této výšky a výškových intervalů jednotlivých biomů získáme příslušný biom. Poté barvu dané části nastavíme na barvu daného biomu. O této technice je možné se více dočíst ve článku \textit{Making maps with noise functions}~\cite{TerrainHeightMap} ze stránky \textit{Red Blob Games}.
 
 \subsection{Generování terénu na CPU vs. GPU}
 Za použití techniky z minulé sekce jsme získali vygenerovaný terén. Tato technika splňuje požadavky na rychlost a spojitost, ovšem zbylé dva požadavky (možnost navigace a absence vizuálních artefaktů) mohou být porušeny v závislosti na tom zda terén budeme generovat na CPU nebo na GPU. Proto si nyní oba přístupy rozebereme.

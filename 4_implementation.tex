@@ -1,4 +1,12 @@
 \chapter{Popis Implementace}
+% TODO:
+% implementace
+%     - popsat hiearchii
+%     - dole jsou nejaky ics impelmentace
+%     - nad nimi abstrakcni vrstva
+%     - s tou pracuje gra
+%     - ta je pak nejak slozena
+%     - takhle az k detailum
 V této kapitole si představíme klíčové a zajímavé části implementace naší hry. Pro více detailů o implementaci je možné nahlédnout do kódu, který obsahuje dokumentační komentáře.
 
 Pro tvorbu hry byl použit MonoGame framework~\cite{MonoGame}, ovšem základní MonoGame nemá podporu pro compute shadery, které jsme využili pro řešení problému s vyhledávání cesty v podsekci~\ref{subsection:path-finding}. Z toho důvodu byl použit fork~\cite{MonoGameCptMax}, který tuto podporu nabízí.

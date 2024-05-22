@@ -22,7 +22,7 @@ Konkrétně budeme měřit výkon u následujících knihoven:
     \item RelEcs~\cite{RelEcs}
 \end{enumerate}
 
-V sekci~\ref{sec:abstract-layer} jsme si říkali, že konkrétní ECS knihovna je reprezentována třídou implementující rozhraní \texttt{IECSFactory}. Instance této třídy je při spuštění hry předána jako generický parametr třídě \texttt{Game}. Tím dojde k výběru konkrétní ECS knihovny.
+V sekci~\ref{sec:abstract-layer} jsme si specifikovali, že konkrétní ECS knihovna je reprezentována třídou implementující rozhraní \texttt{IECSFactory}. Instance této třídy je při spuštění hry předána jako generický parametr třídě \texttt{Game}. Tím dojde k výběru konkrétní ECS knihovny.
 
 Náš test přijímá jako parametr typ, který je právě třída implementující rozhraní \texttt{IECSFactory}. Náš test tedy postupně spouštíme z třídami, které reprezentují jednotlivé ECS knihovny.
 

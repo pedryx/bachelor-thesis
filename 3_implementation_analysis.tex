@@ -12,10 +12,10 @@ Nyní provedeme volbu engninu/frameworku, který použijeme pro naši hru. Pro t
 \begin{enumerate}
     \item \textbf{Podpora pro programovací jazyk C\#:} V sekci~\ref{sec:ecs-libs} jsme si uvedli, že se zaměříme na knihovny pro programovací jazyk C\#. Proto tento programovací jazyk budeme chtít použít pro naši hru.
     \item \textbf{Podpora pro 2D hry s pohledem shora:} Tento požadavek vyplývá ze specifikace hry, konkrétně ze sekce~\ref{sec:game-spec}.
-    \item \textbf{Možnost spouštět hru vícekrát po sobě a z jiného C\# projektu} Kromě naší hry budeme mít také měření, které pomocí naší hry změří výkon různých ECS knihoven. Jak naše hra tak i naše měření budou samostatné C\# projekty. Od enginu budeme vyžadovat aby nám umožnil spouštět hru vícekrát po sobě s různými implementacemi abstrakční vrstvy z našeho měření, které je v jiném C\# projektu než naše hra.    
+    \item \textbf{Možnost spouštět hru vícekrát po sobě a z jiného C\# projektu:} Kromě naší hry budeme mít také měření, které pomocí naší hry změří výkon různých ECS knihoven. Jak naše hra tak i naše měření budou samostatné C\# projekty. Od enginu budeme vyžadovat aby nám umožnil spouštět hru vícekrát po sobě s různými implementacemi abstrakční vrstvy z našeho měření, které je v jiném C\# projektu než naše hra.    
 \end{enumerate}
 
-V přehledu~\cite{SteamDB} technologií používaných hrami v herním obchodě Steam~\cite{Steam} je možné nahlédnou, že mezi nejpopulárnější herní enginy/frameworky pro C\# patří Unity~\cite{Unity}, Godot~\cite{Godot} a Microsoft XNA Framework.
+V přehledu~\cite{SteamDB} technologií používaných hrami v herním obchodě Steam~\cite{Steam} je možné nahlédnout, že mezi nejpopulárnější herní enginy/frameworky pro C\# patří Unity~\cite{Unity}, Godot~\cite{Godot} a Microsoft XNA Framework.
 
 Unity a Godot jsou velké herní enginy s vlastním editorem. Oba dva podporují 2D hry s pohledem shora. Ovšem tyto enginy odstiňují uživatele od některých nízkoúrovňových částí implementace a přebírají kontrolu na C\# projektem. Bylo by pro nás problematické s nimi splnit třetí požadavek (Možnost spouštět hru vícekrát po sobě a z jiného C\# projektu).
 
@@ -136,6 +136,8 @@ Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl
 Některé ECS knihovny také požadují aby jednotlivé komponenty implementovali specifické rozhraní nebo atribut. V případě těchto knihoven nám postačí toto rozhraní nebo atribut implementovat na příslušný \texttt{ComponentWrapper} (ten nemusí být nutně třídou).
 
 \section{Umělá inteligence}
+% TODO: umela inteligence - konec nepracuje s tim co jsme si uvedli (priklady), ten konec je hlavni cast analyzy
+
 Jak již víme ze sekce~\ref{subsec:villages}, naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Každý vesničan na sobě bude mít \texttt{Behavior} komponentu, která bude popisovat jeho chování. Také zde bude \texttt{BehaviorSystem}, který bude zpracovávat logiku umělé inteligence pro každou entitu s \texttt{Behavior} komponentou.
 
 Způsobů, kterými lze umělou inteligenci aneb chování dané entity popsat nebo definovat je více, my se ale zaměříme pouze na ty používanější, které jsou dostatečné pro implementaci umělé inteligence pro naše vesničany:
@@ -204,8 +206,18 @@ Ve výše zmíněném článku je možné se dočíst, že mezi nevýhody \texti
 Výše zmíněný článek také říká, že mezi výhody \textit{stromů chování} patří snadná rozšiřitelnost a schopnost efektivně zvládat chování závislé na kontextu. Obě tyto výhody kompenzují výše zmíněné nevýhody \textit{stavových automatů}. Proto také \textit{stromy chování} použijeme pro definici chovaní našich vesničanů.
 
 \section{Generovaný svět}
+% TODO:
+% generovany teren
+%     - obrazky k experimentu
+%     - jak vypada vysledny teren
+%     - generovani na GPU
+%         - vic popsat jak se to bude generovat v realnem case v okne
+% navigace
+%     - prvne jak to budeme delat a co od toho pozadujeme
+%     - pote analyzovat
+
 \label{sec:terrain}
-Jak jsme si říkali v sekci~\ref{sec:game-world} svět v naší hře bude náhodně generovaný. Konkrétně bude obsahovat náhodně generovaný terén ve kterém budou náhodně umístěny suroviny a vesnice.
+Jak jsme si specifikovali v sekci~\ref{sec:game-world}, svět v naší hře bude náhodně generovaný. Konkrétně bude obsahovat náhodně generovaný terén ve kterém budou náhodně umístěny suroviny a vesnice.
 
 Vygenerovaný terén bude 2D plocha, která se bude skládat ze spojitých oblastí. Každá oblast bude odpovídat nějakému biomu a bude mít barvu podle tohoto biomu (například oblast odpovídající biomu vody bude modrá). Některé oblasti mezi sebou budou mít závislosti (například oblast, která reprezentuje biom vysoké hory, bude obklopena oblastí, která reprezentuje biom hory). Je nutné zmínit, že nechceme políčka, ale opravdu spojité oblasti.
 
@@ -237,7 +249,7 @@ Nyní za pomoci \textit{Perlinova šumu} vygenerujeme výškovou mapu. Pro gener
 
 Pro zvolení techniky autor práce provedl experiment a nechal vygenerovat terén pomocí obou technik. Z výsledných terénů autor více preferoval terén vygenerovaný Fraktálním součtem, proto jej zvolíme.
 
-Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Jak jsme si říkali náš terén bude 2D plocha. Tuto plochu si rozdělíme na malé atomické části (například pixely) a těmto částem přiřadíme souřadnice. Barva každé části bude odpovídat danému biomu. Každý biom bude mít definovaný výškový interval a barvu. Pro souřadnice každé atomické části si necháme vygenerovat výšku z výškové mapy. Poté na základě této výšky a výškových intervalů jednotlivých biomů získáme příslušný biom. Poté barvu dané části nastavíme na barvu daného biomu. O této technice je možné se více dočíst ve článku \textit{Making maps with noise functions}~\cite{TerrainHeightMap} ze stránky \textit{Red Blob Games}.
+Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Již víme, že náš terén bude 2D plocha. Tuto plochu si rozdělíme na malé atomické části (například pixely) a těmto částem přiřadíme souřadnice. Barva každé části bude odpovídat danému biomu. Každý biom bude mít definovaný výškový interval a barvu. Pro souřadnice každé atomické části si necháme vygenerovat výšku z výškové mapy. Poté na základě této výšky a výškových intervalů jednotlivých biomů získáme příslušný biom. Poté barvu dané části nastavíme na barvu daného biomu. O této technice je možné se více dočíst ve článku \textit{Making maps with noise functions}~\cite{TerrainHeightMap} ze stránky \textit{Red Blob Games}.
 
 \subsection{Generování terénu na CPU vs. GPU}
 Za použití techniky z minulé sekce jsme získali vygenerovaný terén. Ovšem to jestli naše technika splňuje naše požadavky je závislé na tom zda terén budeme generovat na CPU nebo na GPU. Proto si nyní oba přístupy rozebereme.
@@ -265,7 +277,7 @@ Abychom získali z našeho terénu mřížku bude třeba jej navzorkovat. Podobn
 
 Ovšem problém nastává v tom, že MonoGame framework, který pro tvorbu naší hry používáme nemá podporu pro compute shadery. Z toho důvodu namísto nativního MonoGame zvolíme jeho fork~\cite{MonoGameCptMax} od Markuse Hötzingera, který tuto podporu přináší.
 
-\xxx{TODO: path-dinding}
+\xxx{TODO: path-finding}
 
 
 
@@ -453,7 +465,7 @@ Ovšem problém nastává v tom, že MonoGame framework, který pro tvorbu naš�
 
 % problem s path finding
 
-% Abychom si rozebrali řešení, bude nejprve nutné nejprve říci něco více o shaderech.
+% Abychom si rozebrali řešení, bude nejprve nutné nejprve  něco více o shaderech.
 
 % Compute shader můžeme použít k řešení výše zmíněného problému.
 

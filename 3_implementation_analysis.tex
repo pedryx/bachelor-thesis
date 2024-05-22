@@ -23,8 +23,6 @@ Microsoft XNA Framework je pouze knihovna tříd bez vlastního editoru. Tento f
 
 Ačkoliv by tento framework byl vhodným kandidátem, bohužel již není delší dobou firmou Microsoft podporován. Ale jelikož se jednalo o velice populární herní framework, tak po skončení jeho podpory vzniklo několik open source reimplementací, které v podpoře a vývoji tohoto herního frameworku pokračují. Mezi nejpopulárnější z nich patří FNA~\cite{FNA} a MonoGame~\cite{MonoGame}. Oba tyto frameworky mají téměř identické API, my pro implementaci naši hry zvolíme MonoGame z důvodů osobní preference autora.
 
-% V pozdější sekci~\ref{sec:terrain} provedeme analýzu generování terénu. Na základě této analýzy vybereme přístup, který bude vyžadovat compute shader. Ovšem nativní MonoGame nemá podporu pro compute shadery, tím pádem použití nativního MonoGame by nám volbu tohoto přístupu znemožnilo. Z toho důvodu použijeme fork~\cite{MonoGameCptMax} MonoGame frameworku, který tuto podporu nabízí.
-
 % analyza abstrakce
 \section{Abstrakční vrstva}
 \label{section:abstract-layer-analysis}
@@ -261,9 +259,13 @@ Díky vysoké paralelizaci GPU můžeme vždy zvolit nejmenší velikost atomick
 \subsection{Navigace ve vygenerovaném terénu}
 Generováním terénu na GPU se tedy zdá být jako ideální kandidát ovšem tím, že terén budeme generovat na GPU nám vzniká problém jak ve vygenerovaném terénu budeme vlastně provádět navigaci. V této sekce tento problém vyřešíme.
 
+Náš terén je dvourozměrný prostor, konkrétně si jej budeme reprezentovat jako mřížku. Tuto mřížku si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází. První si popíšeme kde tuto mřížku vezmeme a poté jak ji budou využívat vesničané pro navigaci.
 
+Abychom získali z našeho terénu mřížku bude třeba jej navzorkovat. Podobně jako při jeho generování si terén rozdělíme na atomické části a střed každé takové atomické části bude bodem v naší mřížce. Ovšem celý náš terén generujeme na GPU, proto toto navzorkování bude nutné také provést na GPU. Pořídíme si proto compute shader pomocí kterého terén navzorkujeme na GPUa tím vytvoříme mřížku, kterou poté stáhneme do CPU.
 
+Ovšem problém nastává v tom, že MonoGame framework, který pro tvorbu naší hry používáme nemá podporu pro compute shadery. Z toho důvodu namísto nativního MonoGame zvolíme jeho fork~\cite{MonoGameCptMax} od Markuse Hötzingera, který tuto podporu přináší.
 
+\xxx{TODO: path-dinding}
 
 
 

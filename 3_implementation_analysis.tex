@@ -222,7 +222,10 @@ Naši hru budeme používat převážně pro měření výkonu ECS knihoven, tí
 \end{enumerate}
 
 \subsection{Generování terénu}
-Jedním ze způsobů jak generovat terén je použít výškové mapy vygenerované za pomoci šumové funkce. Proto si nejprve jednotlivé šumové funkce představíme a následně jednu z nich zvolíme. Poté si představíme způsob, kterým zvolenou šumovou funkci budeme používat pro generování terénu. Mezi nejpoužívanější šumové funkce patří:
+\label{sec:terrain-gen}
+Z požadavků na naši hru, které jsme si představili v sekci~\ref{sec:game-characteristics} vyplývá, že nechceme naši hru dělat příliš složitou. Terén tedy budeme generovat tím, že si za pomoci šumové funkce nejprve vytvoříme výškovou mapu a tu poté obarvíme. Tento přístup jsme zvoli jelikož je jednoduchý na implementaci a poskytuje dobře vypadající terén.
+
+Pro vygenerování výškové mapy bude nejprve nutné zvolit šumovou funkci, proto si jednotlivé šumové funkce nejprve rozebereme:
 
 \begin{enumerate}
     \item \textbf{Perlinův šum:} Jedná se o známou šumovou funkci. Tato šumová funkce je rychlá a také jednoduchá na implementaci. Je jí možné použít v libovolné dimenzi, ale nejčastěji se používá ve druhé nebo třetí. Přehledné vysvětlení o tom co to je Perlinův šum a jak se používá pro generování terénu je možné nalézt v diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise} od \textit{Tuoma Hyttinena}.
@@ -232,20 +235,31 @@ Jedním ze způsobů jak generovat terén je použít výškové mapy vygenerova
 
 I přesto je \textit{Simplexový šum} nabízí výhody oproti \textit{Perlinovu šumu}, pro implementaci zvolíme \textit{Perlinův šum} z důvodů již zmíněného patentu. Konkrétně jej budeme používat ve druhé dimenzi.
 
-Nyní za pomoci \textit{Simplexového šumu} vygenerujeme výškovou mapu. Pro generování výškové mapy lze použít Fraktální součet nebo TurbulencI. Jedná se o techniky pro generování více komplexních vzorů. O obou technikách je možné se více dočíst v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}.
+Nyní za pomoci \textit{Perlinova šumu} vygenerujeme výškovou mapu. Pro generování výškové mapy lze použít Fraktální součet nebo TurbulencI. Jedná se o techniky pro generování více komplexních vzorů. O obou technikách je možné se více dočíst v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}.
 
 Pro zvolení techniky autor práce provedl experiment a nechal vygenerovat terén pomocí obou technik. Z výsledných terénů autor více preferoval terén vygenerovaný Fraktálním součtem, proto jej zvolíme.
 
-\xxx{obrazky k experimentu + nejaky popis???}
-
-Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Jak jsme si říkali náš terén bude 2D plocha. Tuto plochu si rozdělíme na velmi malé části (například pixely) a těmto částem přiřadíme souřadnice. Barva každé části bude odpovídat danému biomu. Každý biom bude mít definovaný výškový interval a barvu. Pro souřadnice každé části si necháme vygenerovat výšku z výškové mapy. Poté na základě této výšky a výškových intervalů jednotlivých biomů získáme příslušný biom. Poté barvu dané části nastavíme na barvu daného biomu. O této technice je možné se více dočíst ve článku \textit{Making maps with noise functions}~\cite{TerrainHeightMap} ze stránky \textit{Red Blob Games}.
+Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Jak jsme si říkali náš terén bude 2D plocha. Tuto plochu si rozdělíme na malé atomické části (například pixely) a těmto částem přiřadíme souřadnice. Barva každé části bude odpovídat danému biomu. Každý biom bude mít definovaný výškový interval a barvu. Pro souřadnice každé atomické části si necháme vygenerovat výšku z výškové mapy. Poté na základě této výšky a výškových intervalů jednotlivých biomů získáme příslušný biom. Poté barvu dané části nastavíme na barvu daného biomu. O této technice je možné se více dočíst ve článku \textit{Making maps with noise functions}~\cite{TerrainHeightMap} ze stránky \textit{Red Blob Games}.
 
 \subsection{Generování terénu na CPU vs. GPU}
-Za použití techniky z minulé sekce jsme získali vygenerovaný terén. Tato technika splňuje požadavky na rychlost a spojitost, ovšem zbylé dva požadavky (možnost navigace a absence vizuálních artefaktů) mohou být porušeny v závislosti na tom zda terén budeme generovat na CPU nebo na GPU. Proto si nyní oba přístupy rozebereme.
+Za použití techniky z minulé sekce jsme získali vygenerovaný terén. Ovšem to jestli naše technika splňuje naše požadavky je závislé na tom zda terén budeme generovat na CPU nebo na GPU. Proto si nyní oba přístupy rozebereme.
 
-CPU
+\subsubsection{Generování terénu na CPU}
+Při generování terénu na CPU bychom si pořídili jednu nebo více textur a vygenerovali terén v nich za použití způsobu z minulé sekce.
 
-GPU
+Při generovaní tohoto terénu je možné zvolit rozlišení, konkrétně specifikaci velikosti atomických částí. Volba tohoto rozlišení nám ovlivňuje dobu trvání vygenerování našeho terénu. Pokud bychom zvolili malé atomické části, generování by trvalo příliš dlouho a porušili bychom požadavek na rychlost. Pokud bychom zvolili velké atomické části, generování by trvalo menší dobu, ale zase bychom porušili požadavek na absenci vizuálních artefaktů.
+
+V ideálním případě bychom chtěli velké rozlišení ale také lepší rychlost. Jeden ze způsobů jak toho dosáhnout je paralelizace, ovšem možnosti paralelizace na CPU jsou oproti GPU omezeny, proto si rozeberme jak by se dal terén generovat na GPU.
+
+\subsubsection{Generování terénu na GPU}
+Prvně si pořídíme texturu do které budeme generovat terén. Tato textura bude mít stejnou velikost jako okno naší hry. Poté si pořídíme fragment shader, kterým do této textury budeme generovat terén.
+
+Terén budeme generovat v realnem čase a vždy pouze úsek viditelný hráčem. Náš fragment shader v každém snímku na základě pozice a přiblížení kamery pro každý pixel naší textury provede algoritmus popsaný v sekci~\ref{sec:terrain-gen}.
+
+Díky vysoké paralelizaci GPU můžeme vždy zvolit nejmenší velikost atomických oblastí (velikost jednoho pixelu) a stejně budeme mít pořád dostatečnou rychlost.
+
+\subsection{Navigace ve vygenerovaném terénu}
+Generováním terénu na GPU se tedy zdá být jako ideální kandidát ovšem tím, že terén budeme generovat na GPU nám vzniká problém jak ve vygenerovaném terénu budeme vlastně provádět navigaci. V této sekce tento problém vyřešíme.
 
 
 

@@ -136,8 +136,6 @@ Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl
 Některé ECS knihovny také požadují aby jednotlivé komponenty implementovali specifické rozhraní nebo atribut. V případě těchto knihoven nám postačí toto rozhraní nebo atribut implementovat na příslušný \texttt{ComponentWrapper} (ten nemusí být nutně třídou).
 
 \section{Umělá inteligence}
-% TODO: umela inteligence - konec nepracuje s tim co jsme si uvedli (priklady), ten konec je hlavni cast analyzy
-
 Jak již víme ze sekce~\ref{subsec:villages}, naše hra bude obsahovat vesničany. Každý vesničan bude reprezentován entitou a bude vykonávat své akce na základě jednoduché umělé inteligence. Každý vesničan na sobě bude mít \texttt{Behavior} komponentu, která bude popisovat jeho chování. Také zde bude \texttt{BehaviorSystem}, který bude zpracovávat logiku umělé inteligence pro každou entitu s \texttt{Behavior} komponentou.
 
 Způsobů, kterými lze umělou inteligenci aneb chování dané entity popsat nebo definovat je více, my se ale zaměříme pouze na ty používanější, které jsou dostatečné pro implementaci umělé inteligence pro naše vesničany:
@@ -190,7 +188,7 @@ Builder.Create()
   .End()
     \end{verbatim}
 
-    V tomto příkladu je kořenový vrchol \texttt{villager job sequence}, který prochází své potomky zleva do prava. Vrcholy s prefixem \texttt{move to} nastaví pohyb vesničana na příslušnou pozici a poté čekají než k ní vesničan dojde. Vrchol \texttt{find resource} nalezne nejbližší surovinu daného typu. Vrchol \texttt{harvest resource} nastaví entitu dané suroviny jako \texttt{Target} v dané komponentě, poté vyčká na její sklizení. Vrchol \texttt{process resource} přesune dané předměty do budovy na zpracování surovin, poté vyčká na jejich zpracování a poté z této budovy přesune zpracované předměty do inventáře vesničana. Vrchol \texttt{store items} přesunu dané předměty do skladiště.
+    V tomto příkladu je kořenový vrchol \texttt{villager job sequence}, který prochází své potomky ze shora dolů. Vrcholy s prefixem \texttt{move to} nastaví pohyb vesničana na příslušnou pozici a poté čekají než k ní vesničan dojde. Vrchol \texttt{find resource} nalezne nejbližší surovinu daného typu. Vrchol \texttt{harvest resource} nastaví entitu dané suroviny jako \texttt{Target} v dané komponentě, poté vyčká na její sklizení. Vrchol \texttt{process resource} přesune dané předměty do budovy na zpracování surovin, poté vyčká na jejich zpracování a poté z této budovy přesune zpracované předměty do inventáře vesničana. Vrchol \texttt{store items} přesunu dané předměty do skladiště.
 \end{enumerate}
 
 Za zpracování AI by byl zodpovědný \texttt{BehaviorSystem}, který by prošel všechny \texttt{Behavior} komponenty. V obou přístupech by byla v této komponentě uložena instance buďto \textit{stavového automatu} nebo \textit{stromu chování}. \texttt{BehaviorSystem} by zavolal příslušnou metodu pro zpracovaní na každé takové instanci.
@@ -201,21 +199,45 @@ Za zpracování AI by byl zodpovědný \texttt{BehaviorSystem}, který by proše
 
 Porovnání \textit{stavových automatů} a \textit{stromů chování} je možné nalézt ve článku \textit{Finite State Machine \& Behavior Tree in Robotics}~\cite{FMTAndBTInRobotics} od Mingu Kwona. I přesto, že tento článek porovnává oba způsoby v robotice, tak dané poznatky jsou použitelné i v oblasti umělé inteligence.
 
-Ve výše zmíněném článku je možné se dočíst, že mezi nevýhody \textit{stavových automatů} patří rychle rostoucí komplexita při přidávání nových stavů a přechodů a limitovaná schopnost spravovat chování závislé na kontextu. Výše uvedené příklady jsou zjednodušeny a v implementaci bude chování vesničanů složitější (bude například obsahovat navíc logiku kolem hladovění vesničanů). Pro toto složitější chování by nám obě nevýhody působili komplikace.
+Ve výše zmíněném článku je možné se dočíst, že mezi nevýhody \textit{stavových automatů} patří rychle rostoucí komplexita při přidávání nových stavů, pro jejichž přidání je někdy nutné provést velké modifikace.
 
-Výše zmíněný článek také říká, že mezi výhody \textit{stromů chování} patří snadná rozšiřitelnost a schopnost efektivně zvládat chování závislé na kontextu. Obě tyto výhody kompenzují výše zmíněné nevýhody \textit{stavových automatů}. Proto také \textit{stromy chování} použijeme pro definici chovaní našich vesničanů.
+Zmíněná nevýhoda by nám způsobila potíže například pokud bychom chtěli do výše uvedeného automatu přidat mechaniku hladovění vesničanů popsanou v sekci~\ref{subsec:villages}. Ta by se za pomoci \textit{stavového automatu} dala řešit například tím, že bychom si pořídili další \texttt{MoveToState}, díky kterému by vesničan došel do skladiště a poté by nastal přechod do nového stavu \texttt{EatFromStockpileState}, díky kterému by vesničan snědl jídlo ze skladiště. 
+
+Ovšem poté co se vesničan nají, je nutné se vrátit zpět do stavu, který vesničan vykonával předtím než se šel najíst. Jením z řešení by bylo pořídit si výše zmíněnou dvojici stavů pro každý stav z původního automatu a provést přechod do této dvojice pokud hlad vesničana klesl pod určitou hodnotu. Poté co by se vykonal \texttt{EatFromStockpileState} nastal by přechod zpět do původního stavu. Situaci je možné vidět na obrázku~\ref{fig:transition}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.66\linewidth]{img/transition.pdf}
+    \caption{Řešení mechaniky hladu pro jeden vrchol z původního stavového automatu.}
+    \label{fig:transition}
+\end{figure}
+
+Alternativní způsob by byl použít dva stavové automaty. Hlavním automatem by byl automat řešící hlad, který by měl \texttt{MainState} ve kterém by se nejprve zkontrolovalo zda hladovění vesničana nekleslo pod určitou hodnotou, pokud ne tak zavolá původní automat, jinak nastane přechod do již zmiňované dvojice stavů \texttt{MoveToState} a \texttt{EatFromStockpileState}.
+
+Je lehké nahlédnou, že obě řešení přidávají netriviální složitost navíc do definice chování pro naše vesničany.
+
+Podle výše zmíněného článku mají \textit{stromy chování} dobrou rozšiřitelnost a modularitu. Pokud bychom chtěli rozšířit náš \textit{strom chování} o výše zmíněnou mechaniku hladu, mohli bychom vytvořit nový strom chování, který by použil \texttt{Selector} vrchol jako kořen, který by měl dva potomky. Prvním by byl podstrom řešící mechaniku hladu a druhým by byl celí původní strom připojený kořenem jako podstrom nového stromu chování. Celá situace by vypadala takto:
+
+\begin{verbatim}
+    Builder.Create()
+      .Selector("tree root")
+        .Sequence("villager hunger sequence")
+          .Condition("is hunger bellow threshold?", IsHungry)
+          .Condition("is there food?", IsThereFood(stockpile))
+          .Do("go to get food", MoveTo(stockpile))
+          .Do("eat food", EatFood)
+        .End()
+
+        .Sequence("villager job sequence")
+          // original tree as subtree
+        .End()
+      .End()
+\end{verbatim}
+
+Je lehké nahlédnou, že rozšiřitelnost a modularita \textit{stromů chování} jsou opravu silné vlastnosti. Proto také \textit{stromy chování} použijeme pro definici chování pro naše vesničany.
+
 
 \section{Generovaný svět}
-% TODO:
-% generovany teren
-%     - obrazky k experimentu
-%     - jak vypada vysledny teren
-%     - generovani na GPU
-%         - vic popsat jak se to bude generovat v realnem case v okne
-% navigace
-%     - prvne jak to budeme delat a co od toho pozadujeme
-%     - pote analyzovat
-
 \label{sec:terrain}
 Jak jsme si specifikovali v sekci~\ref{sec:game-world}, svět v naší hře bude náhodně generovaný. Konkrétně bude obsahovat náhodně generovaný terén ve kterém budou náhodně umístěny suroviny a vesnice.
 
@@ -251,6 +273,15 @@ Pro zvolení techniky autor práce provedl experiment a nechal vygenerovat teré
 
 Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Již víme, že náš terén bude 2D plocha. Tuto plochu si rozdělíme na malé atomické části (například pixely) a těmto částem přiřadíme souřadnice. Barva každé části bude odpovídat danému biomu. Každý biom bude mít definovaný výškový interval a barvu. Pro souřadnice každé atomické části si necháme vygenerovat výšku z výškové mapy. Poté na základě této výšky a výškových intervalů jednotlivých biomů získáme příslušný biom. Poté barvu dané části nastavíme na barvu daného biomu. O této technice je možné se více dočíst ve článku \textit{Making maps with noise functions}~\cite{TerrainHeightMap} ze stránky \textit{Red Blob Games}.
 
+Příklad výsledného terénu je možné vidět na obrázku~\ref{fig:terrain}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.66\linewidth]{img/terrain.png}
+    \caption{Příklad jak může vypadat námi vygenerovaný terén.}
+    \label{fig:terrain}
+\end{figure}
+
 \subsection{Generování terénu na CPU vs. GPU}
 Za použití techniky z minulé sekce jsme získali vygenerovaný terén. Ovšem to jestli naše technika splňuje naše požadavky je závislé na tom zda terén budeme generovat na CPU nebo na GPU. Proto si nyní oba přístupy rozebereme.
 
@@ -262,28 +293,63 @@ Při generovaní tohoto terénu je možné zvolit rozlišení, konkrétně speci
 V ideálním případě bychom chtěli velké rozlišení ale také lepší rychlost. Jeden ze způsobů jak toho dosáhnout je paralelizace, ovšem možnosti paralelizace na CPU jsou oproti GPU omezeny, proto si rozeberme jak by se dal terén generovat na GPU.
 
 \subsubsection{Generování terénu na GPU}
-Prvně si pořídíme texturu do které budeme generovat terén. Tato textura bude mít stejnou velikost jako okno naší hry. Poté si pořídíme fragment shader, kterým do této textury budeme generovat terén.
+Terén budeme generovat v reálném čase (vygenerujeme jej v každém snímku znova) a vždy nám postačí vygenerovat pouze část terénu, která je viditelná hráčem. Tato část bude bude obdélník se stejnými rozměry jako velikost okna naší hry.
 
-Terén budeme generovat v realnem čase a vždy pouze úsek viditelný hráčem. Náš fragment shader v každém snímku na základě pozice a přiblížení kamery pro každý pixel naší textury provede algoritmus popsaný v sekci~\ref{sec:terrain-gen}.
+Pořídíme texturu do které budeme generovat terén. Tato textura bude mít stejnou velikost jako okno naší hry. Poté si pořídíme fragment shader, kterým do této textury budeme generovat terén. Tento fragment shader v každém snímku na základě pozice a přiblížení kamery pro každý pixel naší textury provede algoritmus popsaný v sekci~\ref{sec:terrain-gen}.
 
 Díky vysoké paralelizaci GPU můžeme vždy zvolit nejmenší velikost atomických oblastí (velikost jednoho pixelu) a stejně budeme mít pořád dostatečnou rychlost.
 
+% TODO:
+% navigace
+%     - prvne jak to budeme delat a co od toho pozadujeme
+%     - pote analyzovat
+
 \subsection{Navigace ve vygenerovaném terénu}
+% uvod do kontextu
 Generováním terénu na GPU se tedy zdá být jako ideální kandidát ovšem tím, že terén budeme generovat na GPU nám vzniká problém jak ve vygenerovaném terénu budeme vlastně provádět navigaci. V této sekce tento problém vyřešíme.
 
-Náš terén je dvourozměrný prostor, konkrétně si jej budeme reprezentovat jako mřížku. Tuto mřížku si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází. První si popíšeme kde tuto mřížku vezmeme a poté jak ji budou využívat vesničané pro navigaci.
+% co si predstavujeme pod navigaci
+% co pozadujeme of navigace
+%   - rychlost
+%   - nejkratsi cesty
+%   - prirozene vypadajici cesty
+Vesničané v naší hře budou často potřebovat nalézt cestu v námi vygenerovaném terénu k nějaké entitě. Budou například chtít dojít ke skladišti nebo ke svému pracovnímu místu. Jelikož k hledaní cesty bude docházet poměrně často budeme chtít aby bylo dostatečně rychlé. Dále budeme chtít aby cesty působili přirozeně. Příklad nepřirozené cesty je ceste ve které vesničan dělá zbytečně velkou zacházku nebo cesta ve které vesničan nejde přímo ke svému cíli i přesto, že mezi ním a cílem není žádná překážka. Příklady vhodné cesty a několika nevhodných cest je možné vidět na obrázku~\ref{fig:path}.
 
-Abychom získali z našeho terénu mřížku bude třeba jej navzorkovat. Podobně jako při jeho generování si terén rozdělíme na atomické části a střed každé takové atomické části bude bodem v naší mřížce. Ovšem celý náš terén generujeme na GPU, proto toto navzorkování bude nutné také provést na GPU. Pořídíme si proto compute shader pomocí kterého terén navzorkujeme na GPUa tím vytvoříme mřížku, kterou poté stáhneme do CPU.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.66\linewidth]{img/path.png}
+    \caption{Příklad cest z bodu A do bodu B. Fialové cesty jsou nežádané nepřirozeně vypadající cesty. Červená cesta je žádaná přirozeně vypadající cesta.}
+    \label{fig:path}
+\end{figure}
 
-Ovšem problém nastává v tom, že MonoGame framework, který pro tvorbu naší hry používáme nemá podporu pro compute shadery. Z toho důvodu namísto nativního MonoGame zvolíme jeho fork~\cite{MonoGameCptMax} od Markuse Hötzingera, který tuto podporu přináší.
+% jak ji budeme provadet
+%   - A* (protoze se bezne pouziva, produkuje nejkratsi cesty a je rychli)
+%   - vysledek nevypada prirozene kvuli mrizce, proto provadime zkrasleni cesty
+%   - nespojita navigace ve spojitem terenu
+% jak ziskame mrizku
+Náš terén je dvourozměrný prostor, konkrétně si jej budeme reprezentovat jako mřížku. Tuto mřížku si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází. Pro výpočet vzdálenosti mezi dvěma body v naší mřížce zvolíme Manhattanskou metriku. Pro hledání nejkratších cest použijeme algoritmus A*, jelikož se jedná o známý a rychlí algoritmus pro hledání nejkratších cest. 
 
-\xxx{TODO: path-finding}
+Náš terén je spojitý, ovšem prostor používaný pro navigace v něm máme reprezentovaný pouze jako mřížku. Výsledné cesty vyprodukované A* algoritmem by tedy v původním terénu nevypadali přirozeně, proto po skončení A* algoritmu provádíme ještě jeden krok, při kterém tyto cesty zjednodušujeme.
+
+\xxx{TODO}
 
 
 
 
 
 
+
+
+
+
+
+% První si popíšeme kde tuto mřížku vezmeme a poté jak ji budou využívat vesničané pro navigaci.
+
+% Abychom získali z našeho terénu mřížku bude třeba jej navzorkovat. Podobně jako při jeho generování si terén rozdělíme na atomické části a střed každé takové atomické části bude bodem v naší mřížce. Ovšem celý náš terén generujeme na GPU, proto toto navzorkování bude nutné také provést na GPU. Pořídíme si proto compute shader pomocí kterého terén navzorkujeme na GPUa tím vytvoříme mřížku, kterou poté stáhneme do CPU.
+
+% Ovšem problém nastává v tom, že MonoGame framework, který pro tvorbu naší hry používáme nemá podporu pro compute shadery. Z toho důvodu namísto nativního MonoGame zvolíme jeho fork~\cite{MonoGameCptMax} od Markuse Hötzingera, který tuto podporu přináší.
+
+% \xxx{TODO: path-finding}
 
 % Naše hra bude obsahovat procedurálně generovaný terén. Ten je možné generovat pomocí CPU nebo pomocí GPU. Obě možnosti si nyní rozebereme.
 

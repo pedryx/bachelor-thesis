@@ -191,7 +191,7 @@ Builder.Create()
     V tomto příkladu je kořenový vrchol \texttt{villager job sequence}, který prochází své potomky ze shora dolů. Vrcholy s prefixem \texttt{move to} nastaví pohyb vesničana na příslušnou pozici a poté čekají než k ní vesničan dojde. Vrchol \texttt{find resource} nalezne nejbližší surovinu daného typu. Vrchol \texttt{harvest resource} nastaví entitu dané suroviny jako \texttt{Target} v dané komponentě, poté vyčká na její sklizení. Vrchol \texttt{process resource} přesune dané předměty do budovy na zpracování surovin, poté vyčká na jejich zpracování a poté z této budovy přesune zpracované předměty do inventáře vesničana. Vrchol \texttt{store items} přesunu dané předměty do skladiště.
 \end{enumerate}
 
-Za zpracování AI by byl zodpovědný \texttt{BehaviorSystem}, který by prošel všechny \texttt{Behavior} komponenty. V obou přístupech by byla v této komponentě uložena instance buďto \textit{stavového automatu} nebo \textit{stromu chování}. \texttt{BehaviorSystem} by zavolal příslušnou metodu pro zpracovaní na každé takové instanci.
+V uvedených způsobech by byl za zpracování AI zodpovědný \texttt{BehaviorSystem}, který by prošel všechny \texttt{Behavior} komponenty. V obou přístupech by byla v této komponentě uložena instance buďto \textit{stavového automatu} nebo \textit{stromu chování}. \texttt{BehaviorSystem} by zavolal příslušnou metodu pro zpracovaní na každé takové instanci.
 
 % porovnani stavovych automatu a stromu chovani
 %    zminit clanek a vytahnout z nej relevantni body
@@ -214,7 +214,7 @@ Ovšem poté co se vesničan nají, je nutné se vrátit zpět do stavu, který 
 
 Alternativní způsob by byl použít dva stavové automaty. Hlavním automatem by byl automat řešící hlad, který by měl \texttt{MainState} ve kterém by se nejprve zkontrolovalo zda hladovění vesničana nekleslo pod určitou hodnotou, pokud ne tak zavolá původní automat, jinak nastane přechod do již zmiňované dvojice stavů \texttt{MoveToState} a \texttt{EatFromStockpileState}.
 
-Je lehké nahlédnou, že obě řešení přidávají netriviální složitost navíc do definice chování pro naše vesničany.
+Je lehké nahlédnout, že obě řešení přidávají netriviální složitost navíc do definice chování pro naše vesničany.
 
 Podle výše zmíněného článku mají \textit{stromy chování} dobrou rozšiřitelnost a modularitu. Pokud bychom chtěli rozšířit náš \textit{strom chování} o výše zmíněnou mechaniku hladu, mohli bychom vytvořit nový strom chování, který by použil \texttt{Selector} vrchol jako kořen, který by měl dva potomky. Prvním by byl podstrom řešící mechaniku hladu a druhým by byl celí původní strom připojený kořenem jako podstrom nového stromu chování. Celá situace by vypadala takto:
 
@@ -234,7 +234,7 @@ Podle výše zmíněného článku mají \textit{stromy chování} dobrou rozši
       .End()
 \end{verbatim}
 
-Je lehké nahlédnou, že rozšiřitelnost a modularita \textit{stromů chování} jsou opravu silné vlastnosti. Proto také \textit{stromy chování} použijeme pro definici chování pro naše vesničany.
+Je lehké nahlédnout, že rozšiřitelnost a modularita \textit{stromů chování} jsou opravu silné vlastnosti. Proto také \textit{stromy chování} použijeme pro definici chování pro naše vesničany.
 
 
 \section{Generovaný svět}

@@ -205,7 +205,7 @@ Zmíněná nevýhoda by nám způsobila potíže například pokud bychom chtěl
 
 Ovšem poté co se vesničan nají, je nutné se vrátit zpět do stavu, který vesničan vykonával předtím než se šel najíst. Jením z řešení by bylo pořídit si výše zmíněnou dvojici stavů pro každý stav z původního automatu a provést přechod do této dvojice pokud hlad vesničana klesl pod určitou hodnotu. Poté co by se vykonal \texttt{EatFromStockpileState} nastal by přechod zpět do původního stavu. Situaci je možné vidět na obrázku~\ref{fig:transition}.
 
-\begin{figure}
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=0.66\linewidth]{img/transition.pdf}
     \caption{Řešení mechaniky hladu pro jeden vrchol z původního stavového automatu.}
@@ -275,7 +275,7 @@ Nyní zbývá pomocí výškové mapy vygenerovat daný terén. Již víme, že 
 
 Příklad výsledného terénu je možné vidět na obrázku~\ref{fig:terrain}.
 
-\begin{figure}
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=0.66\linewidth]{img/terrain.png}
     \caption{Příklad jak může vypadat námi vygenerovaný terén.}
@@ -306,21 +306,25 @@ Díky vysoké paralelizaci GPU můžeme vždy zvolit nejmenší velikost atomick
 
 \subsection{Navigace ve vygenerovaném terénu}
 % uvod do kontextu
-Generováním terénu na GPU se tedy zdá být jako ideální kandidát ovšem tím, že terén budeme generovat na GPU nám vzniká problém jak ve vygenerovaném terénu budeme vlastně provádět navigaci. V této sekce tento problém vyřešíme.
+Generování terénu na GPU se tedy zdá být ideálním kandidátem, ovšem tím, že terén budeme generovat na GPU, nám vzniká problém, jak ve vygenerovaném terénu budeme vlastně provádět navigaci. V této sekce tento problém vyřešíme.
 
 % co si predstavujeme pod navigaci
 % co pozadujeme of navigace
 %   - rychlost
 %   - nejkratsi cesty
 %   - prirozene vypadajici cesty
-Vesničané v naší hře budou často potřebovat nalézt cestu v námi vygenerovaném terénu k nějaké entitě. Budou například chtít dojít ke skladišti nebo ke svému pracovnímu místu. Jelikož k hledaní cesty bude docházet poměrně často budeme chtít aby bylo dostatečně rychlé. Dále budeme chtít aby cesty působili přirozeně. Příklad nepřirozené cesty je ceste ve které vesničan dělá zbytečně velkou zacházku nebo cesta ve které vesničan nejde přímo ke svému cíli i přesto, že mezi ním a cílem není žádná překážka. Příklady vhodné cesty a několika nevhodných cest je možné vidět na obrázku~\ref{fig:path}.
+Vesničané v naší hře budou často potřebovat nalézt cestu v námi vygenerovaném terénu k nějaké entitě. Budou například chtít dojít ke skladišti nebo ke svému pracovnímu místu. Jelikož k hledaní cesty bude docházet poměrně často budeme chtít aby bylo dostatečně rychlé. Dále budeme chtít, aby cesty působily přirozeně. Příklady vhodných (přirozených) a nevhodných (nepřirozených) cest je možné vidět na obrázku~\ref{fig:path}.
 
-\begin{figure}
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=0.66\linewidth]{img/path.png}
-    \caption{Příklad cest z bodu A do bodu B. Fialové cesty jsou nežádané nepřirozeně vypadající cesty. Červená cesta je žádaná přirozeně vypadající cesta.}
+    \caption{Příklad cest z bodu A do bodu B. Fialové cesty jsou nevhodné. Červené cesty jsou vhodné.}
     \label{fig:path}
 \end{figure}
+
+Fialové cesty jsou nevhodné. Konkrétně cesta $P1$ je nevhodná, jelikož vede zbytečnou velkou oklikou. Cesta $P2$ je nevhodná, protože vede pouze podel os. Cesta $P3$ je nevhodná, jelikož vede přes vodu.
+
+Červené cesty jsou vhodné. Cesta $P4$ je nejkratší cestou z bodu $A$ do bodu $B$. Cesta $P5$ sice není nejkratší cesta ale je pro nás dostatečně dobrou aproximací a je pro nás dostačující.
 
 % jak ji budeme provadet
 %   - A* (protoze se bezne pouziva, produkuje nejkratsi cesty a je rychli)
@@ -329,9 +333,33 @@ Vesničané v naší hře budou často potřebovat nalézt cestu v námi vygener
 % jak ziskame mrizku
 Náš terén je dvourozměrný prostor, konkrétně si jej budeme reprezentovat jako mřížku. Tuto mřížku si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází. Pro výpočet vzdálenosti mezi dvěma body v naší mřížce zvolíme Manhattanskou metriku. Pro hledání nejkratších cest použijeme algoritmus A*, jelikož se jedná o známý a rychlí algoritmus pro hledání nejkratších cest. 
 
-Náš terén je spojitý, ovšem prostor používaný pro navigace v něm máme reprezentovaný pouze jako mřížku. Výsledné cesty vyprodukované A* algoritmem by tedy v původním terénu nevypadali přirozeně, proto po skončení A* algoritmu provádíme ještě jeden krok, při kterém tyto cesty zjednodušujeme.
+Náš terén je spojitý, ovšem prostor používaný pro navigace v něm máme reprezentovaný pouze jako mřížku. Cesty vyprodukované v této mřížce za pomoci A* algoritmu jsou pro nás nevhodné. Příklad toho jak by taková cesta mohla vypadat je možné vidět na obrazku~\ref{fig:path_grid}. Je lehké nahlédnout, že se podobá cestě $P2$ z obrázku~\ref{fig:path}, která je pro nás nevhodná.
 
-\xxx{TODO}
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.66\linewidth]{img/path_grid.png}
+    \caption{Příklad cesty z bodu A do bodu B nalezené A* algoritmem v naší mřížce.}
+    \label{fig:path_grid}
+\end{figure}
+
+Pro získání vhodných cest je nutné tyto cesty upravit. Úpravu provedeme tak, že začneme v prvním bodu cesty a provedeme ray cast do druhého bodu. Pokud jsme nenarazili na vodu pokusime se provést ray cast ke třetímu bodu. To budeme opakovat dokud náš ray cast nenarazil na vodu. V takovém případě můžeme cestu zjednodušit a odstranit z ní všechny body mezi prvním a posledním úspěšným. Poté ce přesuneme ke druhému bodu a postup opakujeme. Celí tento proces provádíme dokud nedojdeme do posledního bodu naší cesty. Zjednodušení fialové cesty je možné vidět na obrázku~\ref{fig:path_simplified}, kde fialová cesta představuje původní cestu a červená cesta její zjednodušení.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.66\linewidth]{img/path_simplified.png}
+    \caption{Příklad cesty z bodu A do bodu B nalezené A* algoritmem v naší mřížce, která byla následně zjednodušena. Fialová cesta je originální nevhodná cesta. Červená cesta je zjednodušená, již vhodná, cesta.}
+    \label{fig:path_simplified}
+\end{figure}
+
+Ovšem problém spočívá v tom, že k dispozici máme pouze mřížku, která obsahuje data o našem terénu, tím pádem nemůžeme provést klasický ray cast. Proto provedeme pouze jeho aproximaci. Začneme v bodu $N$ a chceme provést aproximaci ray castu do bodu $M$. Spočítáme si směr z bodu $N$ do bodu $M$ a tímto směrem se budeme posouvat vždy o nějakou malou vzdálenost $\Delta$. Pokaždé když se posuneme tak si spočítáme nejbližší bod z naší mřížky. Pokud se jedná o bod s biomem vody, tak ray cast selhal. V případě, že jsme takto došli až do bodu $M$ a nenarazili jsme na bod vody, ray cast byl úspěšný.
+
+Mohlo by se zdát, že použití této aproximace by vedlo v příliš nevhodné cesty, ovšem za předpokladu, že se body v naší mřížce budou nacházet dostatečně blízko sebe, tak bude výsledná cesta dostatečně dobrou aproximací červené cesty z obrázku~\ref{fig:path_simplified}.
+
+Další problém, který je nutné vyřešit, je, že vesničané a entity, ke kterým se vesničané navigují, nejsou umístěni v naší mřížce. Problém vyřešíme tak, že před spuštěním A* algoritmu si k vesničanovi a dané entitě nalezneme nejbližší body v naší mřížce a nalezneme nejkratší cestu mezi těmito body. Poté, předtím než provedeme zjednodušení cesty, přidáme pozici vesničana jako první bod naší cesty a pozici entity, ke které se vesničan naviguje, jako poslední bod naší cesty. Přidáním těchto bodů by nám mohli vzniknout nepřirozené artefakty, ovšem ty budou spraveny během zjednodušování cesty.
+
+Zbývá nám vyřešit jak získáme již zmiňovanou mřížku. Abychom ji získali z našeho terénu bude potřeba jej navzorkovat. Podobně jako při jeho generování si terén rozdělíme na atomické části a střed každé takové atomické části bude bodem v naší mřížce. Protože celý náš terén generujeme na GPU, bude nutné toto navzorkování také provádět na GPU. Pořídíme si proto compute shader pomocí kterého terén navzorkujeme na GPU a tím vytvoříme mřížku, kterou poté přesuneme na CPU.
+
+Ovšem problém nastává v tom, že MonoGame framework, který pro tvorbu naší hry používáme nemá podporu pro compute shadery. Z toho důvodu namísto nativního MonoGame zvolíme jeho fork~\cite{MonoGameCptMax} od Markuse Hötzingera, který tuto podporu přináší.
 
 
 
@@ -348,6 +376,9 @@ Náš terén je spojitý, ovšem prostor používaný pro navigace v něm máme 
 % Abychom získali z našeho terénu mřížku bude třeba jej navzorkovat. Podobně jako při jeho generování si terén rozdělíme na atomické části a střed každé takové atomické části bude bodem v naší mřížce. Ovšem celý náš terén generujeme na GPU, proto toto navzorkování bude nutné také provést na GPU. Pořídíme si proto compute shader pomocí kterého terén navzorkujeme na GPUa tím vytvoříme mřížku, kterou poté stáhneme do CPU.
 
 % Ovšem problém nastává v tom, že MonoGame framework, který pro tvorbu naší hry používáme nemá podporu pro compute shadery. Z toho důvodu namísto nativního MonoGame zvolíme jeho fork~\cite{MonoGameCptMax} od Markuse Hötzingera, který tuto podporu přináší.
+
+
+
 
 % \xxx{TODO: path-finding}
 

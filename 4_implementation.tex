@@ -45,10 +45,46 @@ Z pohledu hry jednotlivé implementace \textit{EntityProcessor} představují sa
 
 Typ, který dědí od \texttt{ECSFactory} musí implementovat metody pro vyváření instancí wrapperu entity a wrapperu \textit{worldu}. Skrze konstruktor svému předku také předá typy jednotlivých systémů (tříd dědicích od \texttt{IECSSystem}). Wrapper entity je třída dědicí od rozhraní \texttt{IEntity} a je zodpovědná za přidávání a odebíraní komponent na dané entitě. Wrapper \textit{worldu} je třída dědicí od rozhraní \texttt{IECSWorld}. Tento wrapper implementuje metodu \texttt{Update}, která je zodpovědná za aktulizaci stavu \textit{worldu}.
 
+\section{Hra}
+reprezentovana tridou game
 
+te je predan konstruktorem herni stav a konkretni ecsfactory
 
+pomoci konkretni ecsfactory si hra vyvari tridy z abstrackni vrstvy se kterou pracuje
 
+obrazek
 
+\subsection{Herní stavy}
+hra se sklada z herních stavu
+
+kazdý reprezentuje herní obrazovku
+
+vzdycky pouze jeden aktivni
+
+herní stav obsahuje ecsworld, kameru a UILayer
+
+Take obsahuje systemy
+
+kazdy herni stav dedi z abstraktni tridy GameState, je nutne implementovat metody pro vytvareni UI, entit a systemu
+
+\subsection{LevelState}
+Jedna se o herni stav, ktery obsahuje core hry
+
+pro vytvareni entit pouziva levelfactory, pro vytvarei herniho sveta pouziva gameworld generator, herni svet je reprezentovat gameworld
+
+\subsection{Herní mechaniky}
+v systemech a komponntach
+
+ty jsou tady a tady
+
+\subsection{Herní data}
+co to je a proc to je potreba
+
+globalinstancemanager
+
+obrazek
+
+popis obrazku
 
 % \begin{enumerate}
 %     \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Instance typů, které implementují toto rozhraní, představují kompletní systém. Tyto typy obsahují logiku pro iteraci přes jednotlivé entity. O zpracování jednotlivých entit se stará \texttt{EntityProcessor}. Každá instance kompletního systému má na sobě právě jeden \texttt{EntityProcessor}. Například \texttt{ArchSystem<TEntityProcessor, TComponent>} je systém, který obsahuje logiku pro procházení entit z ECS knihovny \textit{Arch}~\cite{Arch}.

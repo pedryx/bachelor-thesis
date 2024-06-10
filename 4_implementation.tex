@@ -33,6 +33,18 @@ Jako příklad si uvedeme třídu \texttt{ArchSystem<TEntityProcessor, TComponen
 
 Z pohledu hry jednotlivé implementace \textit{EntityProcessor} představují samotné systémy, jelikož hra nekouká na to jak jsou entity iterovány a zajímá je jenom samotná herní logika. Proto se kód, který pracuje s hrou odkazuje na \texttt{EntityProcessor} jako na systém. Ovšem z pohledu abstrakční vrstvy je nutné rozlišovat \texttt{System} jako typ, který obsahuje logiku pro iteraci entit a \texttt{EntityProcessor} jako typ, který obsahuje logiku pro zpracování entit. Autor si je vědom, že tyto pohledy mohou vést k matoucí terminologii, ovšem v kódu jsou již používány na příliš mnoho místech.
 
+\subsection{ECSFactory}
+\texttt{ECSFactory} je abstraktní třída. Typy, které z ní dědí jsou zodpovědné za tvorbu instancí související s abstrakční vrstvou. Vztah typů souvisejících s \texttt{ECSFactory} je možné vidět na obrázku~\ref{fig:abstract-layer-ecsfactory}.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1.0\linewidth]{img/abstract-layer-ecsfactory.pdf}
+  \caption{Vzah tříd souvisejících s \texttt{ECSFactory}.}
+  \label{fig:abstract-layer-ecsfactory}
+\end{figure}
+
+Typ, který dědí od \texttt{ECSFactory} musí implementovat metody pro vyváření instancí wrapperu entity a wrapperu \textit{worldu}. Skrze konstruktor svému předku také předá typy jednotlivých systémů (tříd dědicích od \texttt{IECSSystem}). Wrapper entity je třída dědicí od rozhraní \texttt{IEntity} a je zodpovědná za přidávání a odebíraní komponent na dané entitě. Wrapper \textit{worldu} je třída dědicí od rozhraní \texttt{IECSWorld}. Tento wrapper implementuje metodu \texttt{Update}, která je zodpovědná za aktulizaci stavu \textit{worldu}.
+
 
 
 

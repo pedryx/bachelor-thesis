@@ -46,26 +46,22 @@ Z pohledu hry jednotlivé implementace \textit{EntityProcessor} představují sa
 Typ, který dědí od \texttt{ECSFactory} musí implementovat metody pro vyváření instancí wrapperu entity a wrapperu \textit{worldu}. Skrze konstruktor svému předku také předá typy jednotlivých systémů (tříd dědicích od \texttt{IECSSystem}). Wrapper entity je třída dědicí od rozhraní \texttt{IEntity} a je zodpovědná za přidávání a odebíraní komponent na dané entitě. Wrapper \textit{worldu} je třída dědicí od rozhraní \texttt{IECSWorld}. Tento wrapper implementuje metodu \texttt{Update}, která je zodpovědná za aktulizaci stavu \textit{worldu}.
 
 \section{Hra}
-reprezentovana tridou game
+Celá hra je reprezentována třídou \texttt{Game}, té je skrze konstruktor předána konkrétní instance \texttt{ECSFactory}. Jednotlivé instance \texttt{ECSFactory} reprezentují jednotlivé ECS knihovny a volba této instance představuje volbu ECS knihovny se kterou bude hra pracovat.
 
-te je predan konstruktorem herni stav a konkretni ecsfactory
-
-pomoci konkretni ecsfactory si hra vyvari tridy z abstrackni vrstvy se kterou pracuje
-
-obrazek
+První herní stav je hře předán skrze metodu \texttt{SwitchState}. Samotná hra je spuštěna metodou \texttt{Run}.
 
 \subsection{Herní stavy}
-hra se sklada z herních stavu
+Celá hra se může skládat z několika herních stavů. Každý herní stav je reprezentován třídou dědicí od \texttt{GameState} a představuje herní obrazovku. Například hra může mít herní stavy \texttt{MenuState}, reprezentující obrazovku s hlavním menu, \texttt{LevelState}, reprezentující obrazovku s úrovní hry a \texttt{GameOverState}, reprezentující obrazovku konce hry.
 
-kazdý reprezentuje herní obrazovku
+V jeden moment může být aktivní pouze jeden herní stav, ten lze zvolit za pomoci metody \texttt{SwitchState} na třídě \texttt{Game}.
 
-vzdycky pouze jeden aktivni
+Každý herní stav obsahuje svoji instanci \texttt{ECSWorld}, která reprezentuje \textit{world} herního stavu, \texttt{Camera}, která reprezentuje herní kameru herního stavu a \texttt{UILayer}, která spravuje prvky uživatelského rozhraní herního stavu.
 
-herní stav obsahuje ecsworld, kameru a UILayer
+Každý herní stav vlastní svoje systémy. Ty se rozdělují na klasické systémy a systémy, které pracují s logikou vykreslování.
 
-Take obsahuje systemy
+Konkrétní herní stavy (instance tříd dědicích od \texttt{GameState}) jsou zodpovědné za vytváření entit, systémů a prvků uživatelského rozhraní.
 
-kazdy herni stav dedi z abstraktni tridy GameState, je nutne implementovat metody pro vytvareni UI, entit a systemu
+I přesto, že hra momentálně obsahuje pouze jeden herní stav (konkrétně \texttt{LevelState}), tak by bylo snadné ji rozšířit o další herní stavy jako je například obrazovka s hlavním menu.
 
 \subsection{LevelState}
 Jedna se o herni stav, ktery obsahuje core hry

@@ -63,24 +63,12 @@ Konkrétní herní stavy (instance tříd dědicích od \texttt{GameState}) jsou
 
 I přesto, že hra momentálně obsahuje pouze jeden herní stav (konkrétně \texttt{LevelState}), tak by bylo snadné ji rozšířit o další herní stavy jako je například obrazovka s hlavním menu.
 
-\subsection{LevelState}
-Jedna se o herni stav, ktery obsahuje core hry
-
-pro vytvareni entit pouziva levelfactory, pro vytvarei herniho sveta pouziva gameworld generator, herni svet je reprezentovat gameworld
+\texttt{LevelState} reprezentuje herní obrazovku obsahující samotný gameplay. Váže se k ní třída \texttt{LevelFactory}, která obsahuje metody pro vytváření entit. Pro tvorbu herního světa využívá třídu \texttt{GameWorldGenerator}. Samotný herní svět, který je v tomto herním stavu uložen, je reprezentován třídou \texttt{GameWorld}.
 
 \subsection{Herní mechaniky}
-v systemech a komponntach
+Implementace jednotlivých herních mechanik je možné najít v jednotlivých systémech (myšleno typech dědicích od \texttt{IEntityProcesor}) a komponentách. Všechny komponenty se nacházejí ve jmenném prostoru \texttt{WorldSimulator.Components}. Všechny systémy v \texttt{WorldSimulator.Systems}.
 
-ty jsou tady a tady
-
-\subsection{Herní data}
-co to je a proc to je potreba
-
-globalinstancemanager
-
-obrazek
-
-popis obrazku
+Některé systémy se zabývají vykreslováním hry. Tyto systémy se reprezentují stejným způsobem jako běžné systémy, akorát k jejich vytvoření dojde v metodě \texttt{GameState.CreateRenderSystems} namísto metody \texttt{GameState.CreateSystems}, ve které se běžně vytvářejí systémy.
 
 % \begin{enumerate}
 %     \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Instance typů, které implementují toto rozhraní, představují kompletní systém. Tyto typy obsahují logiku pro iteraci přes jednotlivé entity. O zpracování jednotlivých entit se stará \texttt{EntityProcessor}. Každá instance kompletního systému má na sobě právě jeden \texttt{EntityProcessor}. Například \texttt{ArchSystem<TEntityProcessor, TComponent>} je systém, který obsahuje logiku pro procházení entit z ECS knihovny \textit{Arch}~\cite{Arch}.

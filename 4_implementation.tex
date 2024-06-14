@@ -27,7 +27,7 @@ V ECS jsou systémy zodpovědné za iterace a zpracování entit. Jelikož každ
   \label{fig:abstract-layer-systems}
 \end{figure}
 
-\texttt{IECSSystem} je rozhraní ze kterého dědí každý systém, každá ECS knihovna poté poskytne svojí implementaci systému, které budou dědit z tohoto rozhraní. Tyto implementace obsahují pouze logiku pro iteraci neboli procházení přes jednotlivé entity. Každá implementace systému bude vlastnit konkrétní \texttt{ECSFactory} dědicí od \texttt{IECSFactory}. Jednotlivé \texttt{ECSFactory} jsou zodpovědné za zpracování entit. Jednotlivé implementace rozhraní \texttt{IECSSystem} jsou generické typy, které přijímají typ entity procesoru a také typy komponent, které od entit vyžadují jako generické parametry.
+\texttt{IECSSystem} je rozhraní ze kterého dědí každý systém, každá ECS knihovna poté poskytne svojí implementaci systému. Tyto implementace obsahují pouze logiku pro iteraci neboli procházení přes jednotlivé entity. Každá implementace systému bude vlastnit konkrétní \texttt{ECSFactory} dědicí od \texttt{IECSFactory}. Jednotlivé \texttt{ECSFactory} jsou zodpovědné za zpracování entit. Jednotlivé implementace rozhraní \texttt{IECSSystem} jsou generické typy, které přijímají typ entity procesoru a také typy komponent, které od entit vyžadují jako generické parametry.
 
 Jako příklad si uvedeme třídu \texttt{ArchSystem<TEntityProcessor, TComponent>}. Jedná se o implementaci systému. Tento systém obsahuje logiku pro iteraci entit z ECS knihovny \textit{Arch}~\cite{Arch}. Příkladem konkrétního \texttt{EntityProcessor} je například třída \texttt{MovementSystem}, která řeší zpracování entit s komponentami \texttt{Position} a \texttt{Movement} a obsahuje logiku zodpovědnou za jejich pohyb.
 

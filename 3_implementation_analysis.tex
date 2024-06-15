@@ -300,9 +300,9 @@ Pořídíme texturu do které budeme generovat terén. Tato textura bude mít st
 Díky vysoké paralelizaci GPU můžeme vždy zvolit nejmenší velikost atomických oblastí (velikost jednoho pixelu) a stejně budeme mít pořád dostatečnou rychlost.
 
 % TODO:
-% navigace
-%     - prvne jak to budeme delat a co od toho pozadujeme
-%     - pote analyzovat
+%     - rozdelit na podpodsekce podle toho co se zrovna resi
+%     - myslenka ze timhle smerem chceme jit uz na zacatku
+%     - pristupy ostatnich
 
 \subsection{Navigace ve vygenerovaném terénu}
 % uvod do kontextu
@@ -331,7 +331,7 @@ Fialové cesty jsou nevhodné. Konkrétně cesta $P1$ je nevhodná, jelikož ved
 %   - vysledek nevypada prirozene kvuli mrizce, proto provadime zkrasleni cesty
 %   - nespojita navigace ve spojitem terenu
 % jak ziskame mrizku
-Náš terén je dvourozměrný prostor, konkrétně si jej budeme reprezentovat jako mřížku. Tuto mřížku si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází. Pro výpočet vzdálenosti mezi dvěma body v naší mřížce zvolíme Manhattanskou metriku. Pro hledání nejkratších cest použijeme algoritmus A*, jelikož se jedná o známý a rychlí algoritmus pro hledání nejkratších cest. 
+Náš terén je dvourozměrný prostor, konkrétně si jej budeme reprezentovat jako mřížku. Tuto mřížku si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází. Pro výpočet vzdálenosti mezi dvěma body v naší mřížce zvolíme Manhattanskou metriku. Pro hledání nejkratších cest použijeme algoritmus A*, jelikož se jedná o známý a rychlý algoritmus pro hledání nejkratších cest. 
 
 Náš terén je spojitý, ovšem prostor používaný pro navigace v něm máme reprezentovaný pouze jako mřížku. Cesty vyprodukované v této mřížce za pomoci A* algoritmu jsou pro nás nevhodné. Příklad toho jak by taková cesta mohla vypadat je možné vidět na obrazku~\ref{fig:path_grid}. Je lehké nahlédnout, že se podobá cestě $P2$ z obrázku~\ref{fig:path}, která je pro nás nevhodná.
 

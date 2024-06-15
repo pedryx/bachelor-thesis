@@ -51,24 +51,77 @@ Celá hra je reprezentována třídou \texttt{Game}, té je skrze konstruktor p�
 První herní stav je hře předán skrze metodu \texttt{SwitchState}. Samotná hra je spuštěna metodou \texttt{Run}.
 
 \subsection{Herní stavy}
-Celá hra se může skládat z několika herních stavů. Každý herní stav je reprezentován třídou dědicí od \texttt{GameState} a představuje herní obrazovku. Například hra může mít herní stavy \texttt{MenuState}, reprezentující obrazovku s hlavním menu, \texttt{LevelState}, reprezentující obrazovku s úrovní hry a \texttt{GameOverState}, reprezentující obrazovku konce hry.
+Celá hra se může skládat z několika herních stavů. Každý herní stav je reprezentován třídou dědicí od \texttt{GameState} a představuje herní obrazovku. Hra momentálně obsahuje pouze herní stav \texttt{LevelState}, který reprezentuje herní obrazovku obsahující gameplay, ale díky abstrakcí herních stavů by bylo snadné ji rozšířit například o herní obrazovku herního menu, nebo herní obrazovku s nastavením hry. Vztahy tříd souvisejících se třídou \texttt{GameState} lze vidět na obrázku~\ref{fig:game-state}.
 
-V jeden moment může být aktivní pouze jeden herní stav, ten lze zvolit za pomoci metody \texttt{SwitchState} na třídě \texttt{Game}.
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1.0\linewidth]{img/game-state.pdf}
+  \caption{Vzah tříd souvisejících s \texttt{GameState}.}
+  \label{fig:game-state}
+\end{figure}
 
-Každý herní stav obsahuje svoji instanci \texttt{ECSWorld}, která reprezentuje \textit{world} herního stavu, \texttt{Camera}, která reprezentuje herní kameru herního stavu a \texttt{UILayer}, která spravuje prvky uživatelského rozhraní herního stavu.
+Každý herní stav obsahuje svoji instanci \texttt{ECSWorld}, která reprezentuje \textit{world} herního stavu. Tím pádem každý herní stav má svojí množinu entit. Dále má každý herní stav svoje systémy, kameru a instanci třídy \texttt{UILayer}, která spravuje prvky uživatelského rozhraní pro daný herní stav. Konkrétní herní stavy (instance tříd dědicích od \texttt{GameState}) jsou zodpovědné za vytváření svých entit, systémů a prvků uživatelského rozhraní.
 
-Každý herní stav vlastní svoje systémy. Ty se rozdělují na klasické systémy a systémy, které pracují s logikou vykreslování.
+V jeden moment může být aktivní pouze jeden herní stav. Ten lze zvolit za pomoci metody \texttt{SwitchState} na třídě \texttt{Game}. Vždy jsou aktivní pouze systémy v aktivním herním stavu.
 
-Konkrétní herní stavy (instance tříd dědicích od \texttt{GameState}) jsou zodpovědné za vytváření entit, systémů a prvků uživatelského rozhraní.
+\subsection{LevelState a herní svět}
+\texttt{LevelState} je herní stav, který reprezentuje herní obrazovku obsahující samotný gameplay. Obrázek~\ref{fix:level-state} popisuje vztahy na této třídě.
 
-I přesto, že hra momentálně obsahuje pouze jeden herní stav (konkrétně \texttt{LevelState}), tak by bylo snadné ji rozšířit o další herní stavy jako je například obrazovka s hlavním menu.
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1.0\linewidth]{img/level-state.pdf}
+  \caption{Vzah tříd souvisejících s \texttt{LevelState}.}
+  \label{fig:level-state}
+\end{figure}
 
-\texttt{LevelState} reprezentuje herní obrazovku obsahující samotný gameplay. Váže se k ní třída \texttt{LevelFactory}, která obsahuje metody pro vytváření entit. Pro tvorbu herního světa využívá třídu \texttt{GameWorldGenerator}. Samotný herní svět, který je v tomto herním stavu uložen, je reprezentován třídou \texttt{GameWorld}.
+Třída \texttt{LevelFactory}, obsahuje metody pro vytváření entit surovin, budov a vesničanů. Tu využívá třída \texttt{GameWorldGenerator} pro tvorbu entit z kterých generuje herní svět. Ta se krom vytváření samotného terénu stará také a počáteční rozpoložení surovin a vesnic. Výsledný vygenerovaný herní svět je poté reprezentován třídou \texttt{GameWorld}.
 
-\subsection{Herní mechaniky}
-Implementace jednotlivých herních mechanik je možné najít v jednotlivých systémech (myšleno typech dědicích od \texttt{IEntityProcesor}) a komponentách. Všechny komponenty se nacházejí ve jmenném prostoru \texttt{WorldSimulator.Components}. Všechny systémy v \texttt{WorldSimulator.Systems}.
+Pomocí třídy \texttt{GameWorld} lze získávat informace o herním světě. Je možné nalézt nejbližší surovinu určitého typu k dané pozici, nalézt cestu mezi dvěma body, nebo získat informace o terénu na dané pozici.
 
-Některé systémy se zabývají vykreslováním hry. Tyto systémy se reprezentují stejným způsobem jako běžné systémy, akorát k jejich vytvoření dojde v metodě \texttt{GameState.CreateRenderSystems} namísto metody \texttt{GameState.CreateSystems}, ve které se běžně vytvářejí systémy.
+Na obrázku \ref{fix:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-strom pro každý typ suroviny. Pomocí tohoto stromu lze efektivně nalézt nejbližší surovinu k dané pozici. \texttt{GameWorld} v sobě také obsahuje dvourozměrnou mřížku s informacemi o terénu, která je používaná například pro hledání cest.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1.0\linewidth]{img/game-world.pdf}
+  \caption{Datové struktury obsažené v \texttt{GameWorld}.}
+  \label{fig:game-world}
+\end{figure}
+
+\subsection{Assety}
+
+\subsection{Uživatelské rozhraní}
+
+\subsection{Herní data}
+
+\subsection{Suroviny}
+
+\subsection{Inventáře a předměty}
+
+\subsection{Vesnice a vesničané}
+
+% \subsection{Herní mechaniky}
+% Implementace jednotlivých herních mechanik je možné najít v jednotlivých systémech (myšleno typech dědicích od \texttt{IEntityProcesor}) a komponentách. Všechny komponenty se nacházejí ve jmenném prostoru \texttt{WorldSimulator.Components}. Všechny systémy v \texttt{WorldSimulator.Systems}.
+
+% Některé systémy se zabývají vykreslováním hry. Tyto systémy se reprezentují stejným způsobem jako běžné systémy, akorát k jejich vytvoření dojde v metodě \texttt{GameState.CreateRenderSystems} namísto metody \texttt{GameState.CreateSystems}, ve které se běžně vytvářejí systémy.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % \begin{enumerate}
 %     \item \textbf{\texttt{IECSSystem}:} Jedná se o rozhraní. Instance typů, které implementují toto rozhraní, představují kompletní systém. Tyto typy obsahují logiku pro iteraci přes jednotlivé entity. O zpracování jednotlivých entit se stará \texttt{EntityProcessor}. Každá instance kompletního systému má na sobě právě jeden \texttt{EntityProcessor}. Například \texttt{ArchSystem<TEntityProcessor, TComponent>} je systém, který obsahuje logiku pro procházení entit z ECS knihovny \textit{Arch}~\cite{Arch}.

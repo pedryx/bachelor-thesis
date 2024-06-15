@@ -102,6 +102,21 @@ Všechny assety se nachází ve složce \texttt{Content}. Jednotlivé typy asset
 Veškeré instance rozhraní \texttt{IAssetManager} jsou uchovány ve třídě \texttt{Game}. Pomocí ní je také možné přistupovat ke konkrétním instancím (\texttt{ShaderManager} a \texttt{TextureManager}). Při inicializaci hry dojde k zavolání metody \texttt{LoadAll} na každé takové instanci, to vede k načtení všech assetů daného typu.
 
 \subsection{Uživatelské rozhraní}
+Vztahy tříd souvisejících s uživatelským rozhraním je možné vidět na obrázku~\ref{fig:ui-layer}. Třída \texttt{UILayer} je zodpovědná za správu prvků uživatelského rozhraní pro jeden konkrétní herní stav. Každý prvek uživatelského rozhraní dědí od třídy \texttt{UIElement}. Hra momentálně obsahuje pouze jediný prvek uživatelského rozhraní a tím je minimapa, ale je navržena tak aby bylo snadné ji rozšířit i o další prvky uživatelského rozhraní, jako jsou například labely, tlačítka, nebo action bar.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.6\linewidth]{img/ui-layer.pdf}
+  \caption{Hierarchie dědičnosti tříd souvisejících s managementem assetů.}
+  \label{fig:ui-layer}
+\end{figure}
+
+Mezi prvky uživatelského rozhraní existuje stromová hierarchie. Každý prvek může mít několik potomků. Jednotlivý potomci poté pracují s pozici relativní vůči svému rodiči.
+
+\subsubsection{Minimapa}
+Pomocí minimapy chceme znázornit jak vypadá herní svět a jaká jeho část je momentálně viditelná kamerou. Jejím cílem je usnadnit hráčovi orientaci v herním světě.
+
+Minimapa se skládá z mapy terénu, view framu a rámečku. Pro vykreslení mapy terénu používáme stejný fragment shader jako pro vykreslení terénu naší hry. Pouze použijeme jiné rozlišení a scale. Poté vykreslíme view frame, ten představuje výsek terénu, který hráč momentálně vidí skrze kameru. Pro jeho vykreslení si najdeme na jakou pozici v minimapě odpovídá umístění kamery a poté vykreslíme obdélníkový rámeček, který odpovídá rozměrům kamery naškálovaných podle velikosti minimapy. Aby nám view frame nepřesahoval hranice minimapy vykreslujeme jej s nastaveným \texttt{ScissorRectangle}. Jedná se o MonoGame nastavení, pomocí kterého lze provádět oříznutí. Na závěr kolem minimapy vykreslíme rámeček. Ten je reprezentován texturou.
 
 \subsection{Herní data}
 

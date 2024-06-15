@@ -88,6 +88,18 @@ Na obrázku \ref{fix:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-
 \end{figure}
 
 \subsection{Assety}
+Na obrázků~\ref{fig:asset-manager} lze vidět hierarchii tříd souvisejících s managementem assetů. \texttt{AssetManager<TAsset>} obsahuje společnou logiku pro nalezení a načtení assetů ze složky a pro správu slovníku ve kterém jsou uloženy načtené assety pro generický typ \texttt{TAsset}. Jednotlivý potomci této třídy poskytují implementace metody \texttt{Load}, pro načtení assetu konkrétního typu. I přesto, že hra momentálně obsahuje assety pro textury a shadery, bylo by díky abstrakci asset managerů snadné hru rozšířit i o jiné typy assetů jako jsou například zvuky.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1.0\linewidth]{img/asset-manager.pdf}
+  \caption{Hierarchie dědičnosti tříd souvisejících s managementem assetů.}
+  \label{fig:asset-manager}
+\end{figure}
+
+Všechny assety se nachází ve složce \texttt{Content}. Jednotlivé typy assetů mají poté v této složce svou podložku. Textury se nacházejí v podsložce \texttt{Textures} a shadery v podsložce \texttt{Shaders}. Je nutné zmínit, že složka \texttt{Shaders} obsahuje již zkompilované shadery.
+
+Veškeré instance rozhraní \texttt{IAssetManager} jsou uchovány ve třídě \texttt{Game}. Pomocí ní je také možné přistupovat ke konkrétním instancím (\texttt{ShaderManager} a \texttt{TextureManager}). Při inicializaci hry dojde k zavolání metody \texttt{LoadAll} na každé takové instanci, to vede k načtení všech assetů daného typu.
 
 \subsection{Uživatelské rozhraní}
 

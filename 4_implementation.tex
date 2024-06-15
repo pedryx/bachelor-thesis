@@ -22,7 +22,7 @@ V ECS jsou systémy zodpovědné za iterace a zpracování entit. Jelikož každ
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.66\linewidth]{img/abstract-layer-systems.pdf}
+  \includegraphics[width=0.8\linewidth]{img/abstract-layer-systems.pdf}
   \caption{Vzah tříd souvisejících se systémy.}
   \label{fig:abstract-layer-systems}
 \end{figure}
@@ -55,7 +55,7 @@ Celá hra se může skládat z několika herních stavů. Každý herní stav je
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=1.0\linewidth]{img/game-state.pdf}
+  \includegraphics[width=0.5\linewidth]{img/game-state.pdf}
   \caption{Vzah tříd souvisejících s \texttt{GameState}.}
   \label{fig:game-state}
 \end{figure}
@@ -65,11 +65,11 @@ Každý herní stav obsahuje svoji instanci \texttt{ECSWorld}, která reprezentu
 V jeden moment může být aktivní pouze jeden herní stav. Ten lze zvolit za pomoci metody \texttt{SwitchState} na třídě \texttt{Game}. Vždy jsou aktivní pouze systémy v aktivním herním stavu.
 
 \subsection{LevelState a herní svět}
-\texttt{LevelState} je herní stav, který reprezentuje herní obrazovku obsahující samotný gameplay. Obrázek~\ref{fix:level-state} popisuje vztahy na této třídě.
+\texttt{LevelState} je herní stav, který reprezentuje herní obrazovku obsahující samotný gameplay. Obrázek~\ref{fig:level-state} popisuje vztahy na této třídě.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=1.0\linewidth]{img/level-state.pdf}
+  \includegraphics[width=0.5\linewidth]{img/level-state.pdf}
   \caption{Vzah tříd souvisejících s \texttt{LevelState}.}
   \label{fig:level-state}
 \end{figure}
@@ -78,11 +78,11 @@ Třída \texttt{LevelFactory}, obsahuje metody pro vytváření entit surovin, b
 
 Pomocí třídy \texttt{GameWorld} lze získávat informace o herním světě. Je možné nalézt nejbližší surovinu určitého typu k dané pozici, nalézt cestu mezi dvěma body, nebo získat informace o terénu na dané pozici.
 
-Na obrázku \ref{fix:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-strom pro každý typ suroviny. Pomocí tohoto stromu lze efektivně nalézt nejbližší surovinu k dané pozici. \texttt{GameWorld} v sobě také obsahuje dvourozměrnou mřížku s informacemi o terénu, která je používaná například pro hledání cest.
+Na obrázku \ref{fig:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-strom pro každý typ suroviny. Pomocí tohoto stromu lze efektivně nalézt nejbližší surovinu k dané pozici. \texttt{GameWorld} v sobě také obsahuje dvourozměrnou mřížku s informacemi o terénu, která je používaná například pro hledání cest.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=1.0\linewidth]{img/game-world.pdf}
+  \includegraphics[width=0.6\linewidth]{img/game-world.pdf}
   \caption{Datové struktury obsažené v \texttt{GameWorld}.}
   \label{fig:game-world}
 \end{figure}
@@ -92,7 +92,7 @@ Na obrázků~\ref{fig:asset-manager} lze vidět hierarchii tříd souvisejícíc
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=1.0\linewidth]{img/asset-manager.pdf}
+  \includegraphics[width=0.6\linewidth]{img/asset-manager.pdf}
   \caption{Hierarchie dědičnosti tříd souvisejících s managementem assetů.}
   \label{fig:asset-manager}
 \end{figure}

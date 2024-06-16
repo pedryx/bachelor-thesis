@@ -119,7 +119,22 @@ Pomocí minimapy chceme znázornit jak vypadá herní svět a jaká jeho část 
 Minimapa se skládá z mapy terénu, view framu a rámečku. Pro vykreslení mapy terénu používáme stejný fragment shader jako pro vykreslení terénu naší hry. Pouze použijeme jiné rozlišení a scale. Poté vykreslíme view frame, ten představuje výsek terénu, který hráč momentálně vidí skrze kameru. Pro jeho vykreslení si najdeme na jakou pozici v minimapě odpovídá umístění kamery a poté vykreslíme obdélníkový rámeček, který odpovídá rozměrům kamery naškálovaných podle velikosti minimapy. Aby nám view frame nepřesahoval hranice minimapy vykreslujeme jej s nastaveným \texttt{ScissorRectangle}. Jedná se o MonoGame nastavení, pomocí kterého lze provádět oříznutí. Na závěr kolem minimapy vykreslíme rámeček. Ten je reprezentován texturou.
 
 \subsection{Herní data}
+Mezi herní data patří informace o biomech, surovinách a předmětech. Herní data jsou immutable a lze k nim přistupovat globálně. Vztah tříd souvisejících s herními daty je možné vidět na obrázku \ref{fig:game-data}.
 
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.85\linewidth]{img/game-data.pdf}
+  \caption{Diagram vyobrazující třídy a důležité instance související s herními daty.}
+  \label{fig:game-data}
+\end{figure}
+
+\texttt{GlobalInstances<TDerived>} je abstraktní třída, kde generický parametr \texttt{TDerived} může být pouze třída, která je jejím potomkem. \texttt{GlobalInstances<TDerived>} si za pomoci statiky interně ukládá všechny instance \texttt{TDerived} a umožňuje k nim globální přístup za pomoci jejich identifikátoru.
+
+Jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} představují jednotlivé typy herních dat, jako je například typ biomu (\texttt{TerrainType}), typ suroviny (\texttt{ResourceType}), nebo typ předmětu (\texttt{ItemType}). Tyto třídy obsahují informace o daném typu herních dat. Například typ biomu (\texttt{TerrainType}) obsahuje informaci o tom zda je možné v daném biomu stavět a také informaci o tom zda je možné v daném biomu chodit.
+
+Je nutné aby jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} měli privátní konstruktor, tím zaručíme, že nebude možné vytvářet nové instance mimo danou třídu. Všechny instance těchto potomků jsou definovány jako veřejné readonly statické fieldy přímo uvnitř těchto tříd.  Například herní data reprezentovaná třídou \texttt{TerrainType} obsahuje instance pro biom vody (\texttt{Water}), biom pláže (\texttt{Beach}), biom lesa (\texttt{Forest}) a další biomy. Na obrázku~\ref{fig:game-data} lze vidět vypsané jednotlivé instance jednotlivých typů herních dat.
+
+Abstraktní třída \texttt{GlobalInstances} obsahuje pouze module initializer, pomocí kterého zavolá \texttt{RuntimeHelpers.RunClassConstructor} na každém neabstraktním typu, který od ní dědí. Tím máme zaručeno, že naše data jsou v čas vytvořené, jinak by k jejich vytvoření došlo až při prvním přístupu k jejich třídám a do té doby bychom k nim nemohli přistupovat skrze třídu \texttt{GlobalInstances<TDerived>}.
 \subsection{Inventáře a předměty}
 
 \subsection{Suroviny}

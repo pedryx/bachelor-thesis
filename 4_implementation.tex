@@ -27,7 +27,7 @@ V ECS jsou systémy zodpovědné za iterace a zpracování entit. Jelikož každ
   \label{fig:abstract-layer-systems}
 \end{figure}
 
-\texttt{IECSSystem} je rozhraní ze kterého dědí každý systém, každá ECS knihovna poté poskytne svojí implementaci systému. Tyto implementace obsahují pouze logiku pro iteraci neboli procházení přes jednotlivé entity. Každá implementace systému bude vlastnit konkrétní \texttt{ECSFactory} dědicí od \texttt{IECSFactory}. Jednotlivé \texttt{ECSFactory} jsou zodpovědné za zpracování entit. Jednotlivé implementace rozhraní \texttt{IECSSystem} jsou generické typy, které přijímají typ entity procesoru a také typy komponent, které od entit vyžadují jako generické parametry.
+\texttt{IECSSystem} je rozhraní ze kterého dědí každý systém. Každá ECS knihovna poté poskytne svojí implementaci systému. Tyto implementace obsahují pouze logiku pro iteraci neboli procházení přes jednotlivé entity. Každá implementace systému bude vlastnit konkrétní \texttt{EntityProcessor} dědicí od \texttt{IEntityProcessor}. Jednotlivé \texttt{EntityProcessor} jsou zodpovědné za zpracování entit. Jednotlivé implementace rozhraní \texttt{IECSSystem} jsou generické typy, které přijímají typ entity procesoru a také typy komponent, které od entit vyžadují jako generické parametry.
 
 Jako příklad si uvedeme třídu \texttt{ArchSystem<TEntityProcessor, TComponent>}. Jedná se o implementaci systému. Tento systém obsahuje logiku pro iteraci entit z ECS knihovny \textit{Arch}~\cite{Arch}. Příkladem konkrétního \texttt{EntityProcessor} je například třída \texttt{MovementSystem}, která řeší zpracování entit s komponentami \texttt{Position} a \texttt{Movement} a obsahuje logiku zodpovědnou za jejich pohyb.
 
@@ -39,7 +39,7 @@ Z pohledu hry jednotlivé implementace \textit{EntityProcessor} představují sa
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1.0\linewidth]{img/abstract-layer-ecsfactory.pdf}
-  \caption{Vzah tříd souvisejících s \texttt{ECSFactory}.}
+  \caption{Vztahy tříd souvisejících s \texttt{ECSFactory}.}
   \label{fig:abstract-layer-ecsfactory}
 \end{figure}
 
@@ -56,7 +56,7 @@ Celá hra se může skládat z několika herních stavů. Každý herní stav je
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.5\linewidth]{img/game-state.pdf}
-  \caption{Vzah tříd souvisejících s \texttt{GameState}.}
+  \caption{Vztahy tříd souvisejících s \texttt{GameState}.}
   \label{fig:game-state}
 \end{figure}
 
@@ -69,8 +69,8 @@ V jeden moment může být aktivní pouze jeden herní stav. Ten lze zvolit za p
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.5\linewidth]{img/level-state.pdf}
-  \caption{Vzah tříd souvisejících s \texttt{LevelState}.}
+  \includegraphics[width=0.7\linewidth]{img/level-state.pdf}
+  \caption{Vztahy tříd souvisejících s \texttt{LevelState}.}
   \label{fig:level-state}
 \end{figure}
 
@@ -99,7 +99,7 @@ Na obrázků~\ref{fig:asset-manager} lze vidět hierarchii tříd souvisejícíc
 
 Všechny assety se nachází ve složce \texttt{Content}. Jednotlivé typy assetů mají poté v této složce svou podložku. Textury se nacházejí v podsložce \texttt{Textures} a shadery v podsložce \texttt{Shaders}. Je nutné zmínit, že složka \texttt{Shaders} obsahuje již zkompilované shadery.
 
-Veškeré instance rozhraní \texttt{IAssetManager} jsou uchovány ve třídě \texttt{Game}. Pomocí ní je také možné přistupovat ke konkrétním instancím (\texttt{ShaderManager} a \texttt{TextureManager}). Při inicializaci hry dojde k zavolání metody \texttt{LoadAll} na každé takové instanci, to vede k načtení všech assetů daného typu.
+Veškeré instance rozhraní \texttt{IAssetManager} jsou uchovány ve třídě \texttt{Game}. Pomocí ní je také možné přistupovat ke konkrétním instancím (\texttt{ShaderManager} a \texttt{TextureManager}). Při inicializaci hry dojde k zavolání metody \texttt{LoadAll} na každé takové instanci. To vede k načtení všech assetů daného typu.
 
 \subsection{Uživatelské rozhraní}
 Vztahy tříd souvisejících s uživatelským rozhraním je možné vidět na obrázku~\ref{fig:ui-layer}. Třída \texttt{UILayer} je zodpovědná za správu prvků uživatelského rozhraní pro jeden konkrétní herní stav. Každý prvek uživatelského rozhraní dědí od třídy \texttt{UIElement}. Hra momentálně obsahuje pouze jediný prvek uživatelského rozhraní a tím je minimapa, ale je navržena tak aby bylo snadné ji rozšířit i o další prvky uživatelského rozhraní, jako jsou například labely, tlačítka, nebo action bar.
@@ -107,7 +107,7 @@ Vztahy tříd souvisejících s uživatelským rozhraním je možné vidět na o
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.4\linewidth]{img/ui-layer.pdf}
-  \caption{Hierarchie dědičnosti tříd souvisejících s managementem assetů.}
+  \caption{Diagram vyobrazující vztahy tříd, které souvisejí s uživatelským rozhraním.}
   \label{fig:ui-layer}
 \end{figure}
 
@@ -123,7 +123,7 @@ Mezi herní data patří informace o biomech, surovinách a předmětech. Herní
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.85\linewidth]{img/game-data.pdf}
+  \includegraphics[width=0.8\linewidth]{img/game-data.pdf}
   \caption{Diagram vyobrazující třídy a důležité instance související s herními daty.}
   \label{fig:game-data}
 \end{figure}
@@ -135,6 +135,7 @@ Jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} představují jed
 Je nutné aby jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} měli privátní konstruktor, tím zaručíme, že nebude možné vytvářet nové instance mimo danou třídu. Všechny instance těchto potomků jsou definovány jako veřejné readonly statické fieldy přímo uvnitř těchto tříd.  Například herní data reprezentovaná třídou \texttt{TerrainType} obsahuje instance pro biom vody (\texttt{Water}), biom pláže (\texttt{Beach}), biom lesa (\texttt{Forest}) a další biomy. Na obrázku~\ref{fig:game-data} lze vidět vypsané jednotlivé instance jednotlivých typů herních dat.
 
 Abstraktní třída \texttt{GlobalInstances} obsahuje pouze module initializer, pomocí kterého zavolá \texttt{RuntimeHelpers.RunClassConstructor} na každém neabstraktním typu, který od ní dědí. Tím máme zaručeno, že naše data jsou v čas vytvořené, jinak by k jejich vytvoření došlo až při prvním přístupu k jejich třídám a do té doby bychom k nim nemohli přistupovat skrze třídu \texttt{GlobalInstances<TDerived>}.
+
 \subsection{Inventáře a předměty}
 
 \subsection{Suroviny}

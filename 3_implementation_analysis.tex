@@ -304,9 +304,14 @@ Díky vysoké paralelizaci GPU můžeme vždy zvolit nejmenší velikost atomick
 %     - myslenka ze timhle smerem chceme jit uz na zacatku
 %     - pristupy ostatnich
 
+% kontext
+% pozadavky
+% list zpusobu
+% popis naseho zpusobu
+
 \subsection{Navigace ve vygenerovaném terénu}
 % uvod do kontextu
-Generování terénu na GPU se tedy zdá být ideálním kandidátem, ovšem tím, že terén budeme generovat na GPU, nám vzniká problém, jak ve vygenerovaném terénu budeme vlastně provádět navigaci. V této sekce tento problém vyřešíme.
+Generování terénu na GPU se zdá být ideálním kandidátem, ovšem tím, že terén budeme generovat na GPU, nám vzniká problém, jak ve vygenerovaném terénu budeme vlastně provádět navigaci. V této sekce tento problém vyřešíme.
 
 % co si predstavujeme pod navigaci
 % co pozadujeme of navigace
@@ -326,14 +331,19 @@ Fialové cesty jsou nevhodné. Konkrétně cesta $P1$ je nevhodná, jelikož ved
 
 Červené cesty jsou vhodné. Cesta $P4$ je nejkratší cestou z bodu $A$ do bodu $B$. Cesta $P5$ sice není nejkratší cesta ale je pro nás dostatečně dobrou aproximací a je pro nás dostačující.
 
-% jak ji budeme provadet
-%   - A* (protoze se bezne pouziva, produkuje nejkratsi cesty a je rychli)
-%   - vysledek nevypada prirozene kvuli mrizce, proto provadime zkrasleni cesty
-%   - nespojita navigace ve spojitem terenu
-% jak ziskame mrizku
-Náš terén je dvourozměrný prostor, konkrétně si jej budeme reprezentovat jako mřížku. Tuto mřížku si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází. Pro výpočet vzdálenosti mezi dvěma body v naší mřížce zvolíme Manhattanskou metriku. Pro hledání nejkratších cest použijeme algoritmus A*, jelikož se jedná o známý a rychlý algoritmus pro hledání nejkratších cest. 
+\subsubsection{Navigační struktury}
+Pro navigaci v terénu použijeme datovou strukturu. Tato datová struktura reprezentuje terén způsobem, který umožňuje snadné hledané cest mezi dvěma body. Často k tomu používají algoritmus pro hledání nejkratších cest. Typickou volbou bývá algoritmus A*. Datové struktury, které lze pro navigaci použít označme jako navigační struktury.
 
-Náš terén je spojitý, ovšem prostor používaný pro navigace v něm máme reprezentovaný pouze jako mřížku. Cesty vyprodukované v této mřížce za pomoci A* algoritmu jsou pro nás nevhodné. Příklad toho jak by taková cesta mohla vypadat je možné vidět na obrazku~\ref{fig:path_grid}. Je lehké nahlédnout, že se podobá cestě $P2$ z obrázku~\ref{fig:path}, která je pro nás nevhodná.
+Velkou část navigačních struktur tvoří navigační meshe (nebo také zkráceně navmesh). Ty jsou často používány populárními frameworky a enginy jako je například Unity. Navigační meshe vezmou plochu terénu po které lze chodit a rozdělí ji do oblastí. Každá taková oblast je tvořena konvexním polygonem. Poté si vytvoří graf, kde každý takovýto polygon je reprezentován vrcholem a každé sousední polygony mají mezi sebou hranu. V tomto grafu se poté hledají nejkratší cesty. Je nutné upozornit, že existuje velké množství navigačních meshů a některé se od tohoto popisu mouhou lišit. Pro více informacích o navigačních meshích lze nahlédnou do studie \textit{A comparative study of navigation meshes}~\cite{10.1145/2994258.2994262}.
+
+V sekci~\ref{sec:game-characteristics} jsme si uvedli, že nechceme aby naše hra byla příliš složitá, jelikož by to odvádělo pozornost od problému, který řešíme. Z toho důvodu nebudeme používat navigační mesh jako navigační strukturu pro naši hru, jelikož i přesto, že použití navigačního meshe pro navigaci není složitá úloha tak jeho konstrukce složitá já.
+
+Jako navigační strukturu zvolíme dvourozměrnou mřížku. Tu si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází daný vrchol mřížky. Tuto strukturu zvolíme, protože je jednoduchá na konstrukci. Cesty které díky této mřížce získáme nebudou nejlepší možnou nejkratší cestou (a nebudou ve skutečnosti ani nejkratší), ale budou pro nás dostatečně dobrou aproximací. 
+
+\subsubsection{Tvorba cesty}
+Tvorbu cesty začneme tím, že získáme cestu, která se bude z počátku nevhodná. Poté ji vylepšíme a tím získáme cestu, která již bude vhodná.
+
+Pro výpočet vzdálenosti mezi dvěma body v naší mřížce zvolíme Manhattanskou metriku. Pro hledání nejkratších cest použijeme algoritmus A*. První tvar naší cesty získáme tím, že pomocí A* algoritmu nalezneme cestu v naší mřížce. Příklad toho jak by taková cesta mohla vypadat je možné vidět na obrazku~\ref{fig:path_grid}. Je lehké nahlédnout, že se podobá cestě $P2$ z obrázku~\ref{fig:path}, která je pro nás nevhodná.
 
 \begin{figure}[!htb]
     \centering
@@ -342,7 +352,7 @@ Náš terén je spojitý, ovšem prostor používaný pro navigace v něm máme 
     \label{fig:path_grid}
 \end{figure}
 
-Pro získání vhodných cest je nutné tyto cesty upravit. Úpravu provedeme tak, že začneme v prvním bodu cesty a provedeme ray cast do druhého bodu. Pokud jsme nenarazili na vodu pokusime se provést ray cast ke třetímu bodu. To budeme opakovat dokud náš ray cast nenarazil na vodu. V takovém případě můžeme cestu zjednodušit a odstranit z ní všechny body mezi prvním a posledním úspěšným. Poté ce přesuneme ke druhému bodu a postup opakujeme. Celí tento proces provádíme dokud nedojdeme do posledního bodu naší cesty. Zjednodušení fialové cesty je možné vidět na obrázku~\ref{fig:path_simplified}, kde fialová cesta představuje původní cestu a červená cesta její zjednodušení.
+Následně provedeme úpravu této cesty.Začneme v prvním bodu cesty a provedeme ray cast do druhého bodu. Pokud jsme nenarazili na vodu pokusime se provést ray cast ke třetímu bodu. To budeme opakovat dokud náš ray cast nenarazil na vodu. V takovém případě můžeme cestu zjednodušit a odstranit z ní všechny body mezi prvním a posledním úspěšným. Poté ce přesuneme ke druhému bodu a postup opakujeme. Celí tento proces provádíme dokud nedojdeme do posledního bodu naší cesty. Zjednodušení fialové cesty je možné vidět na obrázku~\ref{fig:path_simplified}, kde fialová cesta představuje původní cestu a červená cesta její zjednodušení.
 
 \begin{figure}[!htb]
     \centering

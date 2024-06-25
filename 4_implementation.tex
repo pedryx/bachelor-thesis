@@ -137,13 +137,18 @@ Je nutné aby jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} mě
 Abstraktní třída \texttt{GlobalInstances} obsahuje pouze module initializer, pomocí kterého zavolá \texttt{RuntimeHelpers.RunClassConstructor} na každém neabstraktním typu, který od ní dědí. Tím máme zaručeno, že naše data jsou v čas vytvořené, jinak by k jejich vytvoření došlo až při prvním přístupu k jejich třídám a do té doby bychom k nim nemohli přistupovat skrze třídu \texttt{GlobalInstances<TDerived>}.
 
 \subsection{Inventáře a předměty}
+Na konci sekce~\ref{sec:game-world} jsme si uvedli jednotlivé typy předmětů, které jsou součástí naší hry. Jednotlivé předměty mohou mít vesničané ve svém inventáři (například pokud jej získali sklizením suroviny a nyní jej odnášejí aby jej zpracovali). Dále jsou předmět skladovány ve skladišti. Vztahy tříd souvisejících z předměty je možné vidět na obrázku~\ref{fig:items}.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.8\linewidth]{img/items.pdf}
-  \caption{}
+  \caption{Vztah tříd souvisejících s herními předměty.}
   \label{fig:items}
 \end{figure}
+
+Z minulé sekce víme, že instance třídy \texttt{ItemType} reprezentují jednotlivé typy předmětů. Každý typ předmětů má také svoje ID. Struktura \texttt{ItemCollection} reprezentuje kolekci předmětů. Uvnitř sebe má pole, kde jednotlivé prvky tohoto pole reprezentují počty předmětů uvnitř kolekce. Index každého prvku odpovídá ID daného typu předmětu. Například předmět \textit{prkno} má ID 0 a element z tohoto pole s indexem 0 odpovídá počtu prken uvnitř dané kolekce. Krom tohoto pole struktura \texttt{ItemCollection} také obsahuje pomocné metody pro manipulaci s kolekcemi předmětů.
+
+Třída \texttt{Inventory} je komponenta. Entity s touto komponentou mají inventář do kterého mohou ukládat předměty. Tato třída obsahuje jediný field a tím je instance \texttt{ItemCollection}. Tuto komponentu na sobě krom entit vesničanů a skladišť mají také entity budov pro zpracování předmětů (například budova dřevorubce). Do tohoto inventáře přesouvají vesničané předměty pro zpracování a entita dané budovy pro zpracování surovin zde také ukládá produkt získaný zpracování daného předmětu.
 
 \subsection{Suroviny}
 

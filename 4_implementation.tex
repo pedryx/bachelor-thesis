@@ -151,22 +151,51 @@ Z minulé sekce víme, že instance třídy \texttt{ItemType} reprezentují jedn
 Třída \texttt{Inventory} je komponenta. Entity s touto komponentou mají inventář do kterého mohou ukládat předměty. Tato třída obsahuje jediný field a tím je instance \texttt{ItemCollection}. Tuto komponentu na sobě krom entit vesničanů a skladišť mají také entity budov pro zpracování předmětů (například budova dřevorubce). Do tohoto inventáře přesouvají vesničané předměty pro zpracování a entita dané budovy pro zpracování surovin zde také ukládá produkt získaný zpracování daného předmětu.
 
 \subsection{Suroviny}
+Jednotlivé suroviny jsou reprezentované jako entity. Komponenty ze kterých jsou tyto entity složené a systémy které tyto komponenty zpracovávají je možné vidět na obrázku~\ref{fig:resource}. \texttt{RenderSystem} se stará o vykreslení entity. \texttt{Appearance} komponenta nese informaci o tom jak entita vypada a \texttt{Location} obsahuje informaci o tom kde se nachází. \texttt{DeathSystem} řeší logiku smrti dané entity, konkrétně v případě surovin dojde k jejich smrti v případě sklizení.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.8\linewidth]{img/resource.pdf}
-  \caption{}
+  \caption{Entita suroviny s jejími komponentami a systémy, které tyto komponenty zpracovávají.}
   \label{fig:resource}
 \end{figure}
 
+Každá surovina má \texttt{Health} komponentu ve které má uloženou informaci o aktuálním počtu životů. Entita obsahující \texttt{DamageDealer} komponentu může zaútočit na entitu obsahující \texttt{Health} komponentu. Při tomto útoku se počet životů v příslušné \texttt{Health} komponentě sníží a pokud klesne na nulu, tak \texttt{DeathSystem} krom smazání mrtvé entity nahlédne zda zemřelá entita obsahuje \texttt{ItemDrop} komponentu. Pokud ano tak předměty definované v této komponentě převede do inventáře entity, které danou entitu zabila. Stejným způsobem funguje i sklízení surovin, kde útočící entitou je vesničan, který útočí na entitu dané suroviny a tím jí sklízí. Po jejím zabití neboli sklizení obdrží do svého inventáře příslušné předměty.
+
+Suroviny na sobě mají také \texttt{Owner} komponentu. Ta obsahuje instanci wrapperu entity (třídy dědicí od \texttt{IEntity}), který reprezentuje danou entitu. \texttt{DeathSystem} vyžaduje tuto komponentu aby mohl danou entitu smazat.
+
+Jak již bylo zmíněno, existuje kd-tree pro každý typ suroviny. Entity jednotlivých surovin jsou poté uloženy v těchto kd-tree. Tyto kd-tree poté využívají vesničané, kteří v rámci svého povolání provádějí úlohu nalezení nejbližší suroviny daného typu. Pokud si vesničan rezervuje danou surovinu (začne pohyb směrem k ní a následně ji sklidí), dojde k odebrání této suroviny z příslušného kd-tree. Tím zamezíme tomu, že více vesničanů nebude sklízet stejnou entitu suroviny.
+
+Dále je nutné zmínit, že \texttt{DeathSystem} pracuje nad všemi entitami s komponentami \texttt{Health} a \texttt{Owner}. V případě, že zemřelá entita má na sobě komponentu \texttt{Inventory} nebo komponentu \texttt{ItemDrop} tak převede dané předměty. A v případě, že zemřelá entita je vesničan a ten útočil na entitu s komponentou \texttt{Resource} (daná entita byla surovina), tak je nutné entitu vrátit do příslušného kd-tree.
+
+Entita \textit{jelena} se od ostatních entit surovin liší. Její komponenty a systémy, které zpracovávají tyto komponenty je možné vidět na obrázku \ref{fig:deer}. Je možné nahlédnout, že oproti entitám ostatních surovin má entita \textit{jelena} navíc komponenty \texttt{Movement}, která přidává entitám schopnost chodit a \texttt{AnimalBehavior}. \texttt{AnimalBehaviorSystem} poté pracuje se všemi entitami s komponentami \texttt{Location}, \texttt{Owner}, \texttt{Movement} a \texttt{AnimalBehavior} a jeho hlavním úkolem je řídit chování zvířat, konkrétně jejich náhodný pohyb. Krom tohoto úkolu se tento systém stará také o aktulizaci pozice entit zvířat v příslušném kd-tree.
+
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.8\linewidth]{img/deer.pdf}
-  \caption{}
+  \includegraphics[width=1.0\linewidth]{img/deer.pdf}
+  \caption{Entita jelena s jejími komponentami a systemy \texttt{AnimalBehaviorSystem}, \texttt{MovementSystem} a \texttt{OrientationUpdateSystem}.}
   \label{fig:deer}
 \end{figure}
 
+\texttt{MovementSystem} se stará o pohyb entit. Jak \texttt{MovementSystem} tak \texttt{AnimalBehaviorSystem} pracují s \texttt{Movement} komponentou, ale \texttt{AnimalBehaviorSystem} řídí jak se pohyb bude odehrávat a \texttt{MovementSystem} se stará o samotný pohyb. \texttt{OrientationUpdateSystem} aktualizuje orientaci entity. V závislosti na tom zda se entita pohybuje doleva nebo doprava tak převrátí texturu dané entity podle osy y aby její orientace odpovídala směru, ve kterém se pohybuje.
+
 \subsection{Vesnice a vesničané}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % \subsection{Herní mechaniky}
 % Implementace jednotlivých herních mechanik je možné najít v jednotlivých systémech (myšleno typech dědicích od \texttt{IEntityProcesor}) a komponentách. Všechny komponenty se nacházejí ve jmenném prostoru \texttt{WorldSimulator.Components}. Všechny systémy v \texttt{WorldSimulator.Systems}.

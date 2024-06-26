@@ -162,7 +162,7 @@ Jednotlivé suroviny jsou reprezentované jako entity. Komponenty ze kterých js
 
 Každá surovina má \texttt{Health} komponentu ve které má uloženou informaci o aktuálním počtu životů. Entita obsahující \texttt{DamageDealer} komponentu může zaútočit na entitu obsahující \texttt{Health} komponentu. Při tomto útoku se počet životů v příslušné \texttt{Health} komponentě sníží a pokud klesne na nulu, tak \texttt{DeathSystem} krom smazání mrtvé entity nahlédne zda zemřelá entita obsahuje \texttt{ItemDrop} komponentu. Pokud ano tak předměty definované v této komponentě převede do inventáře entity, které danou entitu zabila. Stejným způsobem funguje i sklízení surovin, kde útočící entitou je vesničan, který útočí na entitu dané suroviny a tím jí sklízí. Po jejím zabití neboli sklizení obdrží do svého inventáře příslušné předměty.
 
-Suroviny na sobě mají také \texttt{Owner} komponentu. Ta obsahuje instanci wrapperu entity (třídy dědicí od \texttt{IEntity}), který reprezentuje danou entitu. \texttt{DeathSystem} vyžaduje tuto komponentu aby mohl danou entitu smazat.
+Suroviny na sobě mají také \texttt{Owner} komponentu. Ta obsahuje instanci typu dědicího od \texttt{IEntity}, která reprezentuje danou entitu. \texttt{DeathSystem} vyžaduje tuto komponentu aby mohl danou entitu smazat.
 
 Jak již bylo zmíněno, existuje kd-tree pro každý typ suroviny. Entity jednotlivých surovin jsou poté uloženy v těchto kd-tree. Tyto kd-tree poté využívají vesničané, kteří v rámci svého povolání provádějí úlohu nalezení nejbližší suroviny daného typu. Pokud si vesničan rezervuje danou surovinu (začne pohyb směrem k ní a následně ji sklidí), dojde k odebrání této suroviny z příslušného kd-tree. Tím zamezíme tomu, že více vesničanů nebude sklízet stejnou entitu suroviny.
 

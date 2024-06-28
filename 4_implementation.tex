@@ -221,9 +221,13 @@ Důležitým typem budov jsou budovy pro zpracování surovin. Diagram vyobrazuj
 
 \texttt{ResourceProcessingSystem} se stará o logiku kolem zpracování surovin. Budovy pro zpracování surovin na sobě mají \texttt{Inventory} komponentu. \texttt{ResourceProcessingSystem} má na sobě nastavený recept a pravidelně nahlíží zda se v inventáři dané suroviny nacházejí požadované suroviny. Pokud ano, tak zahájí zpracování po jehož dokončení přemístí nově vytvořené předměty opět do inventáře. Z něj je může vesničan převzít a odnést do skladiště.
 
-===== vesnice
-jak vypada entita vesnice
-jak se spawnuji budovy
+\subsubsection{Vesnice}
+Každá vesnice je entita, která obsahuje komponenty \texttt{Location}, \texttt{Village} a \texttt{Owner}. \texttt{VillageBuildingSystem} se stará se stavění budov v dané vesnici. Má v sobě uloženou stavební frontu budov, kde pro každou budovu má také její cenu. Ve \texttt{Village} komponentě jsou uchovávány odkazy na jednotlivé entity budov, které se ve vesnici nacházejí. Jakmile \texttt{VillageBuildingSystem} zjistí, že vesnice má dostatek surovin na další budovu ze stavební fronty, vytvoří pro ni entitu a přidá na vytvořenou entitu odkaz do \texttt{Village} komponenty.
+
+Klíčovou částí při vytváření entity budovy je volba pozice kde se entita má vytvořit. Nechceme aby budovy byli umístěny v biomech kde nelze stavět a také nechceme aby se nacházeli moc blízko nebo moc daleko od ostatních budov. Pro volbu pozice budov je zvolena konstantní minimální a maximální vzdálenost. Tyto vzdálenosti udávají v jakém rozmezí se mohou nové budovy od již postavených budov objevit.
+
+Pro volbu pozice byl použit přímočarý algoritmus. Jako první se vybere náhodná již postavená budova a vezme se její pozice. Poté se kolem této pozice vytvoří prstenec s rozměry podle konstantní minimální a maximální vzdálenosti. V tomto prstenci se poté vybere náhodná pozice. Na závěr se zkontroluje zda je možné na této pozici stavět a pokud ano tak je tato pozice vybrána jako pozice pro novou budovu. Pokud na dané pozici není možné stavět tak se celý algoritmus zopakuje.
+
 
 
 

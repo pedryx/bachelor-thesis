@@ -26,7 +26,7 @@ Některé ECS knihovny pro lepší výkon používají \textit{arch type}. Jedn�
 
 Jak již bylo zmíněno, \textit{arch type} je datová struktura. Tato datová struktura představuje typ entity. Tento typ je jednoznačně určen typy všech komponent dané entity. Je možné si jej představit jako tabulku, kde jednotlivé sloupečky odpovídají komponentám a v každém řádku se nacházejí instance komponent pro danou entitu. Například můžeme mít \textit{arch type} vyobrazený v tabulce~\ref{tab:arch-type}. Tento \textit{arch type} je jednoznačně určen typy komponent \texttt{Position} (představující pozici entity), \texttt{Health} (představující počet životů entity) a \texttt{Damage} (představující poškození, které entita může udělit jiné entitě).
 
-\begin{table}
+\begin{table}[!htb]
     \centering\footnotesize\sf
     \begin{tabular}{c c c c}
         \toprule
@@ -52,7 +52,7 @@ Pro více informací o \textit{arch type} a o tom jak je ECS knihovny využívaj
 \section{Hypotéza}
 Nyní vyřkneme hypotézu. Jednotlivé ECS knihovny lze rozdělit do kategorií na základě jistých vlastností. My tyto kategorie popíšeme a stanovíme jaké bude jejich pořadí při vykonnostnim porovnání.
 
-Nejrychleji vyjdou ECS knihovny, které používají \textit{arch type}. Jak již bylo řečeno, \textit{arch type} je datová struktura s kterou lze, díky malému počtu \textit{cache miss}, dosáhnout velkého výkonu při iteraci entit. Z těchto důvodů ECS knihovny, které \textit{arch type} používají vyjdou nejlépe.
+Nejrychleji vyjdou ECS knihovny, které používají \textit{arch type}. Jak již bylo zmíněno, \textit{arch type} je datová struktura s kterou lze, díky malému počtu \textit{cache miss}, dosáhnout velkého výkonu při iteraci entit. Z těchto důvodů ECS knihovny, které \textit{arch type} používají vyjdou nejlépe.
 
 Některé ECS knihovny vyžadují aby jednotlivé komponenty byli reprezentovány jako třídy. Tyto knihovny vyjdou nejhůře. V případě, že komponenta je třída, znamená to, že její proměnné musejí být pointery. Z toho důvodu iterace přes komponenty v těchto knihovnách vede ve velmi velký počet \textit{cache miss}, kvůli kterému se tyto knihovny umístí nejhůře. 
 

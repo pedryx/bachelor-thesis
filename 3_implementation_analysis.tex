@@ -12,7 +12,7 @@ Nyní provedeme volbu engninu/frameworku, který použijeme pro naši hru. Pro t
 \begin{enumerate}
     \item \textbf{Podpora pro programovací jazyk C\#:} V sekci~\ref{sec:ecs-libs} jsme si uvedli, že se zaměříme na knihovny pro programovací jazyk C\#. Proto tento programovací jazyk budeme chtít použít pro naši hru.
     \item \textbf{Podpora pro 2D hry s pohledem shora:} Tento požadavek vyplývá ze specifikace hry, konkrétně ze sekce~\ref{sec:game-spec}.
-    \item \textbf{Možnost spouštět hru vícekrát po sobě a z jiného C\# projektu:} Kromě naší hry budeme mít také měření, které pomocí naší hry změří výkon různých ECS knihoven. Jak naše hra tak i naše měření budou samostatné C\# projekty. Od enginu budeme vyžadovat aby nám umožnil spouštět hru vícekrát po sobě s různými implementacemi abstrakční vrstvy z našeho měření, které je v jiném C\# projektu než naše hra.    
+    \item \textbf{Možnost spouštět hru vícekrát po sobě a z jiného C\# projektu:} Kromě naší hry budeme mít také měření, které pomocí naší hry změří výkon různých ECS knihoven. Jak naše hra tak i naše měření budou samostatné C\# projekty. Od frameworku/enginu budeme vyžadovat aby nám umožnil spouštět hru vícekrát po sobě s různými implementacemi abstrakční vrstvy z našeho měření, které je v jiném C\# projektu než naše hra.    
 \end{enumerate}
 
 V přehledu~\cite{SteamDB} technologií používaných hrami v herním obchodě Steam~\cite{Steam} je možné nahlédnout, že mezi nejpopulárnější herní enginy/frameworky pro C\# patří Unity~\cite{Unity}, Godot~\cite{Godot} a Microsoft XNA Framework.
@@ -55,9 +55,9 @@ Pro reprezentaci \textit{systémů} v naší abstrakční vrstvě bude nejprve n
     \item \verb|Query((components1[], components2[]) => { /**/ })|
 \end{enumerate}
 
-\subsubsection{2. kategorie}
-
 Způsoby z této kategorie mají většinou definovanou metodu \verb|Query| (neplést s \textit{query} jako objektem pro iterování \textit{entit}). Tato metoda bývá často implementována na \textit{query} nebo na \textit{world}. Této metodě se předává lambda funkce, která je v případě 1 volána na každou iterovanou \textit{entitu}, v případě 2 volána na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 3 volána na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
+
+\subsubsection{2. kategorie}
 
 \begin{enumerate}
     \setcounter{enumi}{3}
@@ -66,9 +66,9 @@ Způsoby z této kategorie mají většinou definovanou metodu \verb|Query| (nep
     \item \verb|void Update(components1[], components2[]) { /**/ }|
 \end{enumerate}
 
-\subsubsection{3. kategorie}
-
 Způsoby z druhé kategorie vyžadují aby \textit{systém} byl třída, dědicí od rozhraní nebo předka. Toto rozhraní nebo předek nabízí abstraktní metodu \verb|Update|, kterou je nutné přetížit. Při iteraci je v případě 4 metoda \verb|Update| volána na každou iterovanou \textit{entitu}, v případě 5 na množinu žádoucích instancí \textit{komponent} každé iterované \textit{entity}, v případě 6 na množinu polí, které obsahují žádoucí instance \textit{komponent} a kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
+
+\subsubsection{3. kategorie}
 
 \begin{enumerate}
     \setcounter{enumi}{6}
@@ -296,7 +296,7 @@ V ideálním případě bychom chtěli velké rozlišení ale také lepší rych
 \subsubsection{Generování terénu na GPU}
 Terén budeme generovat v reálném čase (vygenerujeme jej v každém snímku znova) a vždy nám postačí vygenerovat pouze část terénu, která je viditelná hráčem. Tato část bude bude obdélník se stejnými rozměry jako velikost okna naší hry.
 
-Pořídíme texturu do které budeme generovat terén. Tato textura bude mít stejnou velikost jako okno naší hry. Poté si pořídíme fragment shader, kterým do této textury budeme generovat terén. Tento fragment shader v každém snímku na základě pozice a přiblížení kamery pro každý pixel naší textury provede algoritmus popsaný v sekci~\ref{sec:terrain-gen}.
+Pořídíme si texturu do které budeme generovat terén. Tato textura bude mít stejnou velikost jako okno naší hry. Poté si pořídíme fragment shader, kterým do této textury budeme generovat terén. Tento fragment shader v každém snímku na základě pozice a přiblížení kamery pro každý pixel naší textury provede algoritmus popsaný v sekci~\ref{sec:terrain-gen}.
 
 Díky vysoké paralelizaci GPU můžeme vždy zvolit nejmenší velikost atomických oblastí (velikost jednoho pixelu) a stejně budeme mít pořád dostatečnou rychlost.
 
@@ -333,7 +333,7 @@ Fialové cesty jsou nevhodné. Konkrétně cesta $P1$ je nevhodná, jelikož ved
 Červené cesty jsou vhodné. Cesta $P4$ je nejkratší cestou z bodu $A$ do bodu $B$. Cesta $P5$ sice není nejkratší cesta ale je pro nás dostatečně dobrou aproximací a je pro nás dostačující.
 
 \subsubsection{Navigační struktury}
-Pro navigaci v terénu použijeme datovou strukturu. Tato datová struktura reprezentuje terén způsobem, který umožňuje snadné hledané cest mezi dvěma body. Často k tomu používají algoritmus pro hledání nejkratších cest. Typickou volbou bývá algoritmus A*. Datové struktury, které lze pro navigaci použít označme jako navigační struktury.
+Pro navigaci v terénu použijeme datovou strukturu. Tato datová struktura reprezentuje terén způsobem, který umožňuje snadné hledaní cest mezi dvěma body. Často k tomu používají algoritmus pro hledání nejkratších cest. Typickou volbou bývá algoritmus A*. Datové struktury, které lze pro navigaci použít nazvěme navigační struktury.
 
 Velkou část navigačních struktur tvoří navigační meshe (nebo také zkráceně navmesh). Ty jsou často používány populárními frameworky a enginy jako je například Unity. Navigační meshe vezmou plochu terénu po které lze chodit a rozdělí ji do oblastí. Každá taková oblast je tvořena konvexním polygonem. Poté si vytvoří graf, kde každý takovýto polygon je reprezentován vrcholem a každé sousední polygony mají mezi sebou hranu. V tomto grafu se poté hledají nejkratší cesty. Je nutné upozornit, že existuje velké množství navigačních meshů a některé se od tohoto popisu mouhou lišit. Pro více informacích o navigačních meshích lze nahlédnou do studie \textit{A comparative study of navigation meshes}~\cite{10.1145/2994258.2994262}.
 

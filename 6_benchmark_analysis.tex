@@ -1,3 +1,14 @@
+% vic to ozdrojovat protoze to uz nekdo resil
+% rici si co znamena mereni vykonu hry
+% - co to znamena, co presne chcee, co chceme zmerit
+% - benchmark.dotnet primarne pro micro benchmarky
+% - co chceme merit, co je nasim cilem, presne rici, co je ta metrika
+
+% spatna argumentace v co neberem v potaz
+% - abychom meli jeden kod, tyhle triky nepouzivame
+% - chci testovat dve auta, jedno ma 3 stupne, druhy 6, aby to bylo jednotny budu testovat 1-3 jenom
+% - - nedava smysl pro vykon
+
 \chapter{Analýza měření}
 V této kapitole provedeme analýzu rozhodnutí, která byla vykonána během implementace měření. Prvně si rozebereme přístupy pro měření výkonu hry. Nakonec si řekneme, které věci při našem měření nebereme v potaz.
 
@@ -38,8 +49,6 @@ Mezi funkcionality, které některé ECS knihovny nabízejí patří takzvané \
 V naší hře zmiňované \textit{reaction systémy} nepoužíváme. Problém je v tom, že jejich podporu nabízejí pouze některé ECS knihovny, tím pádem, pokud bychom je chtěli používat, nemohli bychom pak naši hru použít pro měření výkonu knihoven, které jejich podporu nenabízejí.
 
 Kromě zmiňovaných \textit{reaction systémů} existuje i spoustu dalších funkcionalit, které některé ECS knihovny nabízejí pro zlepšení výkonu. My je ovšem v naší hře nepoužíváme a to ze stejného důvodu, kvůli kterému nepoužíváme \textit{reaction systémy}.
-
-
 
 
 

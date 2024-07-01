@@ -375,7 +375,7 @@ Prvně si přiblížíme co to je \textit{game loop}, jelikož to budeme potřeb
 
 Pseudokód obsahuje \texttt{while} cyklus, který se opakuje dokud nedojde k nastavení proměnné \texttt{shouldExit} na \texttt{true}. V těle tohoto cyklu se volají dvě funkce a to \texttt{Update}, která je zodpovědná za zpracování herní logiky a \texttt{Draw}, která je zodpovědná za vykreslení hry. 
 
-I naše hra obsahuje \textit{game loop}. Logika v naší hře se skládá ze systémů. Ty se dělí na \textit{update systémy}, které řeší zpracování herní logiky a \textit{render systémy}, které řeší vykreslování. \textit{update systémy} běží uvnitř funkce \texttt{Update} a \textit{render systémy} běží uvnitř funkce \texttt{Draw}. Je nutné upozornit, že tento popis je zjednodušen a více dopodrobna se implementaci hry a systémů budeme věnovat v následující kapitole.
+I naše hra obsahuje \textit{game loop}. Logika v naší hře se skládá ze systémů. Ty se dělí na \textit{update systémy}, které řeší zpracování herní logiky a \textit{render systémy}, které řeší vykreslování. \textit{Update systémy} běží uvnitř funkce \texttt{Update} a \textit{render systémy} běží uvnitř funkce \texttt{Draw}. Je nutné upozornit, že tento popis je zjednodušen a více dopodrobna se implementaci hry a systémů budeme věnovat v následující kapitole.
 
 \subsubsection{Popis měření}
 Budeme mít stanovené dva pevné počty iterací. První bude přípravný počet iterací a druhý bude měřený počet iterací. Měřený počet iterací bude větší než přípravný počet iterací.
@@ -385,11 +385,16 @@ Samotné měření se bude skládat ze dvou fází a to fáze přípravy a fáze
 Výše popsaný test provedeme pro každou ECS knihovnu, kterou budeme měřit. Pomocí výsledných časů můžeme relativně porovnat výkon naší hry s různými ECS knihovnami. 
 
 \subsection{Volba frameworku pro měření}
-\xxx{TODO}
+Nyní zvolíme framework, který budeme používat pro měření. Prvně si popíšeme vlastnosti, kterého od tohoto frameworku požadujeme, poté provedeme samotný výběr. Mezi požadované vlastnosti patří:
 
+\begin{enumerate}
+    \item \textbf{Korektnost:} Chceme aby naměřené výsledky byli spolehlivé. Klíčovým faktorem bude aby výsledek vyprodukovaný pro danou ECS knihovnu byl porovnatelný s výsledkem vyprodukovaným pro jinou ECS knihovnu.
+    \item \textbf{Jednoduchost:} Budeme chtít aby framework byl jednoduchý na používání. Nechceme dávat přednost jednoduchosti před korektností, ale pokud bude na výběr mezi frameworky co splňují první požadavek, tak upřednostníme ten, který je jednodušší na používání.
+\end{enumerate}
 
-Benchmark.NET
-% volba frameworku pro mereni
+Pro výběr frameworku použijeme platformu GitHub. Na stránce~\cite{github_performance} je možné vidět seznam repositářů na platformě GitHub s topicem \textit{performance} seřazené podle počtu hvězd. Je možné nahlédnou, že nejpopulárnějším frameworkem pro měření výkonu je \textit{BenchmarkDotNet}~\cite{BenchmarkDotNet}.
+
+\textit{BenchmarkDotNet} je framework pomocí kterého lze měřit výkon metody. Tento framework splňuje oba naše požadavky, ale jedná se o framework primárně určený na micro benchmarky, zatímco naše měření je spíše macro benchmarkem. I přesto jej pro naše měření použijeme, primárně protože je velmi jednoduchý na použití.
 
 \subsection{Na co nebereme při měření ohledy}
 % na co nebudeme brat ohledy

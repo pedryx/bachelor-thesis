@@ -1,0 +1,75 @@
+\chapter{Měření}
+kontext
+
+\section{Hypotéza}
+\label{chap:hypothesis}
+kontext
+% TODO:
+% hypoteza
+%     - vice ozdrovojat cache
+%     - rict ze popisujem pametovy model
+% Do teď jsme se věnovali samotné hře, kterou v následujících kapitolách budeme chtít použít pro porovnání výkonu ECS knihoven. Ale ještě předtím, konkrétně v této kapitole, si rozebereme předpokládané výsledky tohoto porovnání.
+
+\subsection{Cache}
+Využití cache je klíčový faktor pro výkon ECS knihovny, proto si nyní připomene co to vlastně je a jak funguje.
+
+Program si svoje data uchovává v paměti RAM. Ovšem přístup do této paměti je z hlediska času drahý. Pro představu u moderních pamětí takovíto přístup může trvat vyšší desítky nanosekund. Z tohoto důvodu se využívají menší paměti, takzvané cache, které disponují mnohem vyšší rychlostí ale mnohem menší velikostí. Pro představu moderní procesory používají cache, u kterých přístup může trvat menší desetiny nanosekund.
+
+Při přístupu k datům se procesor nejprve podívá zda nemá data již v této cache. Pokud ano, jedná se o takzvaný \textit{cache hit} a data si z ní načte. Pokud ne, jedná se o takzvaný \textit{cache miss} a je nutné data načíst z hlavní paměti. 
+
+Již víme, že \textit{cache miss} jsou drahé, proto je potřeba pro vysoký výkon je minimalizovat. Ale jak přesně procesor rozhoduje o tom, jaká data budou v cache a jaká ne. Využívá se takzvané \textit{časové} a \textit{prostorové lokality}. \textit{Časová lokalita} spočívá v tom, že pokud jsme přistoupili k nějakým datům, je velká šance, že k nim brzo budeme chtít přistoupit znovu. Nadruhou stranu \textit{prostorová lokalita} spočívá v tom, že pokud jsme přistoupili k nějakým datům, je velká šance, že budeme chtít přistoupit také k datům, které se nacházejí blízko nich.
+
+Jedna z možností, jak minimalizovat počet \textit{cache miss}, je využít sekvenčního přístupu. Pokud budeme přistupovat k datům, které jsou v paměti hned za sebou, tak díky \textit{prostorové lokalitě} bude počet \textit{cache miss} velmi malí.
+
+Je nutné upozornit, že výše popsaný paměťový model je úmyslně zjednodušen. Více o něm a cache je možné se dočíst například v již zmiňované knize \textit{Game Programming Patterns}~\cite{nystrom2014game}, konkrétně v kapitole \textit{Data Locality}.
+
+\subsection{Arch type}
+Některé ECS knihovny pro lepší výkon používají \textit{arch type}. Jedná se o datovou strukturu pro ukládání komponent. Knihovny, které používají tuto datovou strukturu mají většinou velký výkon, proto před stanovením hypotézy si použití \textit{arch type} lehce přiblížíme.
+
+Jak již bylo zmíněno, \textit{arch type} je datová struktura. Tato datová struktura představuje typ entity. Tento typ je jednoznačně určen typy všech komponent dané entity. Je možné si jej představit jako tabulku, kde jednotlivé sloupečky odpovídají komponentám a v každém řádku se nacházejí instance komponent pro danou entitu. Například můžeme mít \textit{arch type} vyobrazený v tabulce~\ref{tab:arch-type}. Tento \textit{arch type} je jednoznačně určen typy komponent \texttt{Position} (představující pozici entity), \texttt{Health} (představující počet životů entity) a \texttt{Damage} (představující poškození, které entita může udělit jiné entitě).
+
+\begin{table}[!htb]
+    \centering\footnotesize\sf
+    \begin{tabular}{c c c c}
+        \toprule
+        entita & \texttt{Position} & \texttt{Health} & \texttt{Damage} \\
+        \midrule
+        hráč & $(0,0)$ & 10 & 3 \\
+        nepřítel & (5,4) & 6 & 1 \\
+        npc & (-4,8) & 16 & 9\\
+        \bottomrule
+    \end{tabular}
+    \caption{Tabulka vyobrazující \textit{arch type}, který je jednoznačně určen komponentami \texttt{Position}, \texttt{Health} a \texttt{Damage}. Tento \textit{arch type} obsahuje tři entity, konkrétně hráče, nepřítele a npc.}
+    \label{tab:arch-type}
+\end{table}
+
+Jednotlivé \textit{arch type} jsou uloženy ve \textit{world}. Každý \textit{arch type} má v sobě několik polí, konkrétně jedno pole pro každý typ komponenty. V každém poli jsou poté uloženy instance příslušných komponent. V případě \textit{arch type} z tabulky~\ref{tab:arch-type} by tento \textit{arch type} obsahoval jedno pole pro \texttt{Position} komponenty, jedno pole pro \texttt{Health} komponenty a jedno pole pro \texttt{Damage} komponenty.
+
+Pokud bychom chtěli iterovat přes všechny entity s danými komponentami, stačilo by nám projít příslušná pole všech \textit{arch type} s těmito komponentami. Tato iterace by byla, díky sekvenčnímu přístupu zmíněnému v minulé sekci, velice rychlá. Ke \textit{cache miss} by docházelo pouze při přechodu na další \textit{arch type}.
+
+Nevýhodou knihoven založených na \textit{arch type} bývá pomalé přidávání a odebírání komponent. Pokud je entitě přidána nebo odebrána komponenta, dojde ke změně jejího \textit{arch type}. Při této změně se vezmou instance všech komponent dané entity a přesunou se do nového \textit{arch type}.
+
+Pro více informací o \textit{arch type} a o tom jak je ECS knihovny využívají je možné nahlédnout do série článků \textit{ECS back and forth}~\cite{Caini_2019} od Michela Cainiho.
+
+\subsection{Hypotéza}
+Nyní vyřkneme hypotézu. Jednotlivé ECS knihovny lze rozdělit do kategorií na základě jistých vlastností. My tyto kategorie popíšeme a stanovíme jaké bude jejich pořadí při výkonnostním porovnání.
+
+Nejrychleji vyjdou ECS knihovny, které používají \textit{arch type}. Jak již bylo zmíněno, \textit{arch type} je datová struktura s kterou lze, díky malému počtu \textit{cache miss}, dosáhnout velkého výkonu při iteraci entit. Z těchto důvodů ECS knihovny, které \textit{arch type} používají vyjdou nejlépe.
+
+Některé ECS knihovny vyžadují aby jednotlivé komponenty byli reprezentovány jako třídy. Tyto knihovny vyjdou nejhůře. V případě, že komponenta je třída, znamená to, že její proměnné musejí být pointery. Z toho důvodu iterace přes komponenty v těchto knihovnách vede ve velmi velký počet \textit{cache miss}, kvůli kterému se tyto knihovny umístí nejhůře. 
+
+Zbývají knihovny, které povolují komponenty reprezentovat jako struktury, ale zároveň nepoužívají \textit{arch type}. Tyto knihovny se umístí hůře než knihovny, které používají \textit{arch type}, ale lépe než knihovny, které vyžadují aby komponenty byli třídy.
+
+\section{Měřené knihovny}
+kontext
+
+z ceho je bereme
+
+list knihoven (+ popis?)
+
+\section{Výsledky}
+kontext
+
+prezentace vysledku
+
+oduvodneni vysledku

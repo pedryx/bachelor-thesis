@@ -1,0 +1,121 @@
+% vic to ozdrojovat protoze to uz nekdo resil
+% rici si co znamena mereni vykonu hry
+% - co to znamena, co presne chcee, co chceme zmerit
+% - benchmark.dotnet primarne pro micro benchmarky
+% - co chceme merit, co je nasim cilem, presne rici, co je ta metrika
+
+% spatna argumentace v co neberem v potaz
+% - abychom meli jeden kod, tyhle triky nepouzivame
+% - chci testovat dve auta, jedno ma 3 stupne, druhy 6, aby to bylo jednotny budu testovat 1-3 jenom
+% - - nedava smysl pro vykon
+
+\chapter{Analýza měření}
+V této kapitole provedeme analýzu rozhodnutí, která byla vykonána během implementace měření. Prvně si rozebereme přístupy pro měření výkonu hry. Nakonec si řekneme, které věci při našem měření nebereme v potaz.
+
+Pro měření výkonu jsme použili Benchmark.NET~\cite{BenchmarkDotNet}. Byl zvolen, jelikož se jedná o populární framework, který se běžně používá pro měření výkonu v aplikacích, které používají platformu .NET.
+
+\section{Game loop}
+Před rozborem jednotlivých přístupů si nejprve popíšeme co to je \textit{game loop} a představíme si pojmy, které s ním souvisí. Později se na ně budeme odkazovat při rozboru přístupů.
+
+\textit{Game loop} si můžeme představit jako cyklus, který běží dokud nedojde k ukončení hry. Pseudokód pro \textit{game loop} může vypadat například takto:
+
+\begin{verbatim}
+  while (!shouldExit) 
+  {
+    Update();
+    Draw();
+  }
+\end{verbatim}
+
+Jak je možné nahlédnout, při každé iteraci \textit{game loop} dochází k volání funkcí \texttt{Update} a  \texttt{Draw}. \texttt{Update} se stará o zpracování herní logiky a \texttt{Draw} se stará o vykreslování.
+
+V případě naší hry dojde při každém zavolání funkce \texttt{Draw} také k zavolání metody \texttt{Update} na všech systémech, které se starají o vykreslování. Podobně při každém zavolání funkce \texttt{Update} dojde také k zavolání metody \texttt{Update} na všech ostatních systémech.
+
+\section{Přístupy k měření výkonu}
+\label{sec:performance-measurements}
+Nejpřímočařejší způsob pro měření výkonu hry je změřit jak dlouho trvá jedna iterace \textit{game loop}. Ovšem tento způsob je pro nás velice nevhodný, jelikož časy trvání každé iterace \textit{game loop} se mohou výrazně lišit.
+
+Lepší způsob by bylo změřit čas trvání vícero iterací a následně spočítat jejich průměr. Při dostatečně velkém počtu iterací, tím získáme průměrný čas trvání jedné iterace \textit{game loop}. Toto je zároveň způsob, který jsme zvolili.
+
+Dalším způsobem, kterým by lze měřit výkon, by bylo změřit průměrný čas trvání \texttt{Update} pro každý systém naší hry. Tento přístup by měl výhodu v tom, že by bylo možné nahlédnout na rychlost jednotlivých knihoven pro jednotlivé části hry. Ovšem náš zajímá celkový výkon, proto jsme tento přístup nezvolili.
+
+Výkon hry by také bylo možné měřit během samotného hraní. To by nám pomohlo sledovat například to, jak se výkon hry mění v závislostí na akcích, která hráč provádí. Ovšem v naší hře je hráč pouze pozorovatelem a má velmi malí vliv na průběh hry, tím pádem pro nás tento přístup není moc užitečný.
+
+\section{Věci, které při měření nebereme v potaz}
+Nyní si řekneme jaké věci při měření nebereme v potaz a u každé si odůvodníme proč.
+
+Mezi funkcionality, které některé ECS knihovny nabízejí patří takzvané \textit{reaction systémy}. Jedná se o speciální typ systému, který stejně jako jiné systémy pracují nad entitami, které obsahují žádoucí n-tici komponent. Ovšem tyto systémy v každé své iteraci zpracují pouze ty entity u kterých došlo ke změně na některé z žádoucí n-tice komponent.
+
+V naší hře zmiňované \textit{reaction systémy} nepoužíváme. Problém je v tom, že jejich podporu nabízejí pouze některé ECS knihovny, tím pádem, pokud bychom je chtěli používat, nemohli bychom pak naši hru použít pro měření výkonu knihoven, které jejich podporu nenabízejí.
+
+Kromě zmiňovaných \textit{reaction systémů} existuje i spoustu dalších funkcionalit, které některé ECS knihovny nabízejí pro zlepšení výkonu. My je ovšem v naší hře nepoužíváme a to ze stejného důvodu, kvůli kterému nepoužíváme \textit{reaction systémy}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \chapter{Analýza měření}
+% V této kapitole si rozebereme jaké existují přístupy k měření a na co při měření dbát ohled.
+
+% \section{Problematika měření}
+% Měření výkonu je komplexní proces, který by mohl být samostatnou prací sám o sobě.
+
+% Benchmark.NET je populární framework pro platformu .NET, který lze použít k měření výkonu.
+
+% \section{Přístupy k měření}
+% Nejprve je nutné si co to je vlastně game loop.
+
+% Nejpřímočařejší způsob je změřit jak dlouho trvá jedna iterace.
+
+% Lepší způsob by tedy bylo změřit n iterací a spočítat jejich průměr.
+
+% Rendering může být časově náročnější proces, rozeberme si jestli by měl či neměl být součástí měření.
+
+% Dalším způsobem jak měřit výkon, je změřit iterace jednotlivých systémů.
+% % proc to nedelame
+
+% Výkon je také možné měřit během hraní samotné hry.
+% % proc to nedelame
+
+% % \xxx{Delta time jedne iterace}
+% % \\
+% % \xxx{Delta time n iteracich}
+% % \\
+% % \xxx{Mel by byt rendering soucasti mereni}
+% % \\
+% % \xxx{Mereni prumerneho delta time jednotlivych ssytemu}
+% % \\
+% % \xxx{Mereni behem hrani}
+
+% \section{Na co při měření nebereme ohled?}
+% Některé ECS knihovny pro získání lepšího výkonu používají paralelní queries.
+% % co to je
+% % nase hra je nepouziva protoze je z jednoduchosti navrzena single threaded
+
+% Další častá optimalizace, co některé ECS knihovny nabízejí jsou reaction systémy.
+% % co to je
+% % nepouzivame to protoze to nemaji vsechny knihovny
+
+% Jednotlivé ECS knihovny často používají další specifické výkonnostní funkcionality.
+% % mi je nepouzivame protoze je nemaji vsechny knihovny
+
+% Další věc na kterou při měření nebereme ohledy je přidávání a odebírání komponent.
+% % sparse set muzou by zvyhodnene
+% % nas herni design je prizpusoben tomu, ze to neovlivni mereni
+
+% % \xxx{Paralelni queries}
+% % \\
+% % \xxx{Reaction systemy}
+% % \\
+% % \xxx{Pridavani/odebirani komponent za runtime - design prizpusoben}
+% % \\
+% % \xxx{jine vykonostni vylepseni specificke pro danou ECS knihovnu}

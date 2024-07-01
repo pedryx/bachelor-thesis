@@ -1,17 +1,7 @@
 \chapter{Popis implementace}
-% TODO:
-% implementace
-%     - popsat hierarchii
-%     - dole jsou nejaky ECS implementace
-%     - nad nimi abstrakcni vrstva
-%     - s tou pracuje hra
-%     - ta je pak nejak slozena
-%     - takhle az k detailum
-V této kapitole si představíme klíčové a zajímavé části implementace naší hry. Pro více detailů o implementaci je možné nahlédnout do kódu, který obsahuje dokumentační komentáře.
+V této kapitole si představíme klíčové a zajímavé části implementace. Pro více detailů o implementaci je možné nahlédnout do kódu, který obsahuje dokumentační komentáře.
 
-Pro celý projekt používáme jedno C\# řešení. To obsahuje dva C\# projekty. Prvním je hra a druhým je měření, které používá vytvořenou hru pro měření výkonu ECS knihoven. V této kapitole se budeme věnovat pouze hře a na měření se zaměříme později.
-
-Projekt hry se skládá ze tří částí. První částí jsou implementace ECS knihoven, které implementují abstrakční vrstvu. Nad nimi je samotná abstrakční vrstva, která je druhou částí. Třetí část je hra samotná, která namísto konkrétní ECS knihovny používá abstrakční vrstvu.
+Pro celý projekt používáme jedno C\# řešení. To obsahuje dva C\# projekty. Prvním je hra a druhým je měření, které používá vytvořenou hru pro měření výkonu ECS knihoven. Projekt hry se skládá ze tří částí. První částí jsou implementace ECS knihoven, které implementují abstrakční vrstvu. Nad nimi je samotná abstrakční vrstva, která je druhou částí. Třetí část je hra samotná, která namísto konkrétní ECS knihovny používá abstrakční vrstvu.
 
 \section{Abstrakční vrstva}
 \label{sec:abstract-layer}
@@ -228,7 +218,10 @@ Klíčovou částí při vytváření entity budovy je volba pozice kde se entit
 
 Pro volbu pozice byl použit přímočarý algoritmus. Jako první se vybere náhodná již postavená budova a vezme se její pozice. Poté se kolem této pozice vytvoří prstenec s rozměry podle konstantní minimální a maximální vzdálenosti. V tomto prstenci se poté vybere náhodná pozice. Na závěr se zkontroluje zda je možné na této pozici stavět a pokud ano tak je tato pozice vybrána jako pozice pro novou budovu. Pokud na dané pozici není možné stavět tak se celý algoritmus zopakuje.
 
+\section{Měření}
+kontext
 
+popsat kod kolem mereni
 
 
 

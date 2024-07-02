@@ -219,6 +219,7 @@ Klíčovou částí při vytváření entity budovy je volba pozice kde se entit
 Pro volbu pozice byl použit přímočarý algoritmus. Jako první se vybere náhodná již postavená budova a vezme se její pozice. Poté se kolem této pozice vytvoří prstenec s rozměry podle konstantní minimální a maximální vzdálenosti. V tomto prstenci se poté vybere náhodná pozice. Na závěr se zkontroluje zda je možné na této pozici stavět a pokud ano tak je tato pozice vybrána jako pozice pro novou budovu. Pokud na dané pozici není možné stavět tak se celý algoritmus zopakuje.
 
 \section{Měření}
+\label{benchmark-implementation}
 Měření je druhým C\# projektem našeho C\# řešení. S použitím naší hry měří výkon jednotlivých ECS knihoven. V sekci~\ref{benchmark-framework} jsme se rozhodli, že pro toto měření použijeme \textit{BenchmarkDotNet}. Celé měření se dělí na dvě fáze a to přípravy a samotného měření.
 
 Pro měření máme definované následující konstanty: \texttt{seed}, \texttt{deltaTime}, \texttt{setupIterationCount} a \texttt{benchmarkIterationCount}. \texttt{seed} je seed, který používáme pro náhodné generování čísel. Stejným seedem pro každé měření zajistíme konzistentnost. \texttt{deltaTime} obsahuje čas v sekundách. Tento čas používáme pro odsimulovaní jednoho kroku naší hry (jedné iterace \textit{game loop}, který byl přiblížen v sekci~\ref{game-loop}). \texttt{setupIterationCount} nám udává počet kroků odsimulování naší hry během fáze přípravy a poté \texttt{benchmarkIterationCount} udává počet kroků odsimulování hry během fáze měření.

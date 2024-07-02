@@ -1,13 +1,10 @@
 \chapter{Měření}
-kontext
+Náš projekt se skládá ze dvou částí a to hry a poté měření, které využívá vytvořenou hru pro měření výkonu jednotlivých ECS knihoven. Analýzu tohoto měření jsme provedli v sekci~\ref{benchmark-analysis} a jeho implementaci jsme popsali v sekci~\ref{benchmark-implementation}. V této kapitole si nejprve stanovíme hypotézu, poté si přiblížíme ECS knihovny, které budeme měřit a na závěr si prezentujeme výsledky tohoto měření.
 
 \section{Hypotéza}
 \label{chap:hypothesis}
-kontext
-% TODO:
-% hypoteza
-%     - vice ozdrovojat cache
-%     - rict ze popisujem pametovy model
+V této sekci si stanovíme hypotézu našeho měření. V našem měření měříme jak dlouho trvá odsimulovat určitý počet iterací naší hry s jednotlivými ECS knihovnami. Ty se dají rozdělit na kategorie podle určitých vlastností. V této kapitole stanovíme jak si myslíme, že se jednotlivé kategorie umístí.
+
 % Do teď jsme se věnovali samotné hře, kterou v následujících kapitolách budeme chtít použít pro porovnání výkonu ECS knihoven. Ale ještě předtím, konkrétně v této kapitole, si rozebereme předpokládané výsledky tohoto porovnání.
 
 \subsection{Cache}
@@ -21,7 +18,7 @@ Již víme, že \textit{cache miss} jsou drahé, proto je potřeba pro vysoký v
 
 Jedna z možností, jak minimalizovat počet \textit{cache miss}, je využít sekvenčního přístupu. Pokud budeme přistupovat k datům, které jsou v paměti hned za sebou, tak díky \textit{prostorové lokalitě} bude počet \textit{cache miss} velmi malí.
 
-Je nutné upozornit, že výše popsaný paměťový model je úmyslně zjednodušen. Více o něm a cache je možné se dočíst například v již zmiňované knize \textit{Game Programming Patterns}~\cite{nystrom2014game}, konkrétně v kapitole \textit{Data Locality}.
+Je nutné upozornit, že výše popsaný model cache je úmyslně zjednodušen. Velice detailní popis cache lze nalézt v \textit{Cache Memories}~\cite{10.1145/356887.356892} od \textit{Alana Jaye Smitha}. Stručnější popis a také informace o tom jak lze cache využít lze nalézt v již zmiňované knize \textit{Game Programming Patterns}~\cite{nystrom2014game}, konkrétně v kapitole \textit{Data Locality}. 
 
 \subsection{Arch type}
 Některé ECS knihovny pro lepší výkon používají \textit{arch type}. Jedná se o datovou strukturu pro ukládání komponent. Knihovny, které používají tuto datovou strukturu mají většinou velký výkon, proto před stanovením hypotézy si použití \textit{arch type} lehce přiblížíme.

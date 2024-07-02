@@ -384,6 +384,8 @@ Samotné měření se bude skládat ze dvou fází a to fáze přípravy a fáze
 
 Výše popsaný test provedeme pro každou ECS knihovnu, kterou budeme měřit. Pomocí výsledných časů můžeme relativně porovnat výkon naší hry s různými ECS knihovnami. 
 
+Při měření výkonu jednotlivých ECS knihoven ignorujeme některé jejich funkcionality. Konkrétně se jedná o funkcionality rozšíření ECS. Jedná se například o funkcionality známe pod názvy \textit{reakční systémy} (\textit{reaction systems}) nebo \textit{relace} ({\textit{relations}}). V našem měření je budeme ignorovat protože chceme měřit klasické ECS bez rozšířeních.
+
 \subsection{Volba frameworku pro měření}
 Nyní zvolíme framework, který budeme používat pro měření. Prvně si popíšeme vlastnosti, kterého od tohoto frameworku požadujeme, poté provedeme samotný výběr. Mezi požadované vlastnosti patří:
 
@@ -395,23 +397,6 @@ Nyní zvolíme framework, který budeme používat pro měření. Prvně si pop�
 Pro výběr frameworku použijeme platformu GitHub. Na stránce~\cite{github_performance} je možné vidět seznam repositářů na platformě GitHub s topicem \textit{performance} seřazené podle počtu hvězd. Je možné nahlédnou, že nejpopulárnějším frameworkem pro měření výkonu je \textit{BenchmarkDotNet}~\cite{BenchmarkDotNet}.
 
 \textit{BenchmarkDotNet} je framework pomocí kterého lze měřit výkon metody. Tento framework splňuje oba naše požadavky, ale jedná se o framework primárně určený na micro benchmarky, zatímco naše měření je spíše macro benchmarkem. I přesto jej pro naše měření použijeme, primárně protože je velmi jednoduchý na použití.
-
-\subsection{Na co nebereme při měření ohledy}
-% na co nebudeme brat ohledy
-
-\xxx{TODO}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

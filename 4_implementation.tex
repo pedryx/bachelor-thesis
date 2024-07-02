@@ -219,9 +219,15 @@ Klíčovou částí při vytváření entity budovy je volba pozice kde se entit
 Pro volbu pozice byl použit přímočarý algoritmus. Jako první se vybere náhodná již postavená budova a vezme se její pozice. Poté se kolem této pozice vytvoří prstenec s rozměry podle konstantní minimální a maximální vzdálenosti. V tomto prstenci se poté vybere náhodná pozice. Na závěr se zkontroluje zda je možné na této pozici stavět a pokud ano tak je tato pozice vybrána jako pozice pro novou budovu. Pokud na dané pozici není možné stavět tak se celý algoritmus zopakuje.
 
 \section{Měření}
-kontext
+Měření je druhým C\# projektem našeho C\# řešení. S použitím naší hry měří výkon jednotlivých ECS knihoven. V sekci~\ref{benchmark-framework} jsme se rozhodli, že pro toto měření použijeme \textit{BenchmarkDotNet}. Celé měření se dělí na dvě fáze a to přípravy a samotného měření.
 
-popsat kod kolem mereni
+Pro měření máme definované následující konstanty: \texttt{seed}, \texttt{deltaTime}, \texttt{setupIterationCount} a \texttt{benchmarkIterationCount}. \texttt{seed} je seed, který používáme pro náhodné generování čísel. Stejným seedem pro každé měření zajistíme konzistentnost. \texttt{deltaTime} obsahuje čas v sekundách. Tento čas používáme pro odsimulovaní jednoho kroku naší hry (jedné iterace \textit{game loop}, který byl přiblížen v sekci~\ref{game-loop}). \texttt{setupIterationCount} nám udává počet kroků odsimulování naší hry během fáze přípravy a poté \texttt{benchmarkIterationCount} udává počet kroků odsimulování hry během fáze měření.
+
+V C\# projektu máme definovaný test reprezentovaný třídou \texttt{ECSBenchmarks}. Tento test obsahuje jediný vstupní parametr a tím je \texttt{ECSFactoryType} typu \texttt{Type}. Tímto parametrem jsou předávány typy dědicí od \texttt{ECSFactory}, které reprezentují jednotlivé ECS knihovny.
+
+Během fáze přípravy nejprve zkonstruujeme konkrétní \texttt{ECSFactory}. Poté vytvoříme novou instanci naší hry (třídy \texttt{Game}) a odsimulujeme jeden její snímek za pomocí \texttt{RunOneFrame}, tím zaručíme, že hra bude inicializována. Poté v cyklu voláme metodu \texttt{UpdateOnce}, která vykoná jednu iteraci \textit{game loop} naší hry. Počet opakování tohoto cyklu udává konstanta \texttt{setupIterationCount}.
+
+Během fáze měření používáme tu samou instanci hry vytvořenné během fáze přípravy. Na této instanci v cyklu opět zavoláme metodu \texttt{UpdateOnce}. Počet opakování tohoto cyklu je dán konstantou \texttt{benchmarkIterationCount}.
 
 
 
@@ -266,7 +272,7 @@ popsat kod kolem mereni
 
 %     Z pohledu hry jednotlivé implementace \textit{EntityProcessor} představují samotné systémy, jelikož hra nekouká na to jak jsou entity iterovány a zajímá je jenom samotná herní logika. Proto se kód, který pracuje s hrou odkazuje na \texttt{EntityProcessor} jako na systém. Ovšem z pohledu abstrakční vrstvy je nutné rozlišovat \texttt{System} jako typ, který obsahuje logiku pro iteraci entit a \texttt{EntityProcessor} jako typ, který obsahuje logiku pro zpracování entit. Autor si je vědom, že tyto pohledy mohou vést k matoucí terminologii, ovšem v kódu jsou již používány na příliš mnoho místech.
 
-%     \item \textbf{\texttt{IECSFactory}:} Jedná se o rozhraní. Typy, které implementují toto rozhraní definují logiku pro vytváření entity a \textit{world} dané implementace abstrakční vrstvy. Pomocí instancí těchto typů je také možné vytvářet instance kompletních systémů. Tyto typy také reprezentují celou jednu implementaci abstrakční vrstvy.
+%     \item \textbf{\texttt{}:} Jedná se o rozhraní. Typy, které implementují toto rozhraní definují logiku pro vytváření entity a \textit{world} dané implementace abstrakční vrstvy. Pomocí instancí těchto typů je také možné vytvářet instance kompletních systémů. Tyto typy také reprezentují celou jednu implementaci abstrakční vrstvy.
 
 %     \item \textbf{\texttt{IECSWorld}:} Jedná se rozhraní. Typy, které implementují toto rozhraní, představují \textit{world} pro danou ECS knihovnu. Jelikož pro velkou část ECS knihoven typy, které implementovali toto rozhraní, vypadali identicky, byl zaveden typ \texttt{BasicECSWorld}. Tento typ lze použít pro většinu ECS knihoven.
 
@@ -314,7 +320,7 @@ popsat kod kolem mereni
 
 %     Z pohledu hry jednotlivé implementace \textit{EntityProcessor} představují samotné systémy, jelikož hra nekouká na to jak jsou entity iterovány a zajímá je jenom samotná herní logika. Proto se kód, který pracuje s hrou odkazuje na \texttt{EntityProcessor} jako na systém. Ovšem z pohledu abstrakční vrstvy je nutné rozlišovat \texttt{System} jako typ, který obsahuje logiku pro iteraci entit a \texttt{EntityProcessor} jako typ, který obsahuje logiku pro zpracování entit. Autor si je vědom, že tyto pohledy mohou vést k matoucí terminologii, ovšem v kódu jsou již používány na příliš mnoho místech.
 
-%     \item \textbf{\texttt{IECSFactory}:} Jedná se o rozhraní. Typy, které implementují toto rozhraní definují logiku pro vytváření entity a \textit{world} dané implementace abstrakční vrstvy. Pomocí instancí těchto typů je také možné vytvářet instance kompletních systémů. Tyto typy také reprezentují celou jednu implementaci abstrakční vrstvy.
+%     \item \textbf{\texttt{}:} Jedná se o rozhraní. Typy, které implementují toto rozhraní definují logiku pro vytváření entity a \textit{world} dané implementace abstrakční vrstvy. Pomocí instancí těchto typů je také možné vytvářet instance kompletních systémů. Tyto typy také reprezentují celou jednu implementaci abstrakční vrstvy.
 
 %     \item \textbf{\texttt{IECSWorld}:} Jedná se rozhraní. Typy, které implementují toto rozhraní, představují \textit{world} pro danou ECS knihovnu. Jelikož pro velkou část ECS knihoven typy, které implementovali toto rozhraní, vypadali identicky, byl zaveden typ \texttt{BasicECSWorld}. Tento typ lze použít pro většinu ECS knihoven.
 
@@ -327,7 +333,7 @@ popsat kod kolem mereni
 % Páteřní kód naší hry se skládá z následujících tříd:
 
 % \begin{enumerate}
-%     \item \textbf{\texttt{Game}:} Tato třída představuje samotnou hru. Dědí od třídy \texttt{Microsoft.Xna} \texttt{.Framework.Game} a přetěžuje od ní klíčové metody \verb|Update| a \verb|Draw|. Tato třída přijímá skrze konstruktor instanci typu, který implementuje rozhraní \texttt{IECSFactory}. Pomocí této instance je možné zvolit konkrétní implementaci abstrakční vrstvy neboli konkrétní ECS knihovnu se kterou bude hra pracovat.
+%     \item \textbf{\texttt{Game}:} Tato třída představuje samotnou hru. Dědí od třídy \texttt{Microsoft.Xna} \texttt{.Framework.Game} a přetěžuje od ní klíčové metody \verb|Update| a \verb|Draw|. Tato třída přijímá skrze konstruktor instanci typu, který implementuje rozhraní \texttt{}. Pomocí této instance je možné zvolit konkrétní implementaci abstrakční vrstvy neboli konkrétní ECS knihovnu se kterou bude hra pracovat.
 
 %     \item \textbf{\texttt{GameState}:} Abstraktní třída \verb|GameState| představuje herní obrazovku. Herní obrazovky mohou být například Menu, Nastavení, nebo Level. I přesto, že naše hra obsahuje pouze jednu herní obrazovku, díky této třídě by bylo jednoduché do hry výše zmíněné herní obrazovky přidat.
 

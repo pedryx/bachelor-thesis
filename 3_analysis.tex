@@ -363,6 +363,7 @@ Z úvodu této kapitoly víme, že náš projekt je reprezentován C\# řešení
 Prvně si přiblížíme co to je \textit{game loop}, jelikož to budeme potřebovat k popisu měření. Následně si popíšeme samotné měření.
 
 \subsubsection{Game loop}
+\label{game-loop}
 \textit{game loop} si můžeme představit jako cyklus, který běží dokud nedojde k ukončení hry. Pseudokód pro \textit{game loop} může vypadat například takto:
 
 \begin{verbatim}
@@ -387,6 +388,7 @@ Výše popsaný test provedeme pro každou ECS knihovnu, kterou budeme měřit. 
 Při měření výkonu jednotlivých ECS knihoven ignorujeme některé jejich funkcionality. Konkrétně se jedná o funkcionality rozšíření ECS. Jedná se například o funkcionality známe pod názvy \textit{reakční systémy} (\textit{reaction systems}) nebo \textit{relace} ({\textit{relations}}). V našem měření je budeme ignorovat protože chceme měřit klasické ECS bez rozšířeních.
 
 \subsection{Volba frameworku pro měření}
+\label{benchmark-framework}
 Nyní zvolíme framework, který budeme používat pro měření. Prvně si popíšeme vlastnosti, kterého od tohoto frameworku požadujeme, poté provedeme samotný výběr. Mezi požadované vlastnosti patří:
 
 \begin{enumerate}

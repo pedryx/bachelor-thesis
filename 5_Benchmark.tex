@@ -58,11 +58,27 @@ Některé ECS knihovny vyžadují aby jednotlivé komponenty byli reprezentován
 Zbývají knihovny, které povolují komponenty reprezentovat jako struktury, ale zároveň nepoužívají \textit{arch type}. Tyto knihovny se umístí hůře než knihovny, které používají \textit{arch type}, ale lépe než knihovny, které vyžadují aby komponenty byli třídy.
 
 \section{Měřené knihovny}
-kontext
+V této sekci se budeme zabývat ECS knihovnami, které budeme měřit. První si uvedeme odkud měřené ECS knihovny bereme a poté si jednotlivé ECS knihovny krátce představíme.
 
-z ceho je bereme
+V sekci~\ref{sec:ecs-libs} jsme zmínili, že existuje repositář \textit{EcsCsharpBenchmark}~\cite{EcsCsharpBenchmark} na platformě GitHub obsahující výkonnostní porovnání ECS knihoven pro C\#. Tento repositář byl inspirací této práce, která také porovnává jednotlivé ECS knihovny, ale na místo jednoduchých testů je porovnává na hře. V našem měření budeme měřit knihovny, které byli porovnávány ve zmiňovaném repositáři \textit{EcsCsharpBenchmark}~\cite{EcsCsharpBenchmark}.
 
-list knihoven (+ popis?)
+Od zahájené této práce byl repositář \textit{EcsCsharpBenchmark}~\cite{EcsCsharpBenchmark} několikrát upraven. Během úprav byli přidávány a odebírány některé ECS knihovny z porovnání. V této práci se zaměříme na knihovny, které byli v repositáři \textit{EcsCsharpBenchmark}~\cite{EcsCsharpBenchmark} porovnávány během commitu \textit{db67d1d}~\cite{EcsCsharpBenchmarkCommit}.
+
+Nyní si představíme jednotlivé ECS knihovny, které budeme měřit. U každého si uvedeme přeložený popisek, který je možné nalézt v repositáři dané knihovny. Autor práce neručí za korektnost těchto popisků. Mezi měřené ECS knihovny patří:
+
+\begin{enumerate}
+    \item \textbf{Arch~\cite{Arch}:} Vysoko-výkonnostní ECS knihovna založená na Archtype určená pro herní vývoj a data-oriented programování.
+    \item \textbf{DefaultEcs~\cite{DefaultEcs}:} ECS framework, který si klade za cíl být přístupný s minimálními omezeními, zatímco zachovává co největší výkon pro vývoj her.
+    \item \textbf{Entitas~\cite{Entitas}:} Nejpopulárnější open-source ECS framework pro C\# a Unity.
+    \item \textbf{HypEcs~\cite{HypEcs}:} Lightweight a snadno použitelná ECS knihovna s efektivní sadou funkcionalit pro tvorbu her.
+    \item \textbf{LeoECS~\cite{LeoECS}:} Lightweight ECS framework pro C\#. Mezi hlavní cíle tohoto frameworku patří výkon, nulová nebo minimální alokace, minimalizace využití paměti a absence závislostí na jakémkoliv herním enginu. (Přeloženo přes ChatGPT.)
+    \item \textbf{LeoEcsLite~\cite{LeoEcsLite}:} Lightweight ECS framework pro C\#. Mezi hlavní cíle tohoto frameworku patří výkon, nulová nebo minimální alokace, minimalizace využití paměti a absence závislostí na jakémkoliv herním enginu. (Přeloženo přes ChatGPT.)
+    \item \textbf{MonoGameExtended.Entities~\cite{MonoGameExtended}:} Moderní vysoce výkonnostní ECS framework založený na Artemis.
+    \item \textbf{RelEcs~\cite{RelEcs}:} Lightweight a snadno použitelná ECS knihovna s efektivní sadou funkcionalit pro tvorbu her.
+    \item \xxx{Svelto.ECS?}
+\end{enumerate}
+
+Stejně jako v repositáři \textit{EcsCsharpBenchmark}~\cite{EcsCsharpBenchmark} byli pro ECS knihovny \textit{LeoECS} a \textit{LeoEcsLite} použity nuget balíčky. Tyto nuget balíčky byli vytvořeny jiným autorem a byli zkompilované v debug režimu.
 
 \section{Výsledky}
 kontext

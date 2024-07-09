@@ -78,21 +78,44 @@ Nyní si představíme jednotlivé ECS knihovny, které budeme měřit. U každ�
     \item \textbf{Svelto.ECS:} Reálný ECS framework pro C\#. Umožňuje psát zapouzdřený, oddělený, udržovatelný, vysoce efektivní, datově orientovaný, cache-přátelský kód bez bolesti.
 \end{enumerate}
 
-svelto compile entities
-
-entitas very popular
-
 \section{Výsledky}
-uvod do kontextu
+V ttt jsme si povidali o ddd a vime ze budeme delat mereni. Mereni jsme si zanalyzovali v ooo a implementaci rozebrali v xxx. Nyní si rozebereme jeho vysledky.
 
-vysledky:
+Předtím než si prezentujeme časy měření tak schrneme jak jej provádíme. Vytvoříme si novou instanci hry (tridy Game) s danou ECS knihovnou (danou instancí třídy entityfactory) a necháme ji běžet přípravý počet iterací (x iterationcount). Poté jí necháme běžet měřený počet iterací (y iteraction count) a přitom měříme jak dlouho to trvá. Výsledný čas je tedy čas jak rychle hra zvládna simulovat měřený počet iterací. Test provádíme pro každou měřenou ECS knihovnu (ty jsem rozebrali v minule sekci).
 
-tabulka
+Nyní si prezentujeme vžsledky tohoto měření
 
-popis tabulky
+\begin{table}[!htb]
+    \centering\footnotesize\sf
+    \begin{tabular}{c c c c}
+        \toprule
+        knihovna & Průměrný čas & Chyba & StdDev \\
+        \midrule
+        HypEcs & 1.133 s & 0.0218 s & 0.0194 s \\
+        LeoEcsLite & 1.194 s & 0.0188 s & 0.0176 s \\
+        LeoECS & 1.208 s & 0.0233 s & 0.0229 s \\
+        DefaultEcs & 1.216 s & 0.0243 s & 0.0451 s \\
+        Svelto.ECS & 1.384 s & 0.0172 s & 0.0161 s \\
+        Arch & 1.394 s & 0.0098 s & 0.0092 s \\
+        RelEcs & 1.401 s & 0.0166 s & 0.0156 s \\
+        MonoGameExtended.Entities & 2.004 s & 0.0340 s & 0.0318 s \\
+        Entitas & 4.732 s & 0.0244 s & 0.0228 s \\
+        \bottomrule
+    \end{tabular}
+    \caption{Výsledky měření pro jednotlivé ECS knihovny.}
+    \label{tab:benchmark-results}
+\end{table}
+
+Tabulka zachycuje vysledne casy zachycene podle procedury vyse. V prvním sloupci je možné videt nazvy jednotlivých knihoven. Ve druhém sloupci casy jak dlouho simulace s konrkétní knihovnou trvala. Tretí sloupec je chyba. Ctvrty je stddev. Radky v tabulce jsou serazene podle 2. sloupce (prumerny cas).
+
+V xxx jsme naznacili kategorie. Mezi knihovny co maji archtype patri HypEcs, LeoEcsLite, LeoECS, DefaultEcs a Arch. SveltoECS pouziva vlastni datovou strukturu, ktera je arhctype hodne podobna. Knihovna RelEcs je zvlastni a pouziva archtype a zaroven vyzaduje aby komponenty byli tridy. Spada do druhe kategorie. Treti kategorie vyzaduje aby komponenty byli tridy a nepouzivaji archtype. DO ni spada RelEcs a MonoGameExtended.Entities.
+
+Na obrazku xxx je mozne videt 2 grafy. Graf nalevo jsou namerene vysledky vyzobrazene z tabulky vyse. Graf napravo je ten sami cas, akorat jsou vysledky pro jednotlive knihovny obarveny podle toho do jake kategorie spadaji.
 
 graf 1 a graf 2
 
-popis grafu
+V yyy jsme si stanovli hypotezu podle kterych maji nejlepe vyjit archtype knihovny, pote jine knuihovny, pote class knihovny. Z grafu je lehke vykoukat ze tomu tak je. Je mozne videt ze casy pro jedntlive archtype jsou hodne podobne. Zaroven RelEcs ma class+archtype a take velmi podobny cas, takze pozadavek na struct komponenty nemusi nutne znamenat velke vykonostni zlepseni.
 
-byla hypoteza naplnena?
+Zajimava knihvna je Svelto.ECS. Vyzaduje aby bylo za kompilace znamo jake budeme mit typy entit, presneji z jakych komponent se budou skladat. To hrozne ublizuje flexibilite. I presto tyto omezeni neprinasi velke vykonostni vylepseni.
+
+Podle githubu je nejpopularnejsi knihovnou Entitas (ma na github nejvice hvezdice s porovnanim s osttanimi). I presto ze je nejpomalejsi tak vykon neni tak spatny. Nab9z9 tak0 velkou podporu pro herni engine Unity.

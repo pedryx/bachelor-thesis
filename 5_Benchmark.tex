@@ -49,6 +49,7 @@ Nevýhodou knihoven založených na \textit{arch type} bývá pomalé přidává
 Pro více informací o \textit{arch type} a o tom jak je ECS knihovny využívají je možné nahlédnout do série článků \textit{ECS back and forth}~\cite{Caini_2019} od Michela Cainiho.
 
 \subsection{Hypotéza}
+\label{hypothesis}
 Nyní vyřkneme hypotézu. Jednotlivé ECS knihovny lze rozdělit do kategorií na základě jistých vlastností. My tyto kategorie popíšeme a stanovíme jaké bude jejich pořadí při výkonnostním porovnání.
 
 Nejrychleji vyjdou ECS knihovny, které používají \textit{arch type}. Jak již bylo zmíněno, \textit{arch type} je datová struktura s kterou lze, díky malému počtu \textit{cache miss}, dosáhnout velkého výkonu při iteraci entit. Z těchto důvodů ECS knihovny, které \textit{arch type} používají vyjdou nejlépe.
@@ -79,11 +80,11 @@ Nyní si představíme jednotlivé ECS knihovny, které budeme měřit. U každ�
 \end{enumerate}
 
 \section{Výsledky}
-V ttt jsme si povidali o ddd a vime ze budeme delat mereni. Mereni jsme si zanalyzovali v ooo a implementaci rozebrali v xxx. Nyní si rozebereme jeho vysledky.
+Analýzu měření jsme provedli v sekci~\ref{benchmark-analysis}. Poté v sekci~\ref{benchmark-implementation} jsme si rozebrali implementaci měření. V této sekci se budeme věnovat výsledkům tohoto měření.
 
-Předtím než si prezentujeme časy měření tak schrneme jak jej provádíme. Vytvoříme si novou instanci hry (tridy Game) s danou ECS knihovnou (danou instancí třídy entityfactory) a necháme ji běžet přípravý počet iterací (x iterationcount). Poté jí necháme běžet měřený počet iterací (y iteraction count) a přitom měříme jak dlouho to trvá. Výsledný čas je tedy čas jak rychle hra zvládna simulovat měřený počet iterací. Test provádíme pro každou měřenou ECS knihovnu (ty jsem rozebrali v minule sekci).
+Předtím něž si prezentujeme výsledky měření, tak si shrňme jak jej provádíme. Prvně si vytvoříme novou instanci hry (instanci třídy \texttt{Game}) s danou ECS knihovnou (s danou instancí třídy dědicí od \texttt{ECSFactory}). Poté odsimulujeme přípravný počet iterací (provedeme \texttt{setupIterationCount} iterací \textit{game loop} naší hry). Následně odsimulujeme měřený počet iterací (\texttt{benchmarkIterationCount}) a přitom budeme měřit čas. To několikrát zopakujeme (přesněji námi zvolený framework to za nás několikrát zopakuje) a získáme průměrný čas jak rychle hra zvládne odsimulovat měřený počet iterací (\texttt{benchmarkIterationCount}). Test provádíme pro každou měřenou ECS knihovny (ty jsme si rozebrali v minulé sekci).
 
-Nyní si prezentujeme vžsledky tohoto měření
+Nyní si prezentujeme výsledky našeho měření:
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -106,21 +107,23 @@ Nyní si prezentujeme vžsledky tohoto měření
     \label{tab:benchmark-results}
 \end{table}
 
-Tabulka zachycuje vysledne casy zachycene podle procedury vyse. V prvním sloupci je možné videt nazvy jednotlivých knihoven. Ve druhém sloupci casy jak dlouho simulace s konrkétní knihovnou trvala. Tretí sloupec je chyba. Ctvrty je stddev. Radky v tabulce jsou serazene podle 2. sloupce (prumerny cas).
+Tabulka zachycuje výsledné časy našeho měření. V první sloupci jsou názvy jednotlivých ECS knihoven. Ve druhém sloupci jsou naměřené časy. Ve třetím sloupci je možná chyba a ve čtvrtém standardní odchylka. Jednotlivé řádky jsou seřazené podle naměřených časů.
 
-V xxx jsme naznacili kategorie. Mezi knihovny co maji archtype patri HypEcs, LeoEcsLite, LeoECS, DefaultEcs a Arch. SveltoECS pouziva vlastni datovou strukturu, ktera je arhctype hodne podobna. Knihovna RelEcs je zvlastni a pouziva archtype a zaroven vyzaduje aby komponenty byli tridy. Spada do druhe kategorie. Treti kategorie vyzaduje aby komponenty byli tridy a nepouzivaji archtype. DO ni spada RelEcs a MonoGameExtended.Entities.
+% V sekci~\ref{hypothesis} si stanovili kategorie do kterých lze měřené knihovny dělit.
 
-Na obrazku xxx je mozne videt 2 grafy. Graf nalevo jsou namerene vysledky vyzobrazene z tabulky vyse. Graf napravo je ten sami cas, akorat jsou vysledky pro jednotlive knihovny obarveny podle toho do jake kategorie spadaji.
+%Do první kategorie spadají knihovny, které používají \textit{archtype}, konkrétně se jedná o \textit{archtype} patří \textit{HypEcs}, \textit{LeoEcsLite}, \textit{LeoECS}, \textit{DefaultEcs} a \textit{Arch}. \textit{Svelto.ECS} používá vlastní datovou strukturu, která sice \textit{archtype} není ale je mu podobná, proto jí také zařadíme do první kategorie. Knihovna \textit{RelEcs} používá sice \textit{archtype}, ale zároveň vyžaduje aby jednotlivé komponenty byli třídy, proto ji zařadíme do druhé kategorie. Do třetí kategorie patří knihovny, které vyžadují aby jednotlivé komponenty byli třídy a spadají mezi ně \textit{MonoGameExtended.Entities} a \textit{Entitas}.
+
+Na obrázku~\ref{fig:benchmark-results} je možné vidět graf znázorňující výsledky z tabulky~\ref{tab:benchmark-results}. Tento graf je obarvený podle kategorií, které jsme si stanovili v sekci~\ref{hypothesis}. Knihovny, které používají \textit{archtype}, jsou obarveny zeleně, následně knihovny, které vyžadují aby komponenty byli třídy, jsou obarveny červeně a knihovny, které kombinují obě tyto vlastnosti, jsou obarveny žlutě.
 
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=1.0\linewidth]{plots/benchmark_results.pdf}
-    \caption{Grafy vyobrazující výsledky měření zachycené v tabulce výše. Pravý graf poté obarven podle rozdělení na kategorie ze sekce xxx.}
-    \label{fig:res_building}
+    \caption{Grafy vyobrazující výsledky měření zachycené v tabulce~\ref{tab:benchmark-results}. Pravý graf je obarven podle kategorií ze sekce~\ref{hypothesis}.}
+    \label{fig:benchmark-results}
 \end{figure}
 
-V yyy jsme si stanovli hypotezu podle kterych maji nejlepe vyjit archtype knihovny, pote jine knuihovny, pote class knihovny. Z grafu je lehke vykoukat ze tomu tak je. Je mozne videt ze casy pro jedntlive archtype jsou hodne podobne. Zaroven RelEcs ma class+archtype a take velmi podobny cas, takze pozadavek na struct komponenty nemusi nutne znamenat velke vykonostni zlepseni.
+V sekci~\ref{hypothesis} jsme si stanovili hypotézu, podle které mají nejlépe vyjít knihovny, které využívají \textit{archtype} (viz zelená barva). Nejhůře mají vyjít knihovny, které vyžadují aby komponenty byli třídy (viz červená barva). Mezi nimi se umístí knihovny, které kombinují obě vlastnosti (viz žlutá barva). Při nahlédnutí do tabulky~\ref{tab:benchmark-results} nebo grafu z obrázku~\ref{fig:benchmark-results} je lehké pozorovat, že tomu tak opravdu je. Ovšem je nutné podotknout, že knihovny \textit{Arch} a \textit{RelEcs} mají velmi podobný výsledek a pokud nahlédneme na chybu z tabulky~\ref{tab:benchmark-results} tak je možné pozorovat, že časy jsou téměř identické. Vyplyva z toho to, že požadavek na to, aby jednotlivé komponenty byli struktury, nemusí nutně vést k velkému výkonnostnímu zlepšení.
 
-Zajimava knihvna je Svelto.ECS. Vyzaduje aby bylo za kompilace znamo jake budeme mit typy entit, presneji z jakych komponent se budou skladat. To hrozne ublizuje flexibilite. I presto tyto omezeni neprinasi velke vykonostni vylepseni.
+Zajímavou knihovnou je knihovna \textit{Svelto.ECS}, která vyžaduje aby bylo během kompilace známo z kterých komponent se jednotlivé entity budou skládat. Je lehké pozorovat že tato omezení nevedli k většímu výkonnostnímu zlepšení.
 
-Podle githubu je nejpopularnejsi knihovnou Entitas (ma na github nejvice hvezdice s porovnanim s osttanimi). I presto ze je nejpomalejsi tak vykon neni tak spatny. Nab9z9 tak0 velkou podporu pro herni engine Unity.
+ECS knihovna \textit{Entitas} je na platformě GitHub~\cite{GitHub} nejpopulárnější (má nejvíce hvězdiček) ECS knihovnou pro C\#. I přesto, že v našem měření vyšla nejhůře její výkon je pořád dost dobrý. K její popularitě také přispívá větší podpora pro herní engine \textit{Unity}~\cite{Unity}.

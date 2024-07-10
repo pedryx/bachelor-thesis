@@ -24,11 +24,13 @@ def make_plot(fig, ax, colors):
         height = bar.get_height()
         ax.annotate(f'{height:.3f}', xy=(bar.get_x() + bar.get_width() / 2, height), xytext=(0, 3), textcoords="offset points", ha='center', va='bottom', fontsize=14)
 
-fig1, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 7))
-make_plot(fig1, ax1, 'skyblue')
-make_plot(fig1, ax2, colors)
+# fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 7))
+# make_plot(fig, ax1, 'skyblue')
+# make_plot(fig, ax2, colors)
 
-fig1.suptitle('Výsledky měření', fontsize=20)
+fig, ax = plt.subplots(figsize=(14, 7))
+fig.suptitle('Výsledky měření', fontsize=20)
+make_plot(fig, ax, colors)
 
 plt.tight_layout()
 plt.show()

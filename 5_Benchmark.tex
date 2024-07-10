@@ -48,15 +48,15 @@ Nevýhodou knihoven založených na \textit{arch type} bývá pomalé přidává
 
 Pro více informací o \textit{arch type} a o tom jak je ECS knihovny využívají je možné nahlédnout do série článků \textit{ECS back and forth}~\cite{Caini_2019} od Michela Cainiho.
 
-\subsection{Hypotéza}
+\subsection{Stanovení hypotézy}
 \label{hypothesis}
-Nyní vyřkneme hypotézu. Jednotlivé ECS knihovny lze rozdělit do kategorií na základě jistých vlastností. My tyto kategorie popíšeme a stanovíme jaké bude jejich pořadí při výkonnostním porovnání.
+Nyní stanovíme hypotézu. Jednotlivé ECS knihovny lze rozdělit do kategorií na základě jistých vlastností. My tyto kategorie popíšeme a stanovíme jaké bude jejich pořadí při výkonnostním porovnání.
 
-Nejrychleji vyjdou ECS knihovny, které používají \textit{arch type}. Jak již bylo zmíněno, \textit{arch type} je datová struktura s kterou lze, díky malému počtu \textit{cache miss}, dosáhnout velkého výkonu při iteraci entit. Z těchto důvodů ECS knihovny, které \textit{arch type} používají vyjdou nejlépe.
+Nejrychleji vyjdou ECS knihovny, které vyžadují aby byli komponenty reprezentovany jako struktury a zároveň používají \textit{arch type}. Jak již bylo zmíněno, díky sekvenčnímu přístupu, který \textit{arch type} využívá, dojde k minimalizaci počtu \textit{cache miss}. To má za následek vysoký výkon. Z toho důvodu tyto knihovny vyjdou nejlépe. Označme tuto kategorii jako kategorii 1.
 
-Některé ECS knihovny vyžadují aby jednotlivé komponenty byli reprezentovány jako třídy. Tyto knihovny vyjdou nejhůře. V případě, že komponenta je třída, znamená to, že její proměnné musejí být pointery. Z toho důvodu iterace přes komponenty v těchto knihovnách vede ve velmi velký počet \textit{cache miss}, kvůli kterému se tyto knihovny umístí nejhůře. 
+Některé ECS knihovny vyžadují, aby jednotlivé komponenty, byli reprezentovány jako třídy. Tyto knihovny vyjdou nejhůře. V případě, že komponenta je třída, znamená to, že její proměnné musejí být pointery. Z toho důvodu iterace přes komponenty v těchto knihovnách vede ve velmi velký počet \textit{cache miss}, kvůli kterému se tyto knihovny umístí nejhůře. Označme tuto kategorii jako kategorii~3.
 
-Zbývají knihovny, které povolují komponenty reprezentovat jako struktury, ale zároveň nepoužívají \textit{arch type}. Tyto knihovny se umístí hůře než knihovny, které používají \textit{arch type}, ale lépe než knihovny, které vyžadují aby komponenty byli třídy.
+Zbývají knihovny, které používají \textit{arch type} a zároveň vyžadují aby komponenty byli reprezentovány jako třídy. Tyto knihovny se umístí hůře než knihovny z kategorie 1, ale lépe než knihovny z kategorie 3. Označme tuto kategorii jako kategorii 2.
 
 \section{Měřené knihovny}
 V této sekci se budeme zabývat ECS knihovnami, které budeme měřit. První si uvedeme odkud měřené ECS knihovny bereme a poté si jednotlivé ECS knihovny krátce představíme.
@@ -68,7 +68,7 @@ Od zahájené této práce byl repositář \textit{EcsCsharpBenchmark}~\cite{Ecs
 Nyní si představíme jednotlivé ECS knihovny, které budeme měřit. U každého si uvedeme přeložený popisek, který je možné nalézt v repositáři dané knihovny. Tyto popisky jsou doslovně převzaté a autor práce neručí za korektnost informací, které jsou jejich obsahem.
 
 \begin{enumerate}
-    \item \textbf{Arch~\cite{Arch}:} Vysoko-výkonnostní ECS knihovna založená na Archtype určená pro herní vývoj a data-oriented programování.
+    \item \textbf{Arch~\cite{Arch}:} Vysoko-výkonnostní ECS knihovna založená na Archtype a Chunks určená pro herní vývoj a data-oriented programování.
     \item \textbf{DefaultEcs~\cite{DefaultEcs}:} ECS framework, který si klade za cíl být přístupný s minimálními omezeními, zatímco zachovává co největší výkon pro vývoj her.
     \item \textbf{Entitas~\cite{Entitas}:} Nejpopulárnější open-source ECS framework pro C\# a Unity.
     \item \textbf{HypEcs~\cite{HypEcs}:} Lightweight a snadno použitelná ECS knihovna s efektivní sadou funkcionalit pro tvorbu her.
@@ -78,6 +78,8 @@ Nyní si představíme jednotlivé ECS knihovny, které budeme měřit. U každ�
     \item \textbf{RelEcs~\cite{RelEcs}:} Lightweight a snadno použitelná ECS knihovna s efektivní sadou funkcionalit pro tvorbu her.
     \item \textbf{Svelto.ECS:} Reálný ECS framework pro C\#. Umožňuje psát zapouzdřený, oddělený, udržovatelný, vysoce efektivní, datově orientovaný, cache-přátelský kód bez bolesti.
 \end{enumerate}
+
+V minulé sekci jsme si definovali kategorie do kterých jednotlivé ECS knihovny spadají. Do kategorie 1 patří \textit{Arch}, \textit{HypEcs} a \textit{Svelto.ECS}. Do této kategorie také zařadíme \textit{DefaultEcs}, \textit{LeoECS} a \textit{LeoEcsLite}, které sice \textit{arch type} nepoužívají, ale používají datovou strukturu, která také využívá sekvenčního přístupu pro minimalizaci počtu \textit{cache miss}. V kategorii 2 je pouze \textit{RelEcs}. Do kategorie 3 spadají \textit{MonoGameExtended.Entities} a \textit{Entitas}.
 
 \section{Výsledky}
 Analýzu měření jsme provedli v sekci~\ref{benchmark-analysis}. Poté v sekci~\ref{benchmark-implementation} jsme si rozebrali implementaci měření. V této sekci se budeme věnovat výsledkům tohoto měření.
@@ -109,21 +111,17 @@ Nyní si prezentujeme výsledky našeho měření:
 
 Tabulka zachycuje výsledné časy našeho měření. V první sloupci jsou názvy jednotlivých ECS knihoven. Ve druhém sloupci jsou naměřené časy. Ve třetím sloupci je možná chyba a ve čtvrtém standardní odchylka. Jednotlivé řádky jsou seřazené podle naměřených časů.
 
-% V sekci~\ref{hypothesis} si stanovili kategorie do kterých lze měřené knihovny dělit.
-
-%Do první kategorie spadají knihovny, které používají \textit{archtype}, konkrétně se jedná o \textit{archtype} patří \textit{HypEcs}, \textit{LeoEcsLite}, \textit{LeoECS}, \textit{DefaultEcs} a \textit{Arch}. \textit{Svelto.ECS} používá vlastní datovou strukturu, která sice \textit{archtype} není ale je mu podobná, proto jí také zařadíme do první kategorie. Knihovna \textit{RelEcs} používá sice \textit{archtype}, ale zároveň vyžaduje aby jednotlivé komponenty byli třídy, proto ji zařadíme do druhé kategorie. Do třetí kategorie patří knihovny, které vyžadují aby jednotlivé komponenty byli třídy a spadají mezi ně \textit{MonoGameExtended.Entities} a \textit{Entitas}.
-
-Na obrázku~\ref{fig:benchmark-results} je možné vidět graf znázorňující výsledky z tabulky~\ref{tab:benchmark-results}. Tento graf je obarvený podle kategorií, které jsme si stanovili v sekci~\ref{hypothesis}. Knihovny, které používají \textit{archtype}, jsou obarveny zeleně, následně knihovny, které vyžadují aby komponenty byli třídy, jsou obarveny červeně a knihovny, které kombinují obě tyto vlastnosti, jsou obarveny žlutě.
+Na obrázku~\ref{fig:benchmark-results} je možné vidět graf znázorňující výsledky z tabulky~\ref{tab:benchmark-results}. Tento graf je obarvený podle kategorií, které jsme si stanovili v sekci~\ref{hypothesis}. Knihovny, které spadají do kategorie 1, jsou obarveny zeleně, následně knihovny, které patří do kategorie 2, jsou obarveny žlutě a knihovny které, jsou součástí kategorie 3, jsou obarveny červeně.
 
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=1.0\linewidth]{plots/benchmark_results.pdf}
-    \caption{Grafy vyobrazující výsledky měření zachycené v tabulce~\ref{tab:benchmark-results}. Pravý graf je obarven podle kategorií ze sekce~\ref{hypothesis}.}
+    \caption{Grafy vyobrazující výsledky měření zachycené v tabulce~\ref{tab:benchmark-results}. Graf je obarvený podle kategorií ze sekce~\ref{hypothesis}.}
     \label{fig:benchmark-results}
 \end{figure}
 
-V sekci~\ref{hypothesis} jsme si stanovili hypotézu, podle které mají nejlépe vyjít knihovny, které využívají \textit{archtype} (viz zelená barva). Nejhůře mají vyjít knihovny, které vyžadují aby komponenty byli třídy (viz červená barva). Mezi nimi se umístí knihovny, které kombinují obě vlastnosti (viz žlutá barva). Při nahlédnutí do tabulky~\ref{tab:benchmark-results} nebo grafu z obrázku~\ref{fig:benchmark-results} je lehké pozorovat, že tomu tak opravdu je. Ovšem je nutné podotknout, že knihovny \textit{Arch} a \textit{RelEcs} mají velmi podobný výsledek a pokud nahlédneme na chybu z tabulky~\ref{tab:benchmark-results} tak je možné pozorovat, že časy jsou téměř identické. Vyplyva z toho to, že požadavek na to, aby jednotlivé komponenty byli struktury, nemusí nutně vést k velkému výkonnostnímu zlepšení.
+V sekci~\ref{hypothesis} jsme si stanovili hypotézu, podle které mají nejlépe vyjít knihovny z kategorie 1 (viz zelená barva). Poté se mají umístit knihovny z kategorie 2 (viz žlutá barva). A na závěr se mají umístit knihovny z kategorie 3 (viz červená barva). Při nahlédnutí do tabulky~\ref{tab:benchmark-results} nebo grafu z obrázku~\ref{fig:benchmark-results} je lehké pozorovat, že tomu tak opravdu je. Ovšem je nutné podotknout, že knihovny \textit{Arch} a \textit{RelEcs} mají velmi podobný výsledek a pokud nahlédneme na chybu z tabulky~\ref{tab:benchmark-results} tak je možné pozorovat, že časy jsou téměř identické. Vyplývá z toho to, že požadavek na to, aby jednotlivé komponenty byli struktury, nemusí nutně vést k velkému výkonnostnímu zlepšení a použití \textit{arch type} může přinést lepší výkon i v případě, že budou komponenty reprezentovány jako třídy.
 
-Zajímavou knihovnou je knihovna \textit{Svelto.ECS}, která vyžaduje aby bylo během kompilace známo z kterých komponent se jednotlivé entity budou skládat. Je lehké pozorovat že tato omezení nevedli k většímu výkonnostnímu zlepšení.
+Zajímavou knihovnou je knihovna \textit{Svelto.ECS}, která vyžaduje, aby bylo během kompilace známo, z kterých komponent se jednotlivé entity budou skládat. Je lehké pozorovat že tato omezení nevedli k většímu výkonnostnímu zlepšení oproti ostatním knihovnám z této kategorie.
 
-ECS knihovna \textit{Entitas} je na platformě GitHub~\cite{GitHub} nejpopulárnější (má nejvíce hvězdiček) ECS knihovnou pro C\#. I přesto, že v našem měření vyšla nejhůře její výkon je pořád dost dobrý. K její popularitě také přispívá větší podpora pro herní engine \textit{Unity}~\cite{Unity}.
+ECS knihovna \textit{Entitas} je na platformě GitHub~\cite{GitHub} nejpopulárnější (má nejvíce hvězdiček) ECS knihovnou pro C\#. I přesto, že v našem měření vyšla nejhůře, její výkon je pořád dost dobrý. K její popularitě také přispívá větší podpora pro herní engine \textit{Unity}~\cite{Unity}.

@@ -321,7 +321,7 @@ Fialové cesty jsou nevhodné. Konkrétně cesta $P1$ je nevhodná, jelikož ved
 \subsubsection{Navigační struktury}
 Pro navigaci v terénu použijeme datovou strukturu. Tato datová struktura reprezentuje terén způsobem, který umožňuje snadné hledaní cest mezi dvěma body. Často k tomu používají algoritmus pro hledání nejkratších cest. Typickou volbou bývá algoritmus A*. Datové struktury, které lze pro navigaci použít nazvěme navigační struktury.
 
-Velkou část navigačních struktur tvoří navigační meshe (nebo také zkráceně navmesh). Ty jsou často používány populárními frameworky a enginy jako je například Unity. Navigační meshe vezmou plochu terénu po které lze chodit a rozdělí ji do oblastí. Každá taková oblast je tvořena konvexním polygonem. Poté si vytvoří graf, kde každý takovýto polygon je reprezentován vrcholem a každé sousední polygony mají mezi sebou hranu. V tomto grafu se poté hledají nejkratší cesty. Je nutné upozornit, že existuje velké množství navigačních meshů a některé se od tohoto popisu mouhou lišit. Pro více informacích o navigačních meshích lze nahlédnou do studie \textit{A comparative study of navigation meshes}~\cite{10.1145/2994258.2994262}.
+Velkou část navigačních struktur tvoří navigační meshe (nebo také zkráceně navmesh). Ty jsou často používány populárními frameworky a enginy jako je například Unity. Navigační meshe vezmou plochu terénu po které lze chodit a rozdělí ji do oblastí. Každá taková oblast je tvořena konvexním polygonem. Poté si vytvoří graf, kde každý takovýto polygon je reprezentován vrcholem a každé sousední polygony mají mezi sebou hranu. V tomto grafu se poté hledají nejkratší cesty. Je nutné upozornit, že existuje velké množství navigačních meshů a některé se od tohoto popisu mouhou lišit. Pro více informacích o navigačních meshích lze nahlédnout do studie \textit{A comparative study of navigation meshes}~\cite{10.1145/2994258.2994262}.
 
 V sekci~\ref{sec:game-characteristics} jsme si uvedli, že nechceme aby naše hra byla příliš složitá, jelikož by to odvádělo pozornost od problému, který řešíme. Z toho důvodu nebudeme používat navigační mesh jako navigační strukturu pro naši hru, jelikož i přesto, že použití navigačního meshe pro navigaci není složitá úloha tak jeho konstrukce složitá já.
 
@@ -339,7 +339,7 @@ Pro výpočet vzdálenosti mezi dvěma body v naší mřížce zvolíme Manhatta
     \label{fig:path_grid}
 \end{figure}
 
-Následně provedeme úpravu této cesty.Začneme v prvním bodu cesty a provedeme ray cast do druhého bodu. Pokud jsme nenarazili na vodu pokusime se provést ray cast ke třetímu bodu. To budeme opakovat dokud náš ray cast nenarazil na vodu. V takovém případě můžeme cestu zjednodušit a odstranit z ní všechny body mezi prvním a posledním úspěšným. Poté ce přesuneme ke druhému bodu a postup opakujeme. Celí tento proces provádíme dokud nedojdeme do posledního bodu naší cesty. Zjednodušení fialové cesty je možné vidět na obrázku~\ref{fig:path_simplified}, kde fialová cesta představuje původní cestu a červená cesta její zjednodušení.
+Následně provedeme úpravu této cesty. Začneme v prvním bodu cesty a provedeme ray cast do druhého bodu. Pokud jsme nenarazili na vodu pokusime se provést ray cast ke třetímu bodu. To budeme opakovat dokud náš ray cast nenarazil na vodu. V takovém případě můžeme cestu zjednodušit a odstranit z ní všechny body mezi prvním a posledním úspěšným. Poté ce přesuneme ke druhému bodu a postup opakujeme. Celí tento proces provádíme dokud nedojdeme do posledního bodu naší cesty. Zjednodušení fialové cesty je možné vidět na obrázku~\ref{fig:path_simplified}, kde fialová cesta představuje původní cestu a červená cesta její zjednodušení.
 
 \begin{figure}[!htb]
     \centering
@@ -352,7 +352,14 @@ Ovšem problém spočívá v tom, že k dispozici máme pouze mřížku, která 
 
 Mohlo by se zdát, že použití této aproximace by vedlo v příliš nevhodné cesty, ovšem za předpokladu, že se body v naší mřížce budou nacházet dostatečně blízko sebe, tak bude výsledná cesta dostatečně dobrou aproximací červené cesty z obrázku~\ref{fig:path_simplified}.
 
-Další problém, který je nutné vyřešit, je, že vesničané a entity, ke kterým se vesničané navigují, nejsou umístěni v naší mřížce. Problém vyřešíme tak, že před spuštěním A* algoritmu si k vesničanovi a dané entitě nalezneme nejbližší body v naší mřížce a nalezneme nejkratší cestu mezi těmito body. Poté, předtím než provedeme zjednodušení cesty, přidáme pozici vesničana jako první bod naší cesty a pozici entity, ke které se vesničan naviguje, jako poslední bod naší cesty. Přidáním těchto bodů by nám mohli vzniknout nepřirozené artefakty, ovšem ty budou spraveny během zjednodušování cesty.
+Další problém, který je nutné vyřešit, je, že vesničané a entity, ke kterým se vesničané navigují, se většinou nenacházejí v žádném z bodů naší mřížce. Problém vyřešíme tak, že před spuštěním A* algoritmu si k vesničanovi a dané entitě nalezneme nejbližší body v naší mřížce a nalezneme nejkratší cestu mezi těmito body. Poté, předtím než provedeme zjednodušení cesty, přidáme pozici vesničana jako první bod naší cesty a pozici entity, ke které se vesničan naviguje, jako poslední bod naší cesty. Situaci je možné vidět na obrázku~\ref{fig:path_end_points}. Vesničan se nachází v bodu A, který není bodem naší mřížky a chce se navigovat k entitě umístěné na bodu B, který také není bodem naší mřížky. Na začátek a konec cesty po provedení algoritmy tedy oba body přidáme, tím získáme žluté úseky. Přidáním těchto bodů by nám mohly vzniknout nepřirozené artefakty, ovšem ty budou spraveny během zjednodušování cesty.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.66\linewidth]{img/path_end_points.png}
+    \caption{Příklad cesty z bodu A do bodu B pro entity, které se nenacházejí na některém z bodů naší mřížky.}
+    \label{fig:path_end_points}
+\end{figure}
 
 Zbývá nám vyřešit jak získáme již zmiňovanou mřížku. Abychom ji získali z našeho terénu bude potřeba jej navzorkovat. Podobně jako při jeho generování si terén rozdělíme na atomické části a střed každé takové atomické části bude bodem v naší mřížce. Protože celý náš terén generujeme na GPU, bude nutné toto navzorkování také provádět na GPU. Pořídíme si proto compute shader pomocí kterého terén navzorkujeme na GPU a tím vytvoříme mřížku, kterou poté přesuneme na CPU.
 
@@ -360,14 +367,14 @@ Ovšem problém nastává v tom, že MonoGame framework, který pro tvorbu naš�
 
 \section{Měření}
 \label{benchmark-analysis}
-Z úvodu této kapitoly víme, že náš projekt je reprezentován C\# řešením. Toto C\# řešení se skládá ze dvou C\# projektů a to hry a poté měření, které používá onu hru pro měření výkonu ECS knihoven. V této sekci se budeme věnovat analýze tohoto měření.
+Náš projekt bude reprezentován C\# solution. Toto C\# solution se skládá ze dvou C\# projektů a to hry (\texttt{WorldSimulator.csproj}) a poté měření (\texttt{WorldSimula-} \texttt{tor.Benchmarks.csproj}), které používá onu hru pro měření výkonu ECS knihoven. V této sekci se budeme věnovat analýze tohoto měření.
 
 \subsection{Jak budeme měření provádět}
-Prvně si přiblížíme co to je \textit{game loop}, jelikož to budeme potřebovat k popisu měření. Následně si popíšeme samotné měření.
+Prvně si přiblížíme, co to je \textit{game loop}, jelikož to budeme potřebovat k popisu měření. Následně si popíšeme samotné měření.
 
 \subsubsection{Game loop}
 \label{game-loop}
-\textit{game loop} si můžeme představit jako cyklus, který běží dokud nedojde k ukončení hry. Pseudokód pro \textit{game loop} může vypadat například takto:
+\textit{Game loop} si můžeme představit jako cyklus, který běží dokud nedojde k ukončení hry. Pseudokód pro \textit{game loop} může vypadat například takto:
 
 \begin{verbatim}
     while (!shouldExit) 
@@ -384,7 +391,13 @@ I naše hra obsahuje \textit{game loop}. Logika v naší hře se skládá ze sys
 \subsubsection{Popis měření}
 Budeme mít stanovené dva pevné počty iterací. První bude přípravný počet iterací a druhý bude měřený počet iterací. Měřený počet iterací bude větší než přípravný počet iterací.
 
-Samotné měření se bude skládat ze dvou fází a to fáze přípravy a fáze měření. Během fáze přípravy vytvoříme instanci naší hry s konkrétní ECS knihovnou a necháme její \textit{game loop} běžet přípravný počet iterací. Během fáze měření vezmeme tu samou instanci hry, která běžela přípravný počet iterací a necháme její \textit{game loop} běžet měřený počet iterací. Během fáze měření budeme také měřit čas, během kterého hra provádí měřený počet iterací svého \textit{game loop}. Tento čas bude výsledným časem pro jednu konkrétní ECS knihovnu.
+Článek \textit{Tips for Software Performance Testing} od \textit{Nilushana Costy} zmiňuje pět tipů pro měření výkonu. Jedním z těchto typů je provést před měřením výkonu takzvanou \textit{warmup} fázi, během které program dosáhne stabilního stavu. Jistý \textit{warmup} bude za nás provádět framework, který zvolíme v příští sekci. Ovšem Jedná SE o \textit{warmup} prostředí jako takového. Naše \textit{warmup} fáze před začátkem měření dostane hru do nějakého již lehce rozehraného stavu.
+
+\textit{Warmup} fázi provedme před samotným měřením. Během této fáze odsimulujeme přípravný počet iterací našeho \textit{game loop}. Během této fáze nic neměříme.
+
+Po provedení \textit{warmup} fáze spustíme samotné měření. Během měření vezmeme tu samou instanci hry, která běžela přípravný počet iterací během \textit{warmup} fáze a necháme její \textit{game loop} běžet měřený počet iterací. Během fáze měření budeme také měřit čas, během kterého hra provádí měřený počet iterací svého \textit{game loop}. Tento čas bude výsledným časem pro jednu konkrétní ECS knihovnu.
+
+% Samotné měření se bude skládat ze dvou fází a to fáze přípravy a fáze měření. Během fáze přípravy vytvoříme instanci naší hry s konkrétní ECS knihovnou a necháme její \textit{game loop} běžet přípravný počet iterací. Během fáze měření vezmeme tu samou instanci hry, která běžela přípravný počet iterací a necháme její \textit{game loop} běžet měřený počet iterací. Během fáze měření budeme také měřit čas, během kterého hra provádí měřený počet iterací svého \textit{game loop}. Tento čas bude výsledným časem pro jednu konkrétní ECS knihovnu.
 
 Výše popsaný test provedeme pro každou ECS knihovnu, kterou budeme měřit. Pomocí výsledných časů můžeme relativně porovnat výkon naší hry s různými ECS knihovnami. 
 

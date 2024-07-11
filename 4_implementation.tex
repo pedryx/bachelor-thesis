@@ -1,7 +1,7 @@
 \chapter{Popis implementace}
 V této kapitole si představíme klíčové a zajímavé části implementace. Pro více detailů o implementaci je možné nahlédnout do kódu, který obsahuje dokumentační komentáře.
 
-Pro celý projekt používáme jedno C\# řešení. To obsahuje dva C\# projekty. Prvním je hra a druhým je měření, které používá vytvořenou hru pro měření výkonu ECS knihoven. Projekt hry se skládá ze tří částí. První částí jsou implementace ECS knihoven, které implementují abstrakční vrstvu. Nad nimi je samotná abstrakční vrstva, která je druhou částí. Třetí část je hra samotná, která namísto konkrétní ECS knihovny používá abstrakční vrstvu.
+Pro celý projekt používáme jedno C\# solution. To obsahuje dva C\# projekty. Prvním je hra (\texttt{WorldSimulator.csproj}) a druhým je měření (\texttt{WorldSimula-} \texttt{tor.Benchmarks.csproj}), které používá vytvořenou hru pro měření výkonu ECS knihoven. Projekt hry se skládá ze tří částí. První částí jsou implementace ECS knihoven, které implementují abstrakční vrstvu. Nad nimi je samotná abstrakční vrstva, která je druhou částí. Třetí část je hra samotná, která namísto konkrétní ECS knihovny používá abstrakční vrstvu.
 
 \section{Abstrakční vrstva}
 \label{sec:abstract-layer}
@@ -13,7 +13,7 @@ V ECS jsou systémy zodpovědné za iterace a zpracování entit. Jelikož každ
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.8\linewidth]{img/abstract-layer-systems.pdf}
-  \caption{Vzah tříd souvisejících se systémy.}
+  \caption{Vztahy tříd souvisejících se systémy.}
   \label{fig:abstract-layer-systems}
 \end{figure}
 
@@ -69,14 +69,16 @@ Třída \texttt{LevelFactory}, obsahuje metody pro vytváření entit surovin, b
 
 Pomocí třídy \texttt{GameWorld} lze získávat informace o herním světě. Je možné nalézt nejbližší surovinu určitého typu k dané pozici, nalézt cestu mezi dvěma body, nebo získat informace o terénu na dané pozici.
 
-Na obrázku \ref{fig:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-strom pro každý typ suroviny. Pomocí tohoto stromu lze efektivně nalézt nejbližší surovinu k dané pozici. \texttt{GameWorld} v sobě také obsahuje dvourozměrnou mřížku s informacemi o terénu, která je používaná například pro hledání cest.
+Na obrázku \ref{fig:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-strom pro každý typ suroviny. Pomocí této datové struktury lze efektivně nalézt nejbližší surovinu k dané pozici. Těmto kd-tree se budeme více věnovat v sekci~\ref{sec:res-impl}. \texttt{GameWorld} v sobě také obsahuje dvourozměrnou mřížku s informacemi o terénu, která je používaná například pro hledání cest.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.6\linewidth]{img/game-world.pdf}
+  \includegraphics[width=0.8\linewidth]{img/game-world.pdf}
   \caption{Datové struktury obsažené v \texttt{GameWorld}.}
   \label{fig:game-world}
 \end{figure}
+
+Instance jednotlivých kd-tree z obrázku~\ref{fig:game-world} jsou uchovávány v \texttt{Dictionary} uvnitř třídy \texttt{GameWorld}. Toto \texttt{Dictionary} mapuje typ suroviny (instanci třídy \texttt{ResourceType}) na konkrétní kd-tree. Díky tomuto \texttt{Dictionary} můžeme snadno získat kd-tree pro konkrétní typ suroviny.
 
 \subsection{Assety}
 Na obrázků~\ref{fig:asset-manager} lze vidět hierarchii tříd souvisejících s managementem assetů. \texttt{AssetManager<TAsset>} obsahuje společnou logiku pro nalezení a načtení assetů ze složky a pro správu slovníku ve kterém jsou uloženy načtené assety pro generický typ \texttt{TAsset}. Jednotlivý potomci této třídy poskytují implementace metody \texttt{Load}, pro načtení assetu konkrétního typu. I přesto, že hra momentálně obsahuje assety pro textury a shadery, bylo by díky abstrakci asset managerů snadné hru rozšířit i o jiné typy assetů jako jsou například zvuky.
@@ -127,11 +129,11 @@ V případě, že chceme odebrat danou komponentu, obsahující id instance \tex
 Instance jednotlivých manažerů uchováváme ve třídě \texttt{Game}. Pomocí této třídy je možné k nim také přistupovat. Třídy pro typy jednotlivých manažerů je možné vidět na obrázku~\ref{fig:unmanaged-data-managers}.
 
 \subsection{Uživatelské rozhraní}
-Vztahy tříd souvisejících s uživatelským rozhraním je možné vidět na obrázku~\ref{fig:ui-layer}. Třída \texttt{UILayer} je zodpovědná za správu prvků uživatelského rozhraní pro jeden konkrétní herní stav. Každý prvek uživatelského rozhraní dědí od třídy \texttt{UIElement}. Hra momentálně obsahuje pouze jediný prvek uživatelského rozhraní a tím je minimapa, ale je navržena tak aby bylo snadné ji rozšířit i o další prvky uživatelského rozhraní, jako jsou například labely, tlačítka, nebo action bar.
+Vztahy tříd souvisejících s uživatelským rozhraním je možné vidět na obrázku~\ref{fig:ui-layer}. Třída \texttt{UILayer} je zodpovědná za správu prvků uživatelského rozhraní pro jeden konkrétní herní stav. Každý prvek uživatelského rozhraní dědí od třídy \texttt{UIElement}. Hra momentálně obsahuje pouze jediný prvek uživatelského rozhraní a tím je minimapa (reprezentovaná třídou \texttt{Minimap}), ale je navržena tak aby bylo snadné ji rozšířit i o další prvky uživatelského rozhraní, jako jsou například labely, tlačítka, nebo action bar.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.4\linewidth]{img/ui-layer.pdf}
+  \includegraphics[width=0.35\linewidth]{img/ui-layer.pdf}
   \caption{Diagram vyobrazující vztahy tříd, které souvisejí s uživatelským rozhraním.}
   \label{fig:ui-layer}
 \end{figure}
@@ -139,7 +141,7 @@ Vztahy tříd souvisejících s uživatelským rozhraním je možné vidět na o
 Mezi prvky uživatelského rozhraní existuje stromová hierarchie. Každý prvek může mít několik potomků. Jednotlivý potomci poté pracují s pozici relativní vůči svému rodiči.
 
 \subsubsection{Minimapa}
-Pomocí minimapy chceme znázornit jak vypadá herní svět a jaká jeho část je momentálně viditelná kamerou. Jejím cílem je usnadnit hráčovi orientaci v herním světě.
+Minimapa je reprezentována třídou \texttt{Minimap}, která dědí od \texttt{UIElement}. Pomocí minimapy chceme znázornit jak vypadá herní svět a jaká jeho část je momentálně viditelná kamerou. Jejím cílem je usnadnit hráčovi orientaci v herním světě.
 
 Minimapa se skládá z mapy terénu, view framu a rámečku. Pro vykreslení mapy terénu používáme stejný fragment shader jako pro vykreslení terénu naší hry. Pouze použijeme jiné rozlišení a scale. Poté vykreslíme view frame, ten představuje výsek terénu, který hráč momentálně vidí skrze kameru. Pro jeho vykreslení si najdeme na jakou pozici v minimapě odpovídá umístění kamery a poté vykreslíme obdélníkový rámeček, který odpovídá rozměrům kamery naškálovaných podle velikosti minimapy. Aby nám view frame nepřesahoval hranice minimapy vykreslujeme jej s nastaveným \texttt{ScissorRectangle}. Jedná se o MonoGame nastavení, pomocí kterého lze provádět oříznutí. Na závěr kolem minimapy vykreslíme rámeček. Ten je reprezentován texturou.
 
@@ -155,14 +157,14 @@ Mezi herní data patří informace o biomech, surovinách a předmětech. Herní
 
 \texttt{GlobalInstances<TDerived>} je abstraktní třída, kde generický parametr \texttt{TDerived} může být pouze třída, která je jejím potomkem. \texttt{GlobalInstances<TDerived>} si za pomoci statiky interně ukládá všechny instance \texttt{TDerived} a umožňuje k nim globální přístup za pomoci jejich identifikátoru.
 
-Jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} představují jednotlivé typy herních dat, jako je například typ biomu (\texttt{TerrainType}), typ suroviny (\texttt{ResourceType}), nebo typ předmětu (\texttt{ItemType}). Tyto třídy obsahují informace o daném typu herních dat. Například typ biomu (\texttt{TerrainType}) obsahuje informaci o tom zda je možné v daném biomu stavět a také informaci o tom zda je možné v daném biomu chodit.
+Jednotliví potomci třídy \texttt{GlobalInstances<TDerived>} představují jednotlivé typy herních dat, jako je například typ biomu (\texttt{TerrainType}), typ suroviny (\texttt{ResourceType}), nebo typ předmětu (\texttt{ItemType}). Tyto třídy obsahují informace o daném typu herních dat. Například typ biomu (\texttt{TerrainType}) obsahuje informaci o tom, zda je možné v daném biomu stavět a také informaci o tom, zda je možné v daném biomu chodit.
 
-Je nutné aby jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} měli privátní konstruktor, tím zaručíme, že nebude možné vytvářet nové instance mimo danou třídu. Všechny instance těchto potomků jsou definovány jako veřejné readonly statické fieldy přímo uvnitř těchto tříd.  Například herní data reprezentovaná třídou \texttt{TerrainType} obsahuje instance pro biom vody (\texttt{Water}), biom pláže (\texttt{Beach}), biom lesa (\texttt{Forest}) a další biomy. Na obrázku~\ref{fig:game-data} lze vidět vypsané jednotlivé instance jednotlivých typů herních dat.
+Je nutné, aby jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} měli privátní konstruktor, tím zaručíme, že nebude možné vytvářet nové instance mimo danou třídu. Všechny instance těchto potomků jsou definovány jako veřejné readonly statické fieldy přímo uvnitř těchto tříd.  Například herní data reprezentovaná třídou \texttt{TerrainType} obsahuje instance pro biom vody (\texttt{Water}), biom pláže (\texttt{Beach}), biom lesa (\texttt{Forest}) a další biomy. Na obrázku~\ref{fig:game-data} lze vidět vypsané jednotlivé instance jednotlivých typů herních dat.
 
 Abstraktní třída \texttt{GlobalInstances} obsahuje pouze module initializer, pomocí kterého zavolá \texttt{RuntimeHelpers.RunClassConstructor} na každém neabstraktním typu, který od ní dědí. Tím máme zaručeno, že naše data jsou v čas vytvořené, jinak by k jejich vytvoření došlo až při prvním přístupu k jejich třídám a do té doby bychom k nim nemohli přistupovat skrze třídu \texttt{GlobalInstances<TDerived>}.
 
 \subsection{Inventáře a předměty}
-Na konci sekce~\ref{sec:game-world} jsme si uvedli jednotlivé typy předmětů, které jsou součástí naší hry. Jednotlivé předměty mohou mít vesničané ve svém inventáři (například pokud jej získali sklizením suroviny a nyní jej odnášejí aby jej zpracovali). Dále jsou předmět skladovány ve skladišti. Vztahy tříd souvisejících z předměty je možné vidět na obrázku~\ref{fig:items}.
+Na konci sekce~\ref{sec:game-world} jsme si uvedli jednotlivé typy předmětů, které jsou součástí naší hry. Jednotlivé předměty mohou mít vesničané ve svém inventáři (například pokud jej získali sklizením suroviny a nyní jej odnášejí, aby jej zpracovali). Dále jsou předmět skladovány ve skladišti. Vztahy tříd souvisejících z předměty je možné vidět na obrázku~\ref{fig:items}.
 
 \begin{figure}[!htb]
   \centering
@@ -176,7 +178,8 @@ Z minulé sekce víme, že instance třídy \texttt{ItemType} reprezentují jedn
 Třída \texttt{Inventory} je komponenta. Entity s touto komponentou mají inventář do kterého mohou ukládat předměty. Tato třída obsahuje jediný field a tím je instance \texttt{ItemCollection}. Tuto komponentu na sobě krom entit vesničanů a skladišť mají také entity budov pro zpracování předmětů (například budova dřevorubce). Do tohoto inventáře přesouvají vesničané předměty pro zpracování a entita dané budovy pro zpracování surovin zde také ukládá produkt získaný zpracování daného předmětu.
 
 \subsection{Suroviny}
-Jednotlivé suroviny jsou reprezentované jako entity. Komponenty ze kterých jsou tyto entity složené a systémy které tyto komponenty zpracovávají je možné vidět na obrázku~\ref{fig:resource}. \texttt{RenderSystem} se stará o vykreslení entity. \texttt{Appearance} komponenta nese informaci o tom jak entita vypada a \texttt{Location} obsahuje informaci o tom kde se nachází. \texttt{DeathSystem} řeší logiku smrti dané entity, konkrétně v případě surovin dojde k jejich smrti v případě sklizení.
+\label{sec:res-impl}
+Jednotlivé suroviny jsou reprezentované jako entity. Komponenty, ze kterých jsou tyto entity složené a systémy, které tyto komponenty zpracovávají, je možné vidět na obrázku~\ref{fig:resource}. \texttt{RenderSystem} se stará o vykreslení entity. \texttt{Appearance} komponenta nese informaci o tom, jak entita vypadá a \texttt{Location} obsahuje informaci o tom kde se nachází. \texttt{DeathSystem} řeší logiku smrti dané entity, konkrétně v případě surovin dojde k jejich smrti v případě sklizení.
 
 \begin{figure}[!htb]
   \centering
@@ -189,7 +192,7 @@ Každá surovina má \texttt{Health} komponentu ve které má uloženou informac
 
 Suroviny na sobě mají také \texttt{Owner} komponentu. Ta obsahuje instanci typu dědicího od \texttt{IEntity}, která reprezentuje danou entitu. \texttt{DeathSystem} vyžaduje tuto komponentu aby mohl danou entitu smazat.
 
-Jak již bylo zmíněno, existuje kd-tree pro každý typ suroviny. Entity jednotlivých surovin jsou poté uloženy v těchto kd-tree. Tyto kd-tree poté využívají vesničané, kteří v rámci svého povolání provádějí úlohu nalezení nejbližší suroviny daného typu. Pokud si vesničan rezervuje danou surovinu (začne pohyb směrem k ní a následně ji sklidí), dojde k odebrání této suroviny z příslušného kd-tree. Tím zamezíme tomu, že více vesničanů nebude sklízet stejnou entitu suroviny.
+Jak již bylo zmíněno, existuje kd-tree pro každý typ suroviny. Jedná se o datovou strukturu pomocí které lze efektivně vyhledávat v prostoru. Entity jednotlivých surovin jsou uloženy v těchto kd-tree. Tyto kd-tree poté využívají vesničané, kteří v rámci svého povolání provádějí úlohu nalezení nejbližší suroviny daného typu. Pokud si vesničan rezervuje danou surovinu (začne pohyb směrem k ní a následně ji sklidí), dojde k odebrání této suroviny z příslušného kd-tree. Tím zamezíme tomu, že více vesničanů nebude sklízet stejnou entitu suroviny. Pro implementaci kd-tree používáme Nugget balíček \textit{KdTree}~\ref{KdTree}.
 
 Dále je nutné zmínit, že \texttt{DeathSystem} pracuje nad všemi entitami s komponentami \texttt{Health} a \texttt{Owner}. V případě, že zemřelá entita má na sobě komponentu \texttt{Inventory} nebo komponentu \texttt{ItemDrop} tak převede dané předměty. A v případě, že zemřelá entita je vesničan a ten útočil na entitu s komponentou \texttt{Resource} (daná entita byla surovina), tak je nutné entitu vrátit do příslušného kd-tree.
 
@@ -208,7 +211,7 @@ Entita \textit{jelena} se od ostatních entit surovin liší. Její komponenty a
 Ze sekce~\ref{subsec:villages} víme, že v herním světě se budou nacházet vesničané a vesnice. Jednotlivé vesnice budou obsahovat budovy. Každá budova, každý vesničan a i samotná vesnice jsou reprezentované jako entity. V této sekci si tyto entity představíme.
 
 \subsubsection{Vesničané}
-Diagram s entitou vesničana je možné vidět na obrázku~\ref{fig:villager}. Krom vyobrazených systémů souvisí s vesničanem také \texttt{MovementSystem}, \texttt{DeathSystem}, \texttt{OrientationUpdateSystem} a \texttt{RenderSystem}. Tyto systémy byli popsány v minulé sekci a nyní se jim nebudeme věnovat.
+Diagram s entitou vesničana je možné vidět na obrázku~\ref{fig:villager}. Krom vyobrazených systémů souvisí s vesničanem také \texttt{MovementSystem}, \texttt{DeathSystem}, \texttt{OrientationUpdateSystem} a \texttt{RenderSystem}. Tyto systémy byly popsány v minulé sekci a nyní se jim nebudeme věnovat.
 
 \begin{figure}[!htb]
   \centering
@@ -255,15 +258,25 @@ Pro volbu pozice byl použit přímočarý algoritmus. Jako první se vybere ná
 
 \section{Měření}
 \label{benchmark-implementation}
-Měření je druhým C\# projektem našeho C\# řešení. S použitím naší hry měří výkon jednotlivých ECS knihoven. V sekci~\ref{benchmark-framework} jsme se rozhodli, že pro toto měření použijeme \textit{BenchmarkDotNet}. Celé měření se dělí na dvě fáze a to přípravy a samotného měření.
+Měření je druhým C\# projektem (\texttt{WorldSimulator.Benchmarks.csproj}) našeho C\# solution. S použitím naší hry měří výkon jednotlivých ECS knihoven. V sekci~\ref{benchmark-framework} jsme se rozhodli, že pro toto měření použijeme \textit{BenchmarkDotNet}. Celé měření se dělí na dvě fáze a to přípravy a samotného měření.
 
-Pro měření máme definované následující konstanty: \texttt{seed}, \texttt{deltaTime}, \texttt{setupIterationCount} a \texttt{benchmarkIterationCount}. \texttt{seed} je seed, který používáme pro náhodné generování čísel. Stejným seedem pro každé měření zajistíme konzistentnost. \texttt{deltaTime} obsahuje čas v sekundách. Tento čas používáme pro odsimulovaní jednoho kroku naší hry (jedné iterace \textit{game loop}, který byl přiblížen v sekci~\ref{game-loop}). \texttt{setupIterationCount} nám udává počet kroků odsimulování naší hry během fáze přípravy a poté \texttt{benchmarkIterationCount} udává počet kroků odsimulování hry během fáze měření.
+Pro měření máme definované následující konstanty:
 
-V C\# projektu máme definovaný test reprezentovaný třídou \texttt{ECSBenchmarks}. Tento test obsahuje jediný vstupní parametr a tím je \texttt{ECSFactoryType} typu \texttt{Type}. Tímto parametrem jsou předávány typy dědicí od \texttt{ECSFactory}, které reprezentují jednotlivé ECS knihovny.
+\begin{enumerate}
+  \item \texttt{seed}: Seed pro generování náhodných čísel. Stejným seedem pro každé měření zajistíme konzistentnost.
+
+  \item \texttt{deltaTime}: Čas v sekundách. Tento čas používáme pro odsimulovaní jednoho kroku naší hry (jedné iterace \textit{game loop}, který byl přiblížen v sekci~\ref{game-loop}).
+
+  \item \texttt{setupIterationCount} Udává počet kroků odsimulování naší hry během fáze přípravy.
+
+  \item \texttt{benchmarkIterationCount}: Udává počet kroků odsimulování hry během fáze měření.
+\end{enumerate}
+
+V C\# projektu (\texttt{WorldSimulator.Benchmarks.csproj}) máme definovaný test reprezentovaný třídou \texttt{ECSBenchmarks}. Tento test obsahuje jediný vstupní parametr a tím je \texttt{ECSFactoryType} typu \texttt{Type}. Tímto parametrem jsou předávány typy dědicí od \texttt{ECSFactory}, které reprezentují jednotlivé ECS knihovny.
 
 Během fáze přípravy nejprve zkonstruujeme konkrétní \texttt{ECSFactory}. Poté vytvoříme novou instanci naší hry (třídy \texttt{Game}) a odsimulujeme jeden její snímek za pomocí \texttt{RunOneFrame}, tím zaručíme, že hra bude inicializována. Poté v cyklu voláme metodu \texttt{UpdateOnce}, která vykoná jednu iteraci \textit{game loop} naší hry. Počet opakování tohoto cyklu udává konstanta \texttt{setupIterationCount}.
 
-Během fáze měření používáme tu samou instanci hry vytvořenné během fáze přípravy. Na této instanci v cyklu opět zavoláme metodu \texttt{UpdateOnce}. Počet opakování tohoto cyklu je dán konstantou \texttt{benchmarkIterationCount}.
+Během fáze měření používáme tu samou instanci hry vytvořené během fáze přípravy. Na této instanci v cyklu opět zavoláme metodu \texttt{UpdateOnce}. Počet opakování tohoto cyklu je dán konstantou \texttt{benchmarkIterationCount}.
 
 
 
@@ -326,7 +339,7 @@ Během fáze měření používáme tu samou instanci hry vytvořenné během f�
 
 % \section{Hra}
 
-% Popis a provázanost pateřních členů.
+% Popis a provázanost  členů.
 
 % \subsection{Herní svět}
 
@@ -480,7 +493,7 @@ Během fáze měření používáme tu samou instanci hry vytvořenné během f�
 
 % Budovy pro zpracování surovin na sobě navíc mají \texttt{ResourceProcessor} komponentu. Tyto budovy se starají o zpracování surovin podle daného receptu, který mají uložen v této komponentě. Mechaniku pro zpracování surovin řeší \texttt{ResourceProcessingSystem}.
 
-% Budovy pro zpracování surovin mají na sobě také \texttt{VillagerSpawner} komponentu. Ta je společně s \texttt{VillagerSpawningSystem} zodpovědná za mechaniku spawnování vesničanů. Tato komponenta v sobě uchovává informace o tom jak dlouho trvá než dojde ke spawnutí vesničana a o profesi, která bude spawnutému vesničanovi přidělena. V případě, že vesničan zemře, začne odpočet a po jeho ukončení dojde ke spawnutí nového vesničana.
+% Budovy pro zpracování surovin mají na sobě také \texttt{VillagerSpawner} komponentu. Ta je společně s \texttt{VillagerSpawningSystem} zodpovědná za mechaniku  vesničanů. Tato komponenta v sobě uchovává informace o tom jak dlouho trvá než dojde ke spawnutí vesničana a o profesi, která bude spawnutému vesničanovi přidělena. V případě, že vesničan zemře, začne odpočet a po jeho ukončení dojde ke spawnutí nového vesničana.
 
 % village building system
 

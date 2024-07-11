@@ -92,6 +92,23 @@ Všechny assety se nachází ve složce \texttt{Content}. Jednotlivé typy asset
 
 Veškeré instance rozhraní \texttt{IAssetManager} jsou uchovány ve třídě \texttt{Game}. Pomocí ní je také možné přistupovat ke konkrétním instancím (\texttt{ShaderManager} a \texttt{TextureManager}). Při inicializaci hry dojde k zavolání metody \texttt{LoadAll} na každé takové instanci. To vede k načtení všech assetů daného typu.
 
+\subsection{Správa managed typů}
+Některe knhovny ktere budeme merit vyzaduji aby komponenty byli unmanaged typy. Na strance xxx je mozne videt ze definice unmanaged typu je
+
+enumerate
+  =
+  =
+  =
+end
+
+My potrebujeme nektere unmanaged typy na komponentech, zejmena IENtity a pole. Kde a proc.
+
+Pro vyreseni mame managed data managery viz obrazek. Abstraktni metody createdatainstance a createempty. Je mozne vlozit instanci do managera, to nam vrati id. Je mozne pomoci id ziskat data z managera. Je nutne nezapmenout uvolnit data z managera aby nebyl memmory leak. V nasi hre to resime pres deathsystem.
+
+obrazek
+
+Jednotlive instance manageru uchovany v game. game k nim dava pristup. Jednotlive instance mozno videt na obrazku.
+
 \subsection{Uživatelské rozhraní}
 Vztahy tříd souvisejících s uživatelským rozhraním je možné vidět na obrázku~\ref{fig:ui-layer}. Třída \texttt{UILayer} je zodpovědná za správu prvků uživatelského rozhraní pro jeden konkrétní herní stav. Každý prvek uživatelského rozhraní dědí od třídy \texttt{UIElement}. Hra momentálně obsahuje pouze jediný prvek uživatelského rozhraní a tím je minimapa, ale je navržena tak aby bylo snadné ji rozšířit i o další prvky uživatelského rozhraní, jako jsou například labely, tlačítka, nebo action bar.
 

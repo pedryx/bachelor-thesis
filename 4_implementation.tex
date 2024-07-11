@@ -93,21 +93,38 @@ Všechny assety se nachází ve složce \texttt{Content}. Jednotlivé typy asset
 Veškeré instance rozhraní \texttt{IAssetManager} jsou uchovány ve třídě \texttt{Game}. Pomocí ní je také možné přistupovat ke konkrétním instancím (\texttt{ShaderManager} a \texttt{TextureManager}). Při inicializaci hry dojde k zavolání metody \texttt{LoadAll} na každé takové instanci. To vede k načtení všech assetů daného typu.
 
 \subsection{Správa managed typů}
-Některe knhovny ktere budeme merit vyzaduji aby komponenty byli unmanaged typy. Na strance xxx je mozne videt ze definice unmanaged typu je
+Vytváříme hru abychom jí později mohli používat pro měření výkonu ECS knihoven. Aby hru pro měření bylo možné použít, je klíčové, aby byla nezávislá na konkrétní ECS knihovně. Z toho důvodu hra namísto konkrétní ECS knihovny používá abstrakční vrstvu. V sekci~\ref{sec:components-analysis} jsme si zmínili, že jednotlivé komponenty v abstrakční vrstvě reprezentujeme jako struktury. Ovšem jedna z knihoven, které budeme měřit (konkrétně \textit{Svelto.ECS}~\cite{SveltoECS}), vyžaduje aby komponenty byli \textit{unmanaged typy}. V této sekci se zaměříme na to co to jsou \textit{unmanaged typy} a jak jsme tento problém vyřešili.
 
-enumerate
-  =
-  =
-  =
-end
+Definici \textit{unmanaged typů} lze nalézt ve článku \textit{Unmanaged types (C\# reference)} od firmy \textit{Microsoft}. Ve článku se lze dočíst, že \textit{unmanaged typem} je každý z následujících datových typů:
 
-My potrebujeme nektere unmanaged typy na komponentech, zejmena IENtity a pole. Kde a proc.
+\begin{enumerate}
+  \item \texttt{sbyte}, \texttt{byte}, \texttt{short}, \texttt{ushort}, \texttt{int}, \texttt{uint}, \texttt{long}, \texttt{ulong}, \texttt{nint}, \texttt{nuint}, \texttt{char}, \texttt{float}, \texttt{double}, \texttt{decimal}, nebo \texttt{bool}.
 
-Pro vyreseni mame managed data managery viz obrazek. Abstraktni metody createdatainstance a createempty. Je mozne vlozit instanci do managera, to nam vrati id. Je mozne pomoci id ziskat data z managera. Je nutne nezapmenout uvolnit data z managera aby nebyl memmory leak. V nasi hre to resime pres deathsystem.
+  \item Jakýkoliv výčtový typ.
+  
+  \item Jakýkoliv typ ukazatele.
 
-obrazek
+  \item Jakýkoliv tuple složený z \textit{unmanaged typů}.
 
-Jednotlive instance manageru uchovany v game. game k nim dava pristup. Jednotlive instance mozno videt na obrazku.
+  \item Jakákoliv uživatelem definovaná struktura, která obsahuje pouze fieldy \textit{unmanaged typů}.
+\end{enumerate}
+
+Naše komponenty jsou uživatelem definované struktury, tím pádem je pro nás klíčový poslední bod této definice. Konkrétně naše komponenty nesmí obsahovat fieldy \textit{unmanaged typu}. Ovšem v některých případech bychom takové fieldy potřebovali. Jedná se zejména o instance třídy \textit{IEntity} a jakékoliv pole nebo kolekce. Například entity vesničanů v naší hře obsahují \texttt{Villager} komponentu, ve které si uchovávají referenci na entitu vesnice do které spadají. Dalším příkladem je \textit{PathFollow} komponenta, která přidá entitě schopnost chodit po cestě, která je v této komponentě definována. Cesta je definována za pomocí pole pozic.
+
+Pro řešení tohoto problému byli zavedeny manažeři instancí \textit{managed typů}. Na obrázku~\ref{fig:unmanaged-data-managers} lze vidět hierarchii dědičnosti tříd souvisejících s těmito manažery. Prázdný interface \texttt{IManagedDataManager} slouží abychom mohli instance jednotlivých manažerů spolu ukládat do jedné kolekce. Od tohoto interface dědí abstraktní třída \texttt{ManagedDataManager<TManagedData>}, kde generický parametr \texttt{TManagedData} představuje \textit{managed typ}, jehož instance chceme spravovat. Od této třídy, dědí třídy, které se starají o správu konkrétních \textit{managed typů}.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.6\linewidth]{img/managed_data_managers.pdf}
+  \caption{Hierarchie dědičnosti tříd souvisejících se správou instancí \textit{managed typů}.}
+  \label{fig:unmanaged-data-managers}
+\end{figure}
+
+Třída \texttt{ManagedDataManager<TManagedData>} obsahuje abstraktní metody pro vytvoření instancí spravovaného \textit{managed typu}. V jednotlivých manažerech jsou uchovávány spravované instance odpovídajícího \textit{managed typu}. Do manažera je možné instancí vložit nebo vytvořit novou instanci přímo uvnitř manažera. Obě tyto akce nám navrátí id za pomoci, kterého lze k instancím daného \textit{managed typu} přistupovat. V našich komponentech namísto instancí těchto \textit{managed typů} uchováváme jejich id.
+
+V případě, že chceme odebrat danou komponentu, obsahující id instance \textit{managed typu}, je nutné odpovídající instanci odebrat z manažera aby nedošlo k \textit{memory leaku}. V naší hře toto řešíme za pomoci \texttt{DeathSystem}, který řeší smrt entit. V případě smrti entity tento systém před odstranění dané entity zkontroluje zda na sobě daná entita nemá komponentu obsahující id instance \textit{managed typu}. Pokud ano tak příslušnou instanci odebere z příslušného manažera.
+
+Instance jednotlivých manažerů uchováváme ve třídě \texttt{Game}. Pomocí této třídy je možné k nim také přistupovat. Třídy pro typy jednotlivých manažerů je možné vidět na obrázku~\ref{fig:unmanaged-data-managers}.
 
 \subsection{Uživatelské rozhraní}
 Vztahy tříd souvisejících s uživatelským rozhraním je možné vidět na obrázku~\ref{fig:ui-layer}. Třída \texttt{UILayer} je zodpovědná za správu prvků uživatelského rozhraní pro jeden konkrétní herní stav. Každý prvek uživatelského rozhraní dědí od třídy \texttt{UIElement}. Hra momentálně obsahuje pouze jediný prvek uživatelského rozhraní a tím je minimapa, ale je navržena tak aby bylo snadné ji rozšířit i o další prvky uživatelského rozhraní, jako jsou například labely, tlačítka, nebo action bar.

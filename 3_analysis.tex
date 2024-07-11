@@ -128,6 +128,7 @@ Abychom tyto problémy vyřešili, předáme zodpovědnost za konstrukci těchto
 Je také nutné zmínit, že konkrétní implementace abstrakční vrstvy musejí poskytovat vícero tříd dědicích od \verb|IECSSystem|, jelikož je nutné definovat systém co pracuje s jednou komponentou, poté co pracuje s dvěma komponentami a tak dále. \verb|ECSFactory| tedy v konstruktoru přijímá více typů systému a při zavolání \verb|CreateSystem| vybere jeden z nich na základě počtu generických argumentů na typu \verb|EntityProcessor|.
 
 \subsection{Komponenty jako třídy a komponenty jako struktury}
+\label{sec:components-analysis}
 Jednotlivé ECS knihovny mají různé požadavky na typech jednotlivých komponent. Některé chtějí aby tyto typy byli třídy, jiné zase chtějí, aby tyto typy byly struktury a jiné povolují kombinaci obou variant.
 
 Možné řešení by bylo mít dva typy pro každou komponentu, kde jeden by byl třída a jeden struktura. Ovšem toto řešení by vedlo k duplicitnímu kódu.

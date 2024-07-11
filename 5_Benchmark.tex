@@ -1,4 +1,5 @@
 \chapter{Měření}
+\label{chap:benchmark}
 Náš projekt se skládá ze dvou částí a to hry a poté měření, které využívá vytvořenou hru pro měření výkonu jednotlivých ECS knihoven. Analýzu tohoto měření jsme provedli v sekci~\ref{benchmark-analysis} a jeho implementaci jsme popsali v sekci~\ref{benchmark-implementation}. V této kapitole si nejprve stanovíme hypotézu, poté si přiblížíme ECS knihovny, které budeme měřit a na závěr si prezentujeme výsledky tohoto měření.
 
 \section{Hypotéza}
@@ -82,6 +83,7 @@ Nyní si představíme jednotlivé ECS knihovny, které budeme měřit. U každ�
 V minulé sekci jsme si definovali kategorie do kterých jednotlivé ECS knihovny spadají. Do kategorie 1 patří \textit{Arch}, \textit{HypEcs} a \textit{Svelto.ECS}. Do této kategorie také zařadíme \textit{DefaultEcs}, \textit{LeoECS} a \textit{LeoEcsLite}, které sice \textit{arch type} nepoužívají, ale používají datovou strukturu, která také využívá sekvenčního přístupu pro minimalizaci počtu \textit{cache miss}. V kategorii 2 je pouze \textit{RelEcs}. Do kategorie 3 spadají \textit{MonoGameExtended.Entities} a \textit{Entitas}.
 
 \section{Výsledky}
+\label{sec:benchmark-results}
 Analýzu měření jsme provedli v sekci~\ref{benchmark-analysis}. Poté v sekci~\ref{benchmark-implementation} jsme si rozebrali implementaci měření. V této sekci se budeme věnovat výsledkům tohoto měření.
 
 Předtím něž si prezentujeme výsledky měření, tak si shrňme jak jej provádíme. Prvně si vytvoříme novou instanci hry (instanci třídy \texttt{Game}) s danou ECS knihovnou (s danou instancí třídy dědicí od \texttt{ECSFactory}). Poté odsimulujeme přípravný počet iterací (provedeme \texttt{setupIterationCount} iterací \textit{game loop} naší hry). Následně odsimulujeme měřený počet iterací (\texttt{benchmarkIterationCount}) a přitom budeme měřit čas. To několikrát zopakujeme (přesněji námi zvolený framework to za nás několikrát zopakuje) a získáme průměrný čas jak rychle hra zvládne odsimulovat měřený počet iterací (\texttt{benchmarkIterationCount}). Test provádíme pro každou měřenou ECS knihovny (ty jsme si rozebrali v minulé sekci).

@@ -36,6 +36,7 @@ Z pohledu hry jednotlivé implementace \textit{EntityProcessor} představují sa
 Typ, který dědí od \texttt{ECSFactory} musí implementovat metody pro vyváření instancí wrapperu entity a wrapperu \textit{worldu}. Skrze konstruktor svému předku také předá typy jednotlivých systémů (tříd dědicích od \texttt{IECSSystem}). Wrapper entity je třída dědicí od rozhraní \texttt{IEntity} a je zodpovědná za přidávání a odebíraní komponent na dané entitě. Wrapper \textit{worldu} je třída dědicí od rozhraní \texttt{IECSWorld}. Tento wrapper implementuje metodu \texttt{Update}, která je zodpovědná za aktulizaci stavu \textit{worldu}.
 
 \section{Hra}
+\label{sec:game-impl}
 Celá hra je reprezentována třídou \texttt{Game}, té je skrze konstruktor předána konkrétní instance \texttt{ECSFactory}. Jednotlivé instance \texttt{ECSFactory} reprezentují jednotlivé ECS knihovny a volba této instance představuje volbu ECS knihovny se kterou bude hra pracovat.
 
 První herní stav je hře předán skrze metodu \texttt{SwitchState}. Samotná hra je spuštěna metodou \texttt{Run}.

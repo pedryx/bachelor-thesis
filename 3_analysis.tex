@@ -1,7 +1,7 @@
 % Proc jsem delali rozhodnuti kdyz vznikala ta implementace.
 \chapter{Analýza}
 \label{chap:analysis}
-V této kapitole prozkoumáme jaké rozhodnutí byla udělána během implementace a odůvodníme jejich zvolení.
+V této kapitole prozkoumáme jaká rozhodnutí byla provedena během implementace a odůvodníme jejich zvolení.
 
 % Prvně nahlédneme na abstrakční vrstvu a poté na samotnou hru.
 
@@ -18,7 +18,7 @@ Nyní provedeme volbu engninu/frameworku, který použijeme pro naši hru. Pro t
 
 V přehledu~\cite{SteamDB} technologií používaných hrami v herním obchodě Steam~\cite{Steam} je možné nahlédnout, že mezi nejpopulárnější herní enginy/frameworky pro C\# patří Unity~\cite{Unity}, Godot~\cite{Godot} a Microsoft XNA Framework.
 
-Unity a Godot jsou velké herní enginy s vlastním editorem. Oba dva podporují 2D hry s pohledem shora. Ovšem tyto enginy odstiňují uživatele od některých nízkoúrovňových částí implementace a přebírají kontrolu na C\# projektem. Bylo by pro nás problematické s nimi splnit třetí požadavek (Možnost spouštět hru vícekrát po sobě a z jiného C\# projektu).
+Unity a Godot jsou velké herní enginy s vlastním editorem. Oba dva podporují 2D hry s pohledem shora. Ovšem tyto enginy odstiňují uživatele od některých nízkoúrovňových částí implementace a přebírají kontrolu nad C\# projektem. Bylo by pro nás problematické s nimi splnit třetí požadavek.
 
 Microsoft XNA Framework je pouze knihovna tříd bez vlastního editoru. Tento framework je vhodný pro 2D hry s pohledem shora a oproti herním enginům Unity a Godot tento framework volí nízkoúrovňoví přístup, díky kterému uživatel není odstíněn od nízkoúrovňových částí implementace a má plnou kontrolu nad projektem. Tím pádem tento framework splňuje všechny naše požadavky.
 
@@ -37,7 +37,7 @@ Pro návrh abstrakční vrstvy bude nejprve nutné rozebrat jak jsou jednotlivé
 
     \item \textbf{\textit{Entity}:} \textit{Entita} by, podobně jako v návrhovém vzoru Component, mohla být reprezentována jako kolekce svých \textit{komponent}. Ovšem to se v praxi nedělá, namísto toho se používá řešení, které vede k lepšímu výkonu. Většina ECS implementacích reprezentuje \textit{entity} pouze jako jednoduchý identifikátor a jednotlivé \textit{komponenty} jsou na \textit{entity} mapovány skrze \textit{world}.
 
-    \item \textbf{\textit{World}:} \textit{World} je spravce \textit{entit} a \text{komponent}. Tento správce slouží jako kontejner pro všechny \textit{entity} a \textit{komponenty} v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé \textit{entity}. Často obsahuje také funkce pro přidávání a odebírání \textit{komponent} jednotlivým \textit{entitám}.
+    \item \textbf{\textit{World}:} \textit{World} je spravce \textit{entit} a \textit{komponent}. Tento správce slouží jako kontejner pro všechny \textit{entity} a \textit{komponenty} v herním světě. Jeho rozhraní nabízí funkce, pomocí niž je možné vytvářet a mazat jednotlivé \textit{entity}. Často obsahuje také funkce pro přidávání a odebírání \textit{komponent} jednotlivým \textit{entitám}.
 
     Některé ECS implementace reprezentují \textit{entity} pomocí malé struktury, obsahující identifikátor dané \textit{entity} společně s referencí na \textit{world} do kterého patří. To umožňuje mít na této struktuře bohaté rozhraní s funkcemi pro přidávání a odebírání \textit{komponent}.
 
@@ -268,7 +268,7 @@ Pro vygenerování výškové mapy bude nejprve nutné zvolit šumovou funkci, p
     \item \textbf{Simplexový šum:} \textit{Simplexový šum} je velmi podobný \textit{Perlinovu šumu}. Přehledné vysvětlení o tom co to je \textit{Simplexový šum} a jak se používá pro generování terénu je možné nalézt v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}. V této práci je možné se dočíst, že oproti \textit{Perinovu šumu} je \textit{Simplexový šum} rychlejší a produkuje výsledky, které vypadají více přirozeně. Ovšem má jednu velkou nevýhodu a to patent, který omezuje jeho použití pro komerční účely. Z toho důvodu se v praxi tolik nepoužívá.
 \end{enumerate}
 
-I přesto je \textit{Simplexový šum} nabízí výhody oproti \textit{Perlinovu šumu}, pro implementaci zvolíme \textit{Perlinův šum} z důvodů již zmíněného patentu. Konkrétně jej budeme používat ve druhé dimenzi.
+I přesto, že \textit{Simplexový šum} nabízí výhody, oproti \textit{Perlinovu šumu}, pro implementaci zvolíme \textit{Perlinův šum} z důvodů již zmíněného patentu. Konkrétně jej budeme používat ve druhé dimenzi.
 
 Nyní za pomoci \textit{Perlinova šumu} vygenerujeme výškovou mapu. Pro generování výškové mapy lze použít Fraktální součet nebo TurbulencI. Jedná se o techniky pro generování více komplexních vzorů. O obou technikách je možné se více dočíst v již zmíněné diplomové práci \textit{Terrain synthesis using noise}~\cite{TerrainNoise}.
 
@@ -285,6 +285,8 @@ Příklad výsledného terénu je možné vidět na obrázku~\ref{fig:terrain}.
     \label{fig:terrain}
 \end{figure}
 
+\newpage
+
 \subsection{Generování terénu na CPU vs. GPU}
 Za použití techniky z minulé sekce jsme získali vygenerovaný terén. Ovšem to jestli naše technika splňuje naše požadavky je závislé na tom zda terén budeme generovat na CPU nebo na GPU. Proto si nyní oba přístupy rozebereme.
 
@@ -296,7 +298,7 @@ Při generovaní tohoto terénu je možné zvolit rozlišení, konkrétně speci
 V ideálním případě bychom chtěli velké rozlišení ale také lepší rychlost. Jeden ze způsobů jak toho dosáhnout je paralelizace, ovšem možnosti paralelizace na CPU jsou oproti GPU omezeny, proto si rozeberme jak by se dal terén generovat na GPU.
 
 \subsubsection{Generování terénu na GPU}
-Terén budeme generovat v reálném čase (vygenerujeme jej v každém snímku znova) a vždy nám postačí vygenerovat pouze část terénu, která je viditelná hráčem. Tato část bude bude obdélník se stejnými rozměry jako velikost okna naší hry.
+Terén budeme generovat v reálném čase (vygenerujeme jej v každém snímku znovu) a vždy nám postačí vygenerovat pouze část terénu, která je viditelná hráčem. Tato část bude bude obdélník se stejnými rozměry jako velikost okna naší hry.
 
 Pořídíme si texturu do které budeme generovat terén. Tato textura bude mít stejnou velikost jako okno naší hry. Poté si pořídíme fragment shader, kterým do této textury budeme generovat terén. Tento fragment shader v každém snímku na základě pozice a přiblížení kamery pro každý pixel naší textury provede algoritmus popsaný v sekci~\ref{sec:terrain-gen}.
 
@@ -317,6 +319,8 @@ Vesničané v naší hře budou často potřebovat nalézt cestu v námi vygener
 Fialové cesty jsou nevhodné. Konkrétně cesta $P1$ je nevhodná, jelikož vede zbytečnou velkou oklikou. Cesta $P2$ je nevhodná, protože vede pouze podel os. Cesta $P3$ je nevhodná, jelikož vede přes vodu.
 
 Červené cesty jsou vhodné. Cesta $P4$ je nejkratší cestou z bodu $A$ do bodu $B$. Cesta $P5$ sice není nejkratší cesta ale je pro nás dostatečně dobrou aproximací a je pro nás dostačující.
+
+\newpage
 
 \subsubsection{Navigační struktury}
 Pro navigaci v terénu použijeme datovou strukturu. Tato datová struktura reprezentuje terén způsobem, který umožňuje snadné hledaní cest mezi dvěma body. Často k tomu používají algoritmus pro hledání nejkratších cest. Typickou volbou bývá algoritmus A*. Datové struktury, které lze pro navigaci použít nazvěme navigační struktury.
@@ -352,7 +356,9 @@ Ovšem problém spočívá v tom, že k dispozici máme pouze mřížku, která 
 
 Mohlo by se zdát, že použití této aproximace by vedlo v příliš nevhodné cesty, ovšem za předpokladu, že se body v naší mřížce budou nacházet dostatečně blízko sebe, tak bude výsledná cesta dostatečně dobrou aproximací červené cesty z obrázku~\ref{fig:path_simplified}.
 
-Další problém, který je nutné vyřešit, je, že vesničané a entity, ke kterým se vesničané navigují, se většinou nenacházejí v žádném z bodů naší mřížce. Problém vyřešíme tak, že před spuštěním A* algoritmu si k vesničanovi a dané entitě nalezneme nejbližší body v naší mřížce a nalezneme nejkratší cestu mezi těmito body. Poté, předtím než provedeme zjednodušení cesty, přidáme pozici vesničana jako první bod naší cesty a pozici entity, ke které se vesničan naviguje, jako poslední bod naší cesty. Situaci je možné vidět na obrázku~\ref{fig:path_end_points}. Vesničan se nachází v bodu A, který není bodem naší mřížky a chce se navigovat k entitě umístěné na bodu B, který také není bodem naší mřížky. Na začátek a konec cesty po provedení algoritmy tedy oba body přidáme, tím získáme žluté úseky. Přidáním těchto bodů by nám mohly vzniknout nepřirozené artefakty, ovšem ty budou spraveny během zjednodušování cesty.
+Další problém, který je nutné vyřešit, je, že vesničané a entity, ke kterým se vesničané navigují, se většinou nenacházejí v žádném z bodů naší mřížce. Problém vyřešíme tak, že před spuštěním A* algoritmu si k vesničanovi a dané entitě nalezneme nejbližší body v naší mřížce a nalezneme nejkratší cestu mezi těmito body. Poté, předtím než provedeme zjednodušení cesty, přidáme pozici vesničana jako první bod naší cesty a pozici entity, ke které se vesničan naviguje, jako poslední bod naší cesty.
+
+Situaci je možné vidět na obrázku~\ref{fig:path_end_points}. Vesničan se nachází v bodu A, který není bodem naší mřížky a chce se navigovat k entitě umístěné na bodu B, který také není bodem naší mřížky. Na začátek a konec cesty po provedení algoritmu oba body přidáme a tím získáme žluté úseky. Přidáním těchto bodů by nám mohly vzniknout nepřirozené artefakty, ovšem ty budou spraveny během zjednodušování cesty.
 
 \begin{figure}[!htb]
     \centering
@@ -391,7 +397,7 @@ I naše hra obsahuje \textit{game loop}. Logika v naší hře se skládá ze sys
 \subsubsection{Popis měření}
 Budeme mít stanovené dva pevné počty iterací. První bude přípravný počet iterací a druhý bude měřený počet iterací. Měřený počet iterací bude větší než přípravný počet iterací.
 
-Článek \textit{Tips for Software Performance Testing} od \textit{Nilushana Costy} zmiňuje pět tipů pro měření výkonu. Jedním z těchto typů je provést před měřením výkonu takzvanou \textit{warmup} fázi, během které program dosáhne stabilního stavu. Jistý \textit{warmup} bude za nás provádět framework, který zvolíme v příští sekci. Ovšem Jedná SE o \textit{warmup} prostředí jako takového. Naše \textit{warmup} fáze před začátkem měření dostane hru do nějakého již lehce rozehraného stavu.
+Článek \textit{Tips for Software Performance Testing}~\cite{PerformanceTips} od \textit{Nilushana Costy} zmiňuje pět tipů pro měření výkonu. Jedním z těchto typů je provést před měřením výkonu takzvanou \textit{warmup} fázi, během které program dosáhne stabilního stavu. Jistý \textit{warmup} bude za nás provádět framework, který zvolíme v příští sekci. Ovšem Jedná se o \textit{warmup} prostředí jako takového. Naše \textit{warmup} fáze před začátkem měření dostane hru do nějakého již lehce rozehraného stavu.
 
 \textit{Warmup} fázi provedme před samotným měřením. Během této fáze odsimulujeme přípravný počet iterací našeho \textit{game loop}. Během této fáze nic neměříme.
 

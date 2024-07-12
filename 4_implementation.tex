@@ -21,7 +21,7 @@ V ECS jsou systémy zodpovědné za iterace a zpracování entit. Jelikož každ
 
 Jako příklad si uvedeme třídu \texttt{ArchSystem<TEntityProcessor, TComponent>}. Jedná se o implementaci systému. Tento systém obsahuje logiku pro iteraci entit z ECS knihovny \textit{Arch}~\cite{Arch}. Příkladem konkrétního \texttt{EntityProcessor} je například třída \texttt{MovementSystem}, která řeší zpracování entit s komponentami \texttt{Position} a \texttt{Movement} a obsahuje logiku zodpovědnou za jejich pohyb.
 
-Z pohledu hry jednotlivé implementace \textit{EntityProcessor} představují samotné systémy, jelikož hra nekouká na to jak jsou entity iterovány a zajímá ji jenom samotná herní logika. Proto se kód, který pracuje s hrou odkazuje na \texttt{EntityProcessor} jako na systém. Ovšem z pohledu abstrakční vrstvy je nutné rozlišovat \texttt{System} jako typ, který obsahuje logiku pro iteraci entit a \texttt{EntityProcessor} jako typ, který obsahuje logiku pro zpracování entit. Autor si je vědom, že tyto pohledy mohou vést k matoucí terminologii, ovšem v kódu jsou již používány na příliš mnoho místech.
+Z pohledu hry jednotlivé implementace \texttt{EntityProcessor} představují samotné systémy, jelikož hra nekouká na to jak jsou entity iterovány a zajímá ji jenom samotná herní logika. Proto se kód, který pracuje s hrou odkazuje na \texttt{EntityProcessor} jako na systém. Ovšem z pohledu abstrakční vrstvy je nutné rozlišovat \texttt{System} jako typ, který obsahuje logiku pro iteraci entit a \texttt{EntityProcessor} jako typ, který obsahuje logiku pro zpracování entit. Autor si je vědom, že tyto pohledy mohou vést k matoucí terminologii, ovšem v kódu jsou již používány na příliš mnoho místech.
 
 \subsection{ECSFactory}
 \texttt{ECSFactory} je abstraktní třída. Typy, které z ní dědí jsou zodpovědné za tvorbu instancí související s abstrakční vrstvou. Vztah typů souvisejících s \texttt{ECSFactory} je možné vidět na obrázku~\ref{fig:abstract-layer-ecsfactory}.
@@ -69,7 +69,7 @@ Třída \texttt{LevelFactory}, obsahuje metody pro vytváření entit surovin, b
 
 Pomocí třídy \texttt{GameWorld} lze získávat informace o herním světě. Je možné nalézt nejbližší surovinu určitého typu k dané pozici, nalézt cestu mezi dvěma body, nebo získat informace o terénu na dané pozici.
 
-Na obrázku \ref{fig:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-strom pro každý typ suroviny. Pomocí této datové struktury lze efektivně nalézt nejbližší surovinu k dané pozici. Těmto kd-tree se budeme více věnovat v sekci~\ref{sec:res-impl}. \texttt{GameWorld} v sobě také obsahuje dvourozměrnou mřížku s informacemi o terénu, která je používaná například pro hledání cest.
+Na obrázku \ref{fig:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-strom pro každý typ suroviny. Pomocí této datové struktury lze efektivně nalézt nejbližší surovinu k dané pozici. Těmto kd-stromům se budeme více věnovat v sekci~\ref{sec:res-impl}. \texttt{GameWorld} v sobě také obsahuje dvourozměrnou mřížku s informacemi o terénu, která je používaná například pro hledání cest.
 
 \begin{figure}[!htb]
   \centering
@@ -78,10 +78,10 @@ Na obrázku \ref{fig:game-world} lze vidět, že \texttt{GameWorld} obsahuje kd-
   \label{fig:game-world}
 \end{figure}
 
-Instance jednotlivých kd-tree z obrázku~\ref{fig:game-world} jsou uchovávány v \texttt{Dictionary} uvnitř třídy \texttt{GameWorld}. Toto \texttt{Dictionary} mapuje typ suroviny (instanci třídy \texttt{ResourceType}) na konkrétní kd-tree. Díky tomuto \texttt{Dictionary} můžeme snadno získat kd-tree pro konkrétní typ suroviny.
+Instance jednotlivých kd-stromů z obrázku~\ref{fig:game-world} jsou uchovávány v \texttt{Dictionary} uvnitř třídy \texttt{GameWorld}. Toto \texttt{Dictionary} mapuje typ suroviny (instanci třídy \texttt{ResourceType}) na konkrétní kd-tree. Díky tomuto \texttt{Dictionary} můžeme snadno získat kd-strom pro konkrétní typ suroviny.
 
 \subsection{Assety}
-Na obrázků~\ref{fig:asset-manager} lze vidět hierarchii tříd souvisejících s managementem assetů. \texttt{AssetManager<TAsset>} obsahuje společnou logiku pro nalezení a načtení assetů ze složky a pro správu slovníku ve kterém jsou uloženy načtené assety pro generický typ \texttt{TAsset}. Jednotlivý potomci této třídy poskytují implementace metody \texttt{Load}, pro načtení assetu konkrétního typu. I přesto, že hra momentálně obsahuje assety pro textury a shadery, bylo by díky abstrakci asset managerů snadné hru rozšířit i o jiné typy assetů jako jsou například zvuky.
+Na obrázků~\ref{fig:asset-manager} lze vidět hierarchii tříd souvisejících s managementem assetů. \texttt{AssetManager<TAsset>} obsahuje společnou logiku pro nalezení a načtení assetů ze složky a pro správu slovníku ve kterém jsou uloženy načtené assety pro generický typ \texttt{TAsset}. Jednotlivý potomci této třídy poskytují implementace metody \texttt{Load}, pro načtení assetu konkrétního typu. I přesto, že hra momentálně obsahuje pouze assety pro textury a shadery, bylo by díky abstrakci asset managerů snadné hru rozšířit i o jiné typy assetů jako jsou například zvuky.
 
 \begin{figure}[!htb]
   \centering
@@ -90,7 +90,7 @@ Na obrázků~\ref{fig:asset-manager} lze vidět hierarchii tříd souvisejícíc
   \label{fig:asset-manager}
 \end{figure}
 
-Všechny assety se nachází ve složce \texttt{Content}. Jednotlivé typy assetů mají poté v této složce svou podložku. Textury se nacházejí v podsložce \texttt{Textures} a shadery v podsložce \texttt{Shaders}. Je nutné zmínit, že složka \texttt{Shaders} obsahuje již zkompilované shadery.
+Všechny assety se nachází ve složce \texttt{Content}. Jednotlivé typy assetů mají poté v této složce svou podsložku. Textury se nacházejí v podsložce \texttt{Textures} a shadery v podsložce \texttt{Shaders}. Je nutné zmínit, že složka \texttt{Shaders} obsahuje již zkompilované shadery.
 
 Veškeré instance rozhraní \texttt{IAssetManager} jsou uchovány ve třídě \texttt{Game}. Pomocí ní je také možné přistupovat ke konkrétním instancím (\texttt{ShaderManager} a \texttt{TextureManager}). Při inicializaci hry dojde k zavolání metody \texttt{LoadAll} na každé takové instanci. To vede k načtení všech assetů daného typu.
 
@@ -164,7 +164,7 @@ Je nutné, aby jednotlivý potomci třídy \texttt{GlobalInstances<TDerived>} m�
 Abstraktní třída \texttt{GlobalInstances} obsahuje pouze module initializer, pomocí kterého zavolá \texttt{RuntimeHelpers.RunClassConstructor} na každém neabstraktním typu, který od ní dědí. Tím máme zaručeno, že naše data jsou v čas vytvořené, jinak by k jejich vytvoření došlo až při prvním přístupu k jejich třídám a do té doby bychom k nim nemohli přistupovat skrze třídu \texttt{GlobalInstances<TDerived>}.
 
 \subsection{Inventáře a předměty}
-Na konci sekce~\ref{sec:game-world} jsme si uvedli jednotlivé typy předmětů, které jsou součástí naší hry. Jednotlivé předměty mohou mít vesničané ve svém inventáři (například pokud jej získali sklizením suroviny a nyní jej odnášejí, aby jej zpracovali). Dále jsou předmět skladovány ve skladišti. Vztahy tříd souvisejících z předměty je možné vidět na obrázku~\ref{fig:items}.
+Na konci sekce~\ref{sec:game-world} jsme si uvedli jednotlivé typy předmětů, které jsou součástí naší hry. Jednotlivé předměty mohou mít vesničané ve svém inventáři (například pokud jej získali sklizením suroviny a nyní jej odnášejí, aby jej zpracovali). Dále jsou předměty skladovány ve skladišti. Vztahy tříd souvisejících z předměty je možné vidět na obrázku~\ref{fig:items}.
 
 \begin{figure}[!htb]
   \centering
@@ -175,7 +175,7 @@ Na konci sekce~\ref{sec:game-world} jsme si uvedli jednotlivé typy předmětů,
 
 Z minulé sekce víme, že instance třídy \texttt{ItemType} reprezentují jednotlivé typy předmětů. Každý typ předmětů má také svoje ID. Struktura \texttt{ItemCollection} reprezentuje kolekci předmětů. Uvnitř sebe má pole, kde jednotlivé prvky tohoto pole reprezentují počty předmětů uvnitř kolekce. Index každého prvku odpovídá ID daného typu předmětu. Například předmět \textit{prkno} má ID 0 a element z tohoto pole s indexem 0 odpovídá počtu prken uvnitř dané kolekce. Krom tohoto pole struktura \texttt{ItemCollection} také obsahuje pomocné metody pro manipulaci s kolekcemi předmětů.
 
-Třída \texttt{Inventory} je komponenta. Entity s touto komponentou mají inventář do kterého mohou ukládat předměty. Tato třída obsahuje jediný field a tím je instance \texttt{ItemCollection}. Tuto komponentu na sobě krom entit vesničanů a skladišť mají také entity budov pro zpracování předmětů (například budova dřevorubce). Do tohoto inventáře přesouvají vesničané předměty pro zpracování a entita dané budovy pro zpracování surovin zde také ukládá produkt získaný zpracování daného předmětu.
+Třída \texttt{Inventory} je komponenta. Entity s touto komponentou mají inventář do kterého mohou ukládat předměty. Tato třída obsahuje jediný field a tím je instance \texttt{ItemCollection}. Tuto komponentu na sobě krom entit vesničanů a skladišť mají také entity budov pro zpracování předmětů (například budova dřevorubce). Do tohoto inventáře přesouvají vesničané předměty pro zpracování a entita dané budovy pro zpracování surovin zde také ukládá produkt získaný zpracováním daného předmětu.
 
 \subsection{Suroviny}
 \label{sec:res-impl}
@@ -192,7 +192,7 @@ Každá surovina má \texttt{Health} komponentu ve které má uloženou informac
 
 Suroviny na sobě mají také \texttt{Owner} komponentu. Ta obsahuje instanci typu dědicího od \texttt{IEntity}, která reprezentuje danou entitu. \texttt{DeathSystem} vyžaduje tuto komponentu aby mohl danou entitu smazat.
 
-Jak již bylo zmíněno, existuje kd-tree pro každý typ suroviny. Jedná se o datovou strukturu pomocí které lze efektivně vyhledávat v prostoru. Entity jednotlivých surovin jsou uloženy v těchto kd-tree. Tyto kd-tree poté využívají vesničané, kteří v rámci svého povolání provádějí úlohu nalezení nejbližší suroviny daného typu. Pokud si vesničan rezervuje danou surovinu (začne pohyb směrem k ní a následně ji sklidí), dojde k odebrání této suroviny z příslušného kd-tree. Tím zamezíme tomu, že více vesničanů nebude sklízet stejnou entitu suroviny. Pro implementaci kd-tree používáme Nugget balíček \textit{KdTree}~\ref{KdTree}.
+Jak již bylo zmíněno, existuje kd-tree pro každý typ suroviny. Jedná se o datovou strukturu pomocí které lze efektivně vyhledávat v prostoru. Entity jednotlivých surovin jsou uloženy v těchto kd-tree. Tyto kd-tree poté využívají vesničané, kteří v rámci svého povolání provádějí úlohu nalezení nejbližší suroviny daného typu. Pokud si vesničan rezervuje danou surovinu (začne pohyb směrem k ní a následně ji sklidí), dojde k odebrání této suroviny z příslušného kd-tree. Tím zamezíme tomu, že více vesničanů nebude sklízet stejnou entitu suroviny. Pro implementaci kd-tree používáme Nugget balíček \textit{KdTree}~\cite{KdTree}.
 
 Dále je nutné zmínit, že \texttt{DeathSystem} pracuje nad všemi entitami s komponentami \texttt{Health} a \texttt{Owner}. V případě, že zemřelá entita má na sobě komponentu \texttt{Inventory} nebo komponentu \texttt{ItemDrop} tak převede dané předměty. A v případě, že zemřelá entita je vesničan a ten útočil na entitu s komponentou \texttt{Resource} (daná entita byla surovina), tak je nutné entitu vrátit do příslušného kd-tree.
 
@@ -278,8 +278,8 @@ Během fáze přípravy nejprve zkonstruujeme konkrétní \texttt{ECSFactory}. P
 
 Během fáze měření používáme tu samou instanci hry vytvořené během fáze přípravy. Na této instanci v cyklu opět zavoláme metodu \texttt{UpdateOnce}. Počet opakování tohoto cyklu je dán konstantou \texttt{benchmarkIterationCount}.
 
-
-
+% \newpage
+% \null
 
 
 

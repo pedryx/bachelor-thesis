@@ -27,7 +27,7 @@ Hlavní důvod požadavku \textit{p2} je zabránit velké ztrátě na výkonu kn
 
 Požadavek \textit{p3} jsme splnili. Naše hra obsahuje velký svět s velkým počtem entit reprezentující surovinu ke sklizení. Krom samotných surovin se v herním světě také nacházejí entity vesnic. Součástí vesnic jsou poté také entity budov a entity vesničanů.
 
-Požadavek \textit{p4} jsme vyžadovali ze dvou důvodů. První byl zamezit tomu, aby naše hra nebyla příliš jednoduchá. Chtěli jsme se vyhnout tomu, aby naše měření, na které hru používáme, nebylo jenom dalším jednoduchým testem (viz sekce~\ref{sec:ecs-libs}). Druhým důvodem byla naopak zamezit příliš složité hře, jelikož bychom odváděli pozornost od problému, který řešíme. I přesto, že se autor práce nechal některými funkcionalitami (jako je například procedurální generování terénu) unést, tak považuje složitost hry za adekvátní.
+Požadavek \textit{p4} jsme vyžadovali ze dvou důvodů. První byl zamezit tomu, aby naše hra nebyla příliš jednoduchá. Chtěli jsme se vyhnout tomu, aby naše měření, na které hru používáme, nebylo jenom dalším jednoduchým testem (viz sekce~\ref{sec:ecs-libs}). Druhým důvodem byla naopak zamezit příliš složité hře, jelikož bychom odváděli pozornost od problému, který řešíme. Složitost naší hry považujeme za adekvátní.
 
 \subsection{Splnění cíle 2}
 Pro porovnání výkonu jsme si vytvořili měření, které měří výkon naší hry s různými ECS knihovnami. Analýzu tohoto měření jsme provedli v sekci~\ref{benchmark-analysis} a jeho implementaci jsme si rozebrali v sekci~\ref{benchmark-implementation}.
@@ -40,9 +40,19 @@ I přesto, že jsme splnili stanovené cíle, tak některé věci v našem řeš
 \begin{enumerate}
     \item \textbf{Občasné chození vesničanů přes vodu:} Generování náhodného terénu bylo nastaveno tak, aby terén pokud možno neobsahoval žádný ostrov. I přesto, že pravděpodobnost na vytvoření ostrovu je nízká, tak občas k jeho vytvoření dojde. V případě, že se na tomto ostrově objeví jelen a některý z vesničanů se vydá jej ulovit, tak pro jeho ulovení přejde přes vodu.
 
+    % oduvodnit jak ho odstranit
+    % odpoved na proc jsme ho neodrstranili
+    % co s tim, jak se k tomu stavime, co bychom museli zkoumat/prozkoumat
+    % napr naznacit ze ten problem neni trivialni
+    % co by priblizne znamenalo ten problem odstranit
+
     \item \textbf{Komplexnější generování terénu:} I přesto, že autor považuje složitost hry za adekvátní, tak použití shaderů pro vygenerování terénu bylo pravděpodobně zbytečně komplexní. Pro účely této hry by postačovala jednodušší technika, která by například pouze předgenerovala náhodný terén.
 
     \item \textbf{Zdlouhavý proces přidávání nové ECS knihovny:} Hra je nezávislá na konkrétní ECS knihovně a lze jí tedy spouštět s různými ECS knihovnami. Proto aby bylo možné s danou ECS knihovnou spustit je nutné implementovat odpovídající třídy. Ovšem implementace těchto tříd může trvat delší dobu.
+
+    % tady take, napr ono to moc jinak nejde nebo neco takoveho
+    % nejak se k tomu postavit
+    % nejak to nevadi nebo neco bychom s tim chteli udelat do budoucna
 \end{enumerate}
 
 \section{Možná budoucí vylepšení}

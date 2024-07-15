@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-libs = ["HypEcs", "LeoEcsLite", "LeoECS", "DefaultEcs", "Svelto.ECS", "Arch", "RelEcs", "MGE.Entities", "Entitas"]
-means = [7.789, 7.958, 8.234, 8.471, 8.589, 8.938, 13.862, 20.442, 25.908]
+libs = ["DefaultEcs", "LeoECS", "HypEcs", "LeoEcsLite", "Arch", "Svelto.ECS", "RelEcs", "Entitas", "MGE.Entities"]
+means = [196.2, 208.6, 210.3, 218.6, 220.0, 229.5, 236.7, 308.6, 360.9]
 colors = ['lightgreen'] * 6 + ['khaki'] + ['lightcoral'] * 2
 
 def make_plot(fig, ax, colors):
@@ -17,7 +17,7 @@ def make_plot(fig, ax, colors):
     ax.set_xticklabels(libs, rotation=45, ha='right', fontsize=16)
     ax.set_yticklabels(ax.get_yticks(), fontsize=16)
 
-    ax.set_ylim(0, 30)
+    ax.set_ylim(0, 400)
     ax.yaxis.grid(True, linestyle='--', which='major', color='grey', alpha=.25)
 
     for bar in bars:

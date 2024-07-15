@@ -109,7 +109,7 @@ Měření budeme spouštět vícekrát s různými velikostmi herního světa. V
 Parametr \texttt{deltaTime} je nastaven na 1/60s a to odpovídá 60 FPS (snímkům za sekundu). Poté parametr \texttt{setupIterationCount} odpovídá zhruba 30 sekundám simulace a parametr \texttt{benchmarkIterationCount} je přibližně 1 minuta simulace.
 
 \subsection{První měření}
-První měření bylo spuštěno s velikostí světa 8192x8192. Tento svět obsahoval \xxx{X} entit. Výsledky tohoto měření:
+První měření bylo spuštěno s velikostí světa 8192x8192. Výsledky tohoto měření:
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -148,7 +148,7 @@ V sekci~\ref{hypothesis} jsme si stanovili hypotézu, podle které mají nejlép
 \newpage
 
 \subsection{Druhé měření}
-Druhé měření bylo spouštěno s velikostí světa 16384x16384. Tento svět obsahoval \xxx{X} entit. Výsledky tohoto měření:
+Druhé měření bylo spouštěno s velikostí světa 16384x16384. Výsledky tohoto měření:
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -181,7 +181,7 @@ Druhé měření bylo spouštěno s velikostí světa 16384x16384. Tento svět o
 Z tabulky~\ref{tab:second-benchmark-results} i grafu~\ref{fig:second-benchmark-results} je možné vypozorovat významnější rozdíl mezi knihovnami první kategorie (zelená barva) a knihovnou druhé kategorie (žlutá barva). Za tento rozdíl mohou převážně \textit{cache misses} způsobené tím, že knihovna \textit{RelEcs} používá třídy namísto struktur pro reprezentaci komponent (viz sekce~\ref{hypothesis}). Lze pozorovat, že hypotéza zde byla také splněna.
 
 \subsection{Třetí měření}
-Třetí měření bylo spouštěno s velikostí světa 32768x32768. Tento svět obsahoval \xxx{X} entit. Výsledky tohoto měření:
+Třetí měření bylo spouštěno s velikostí světa 32768x32768. Výsledky tohoto měření:
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -189,15 +189,15 @@ Třetí měření bylo spouštěno s velikostí světa 32768x32768. Tento svět 
         \toprule
         knihovna & Průměrný čas & Chyba & StdDev \\
         \midrule
-        HypEcs & 7.789 s & 0.1542 s & 0.3044 s \\
-        DefaultEcs & 7.958 s & 0.1585 s & 0.3129 s \\
-        LeoECS & 8.234 s & 0.1647 s & 0.3011 s \\
-        LeoEcsLite & 8.471 s & 0.1670 s & 0.3177 s \\
-        Svelto.ECS & 8.589 s & 0.1711 s & 0.3571 s \\
-        Arch & 8.938 s & 0.1775 s & 0.4253 s \\
-        RelEcs & 13.862 s & 0.2707 s & 0.3424 s \\
-        MonoGameExtended.Entities & 20.442 s & 0.2375 s & 0.2222 s \\
-        Entitas & 25.908 s & 0.5035 s & 0.6183 s \\
+        DefaultEcs & 196.2 s & 3.91 s & 6.63 s \\
+        LeoECS & 208.6 s & 3.32 s & 3.10 s \\
+        HypEcs & 210.3 s & 2.05 s & 1.82 s \\
+        LeoEcsLite & 218.6 s & 3.08 s & 2.88 s \\
+        Arch & 220.0 s & 4.27 s & 3.99 s \\
+        Svelto.ECS & 229.5 s & 4.52 s & 5.38 s \\
+        RelEcs & 236.7 s & 3.60  s & 3.37 s \\
+        Entitas & 308.6 s &6.11 s & 6.01 s \\
+        MonoGameExtended.Entities & 360.9 s & 1.86 s & 1.74 s \\
         \bottomrule
     \end{tabular}
     \caption{Výsledky třetího měření pro jednotlivé ECS knihovny.}
@@ -206,10 +206,14 @@ Třetí měření bylo spouštěno s velikostí světa 32768x32768. Tento svět 
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=1.0\linewidth]{plots/second_benchmark_results.pdf}
+    \includegraphics[width=1.0\linewidth]{plots/third_benchmark_results.pdf}
     \caption{Grafy vyobrazující výsledky třetího měření zachycené v tabulce~\ref{tab:third-benchmark-results}. Graf je obarvený podle kategorií ze sekce~\ref{hypothesis}.}
     \label{fig:third-benchmark-results}
 \end{figure}
+
+Z tabulky~\ref{tab:third-benchmark-results} i grafu~\ref{fig:third-benchmark-results} lze pozorovat, že výsledky jednotlivých kategorií jsou opět, podobně jako v případě prvního měření, blíže u sebe. Může za to pravděpodobně to, že hra momentální tráví spoustu času ve složitých datových strukturách jako jsou \textit{behavior stromy} a \textit{kd-stromy}, tím pádem knihovny první kategorie (zelená barva) nezískávají tolik výkonu na dobrém využití \textit{cache}. Je možné pozorovat, že hypotéza je stále splněna.
+
+\newpage
 
 \subsection{Zajímavé knihovny}
 Zajímavou knihovnou je knihovna \textit{Svelto.ECS}, která vyžaduje, aby bylo během kompilace známo, z kterých komponent se jednotlivé entity budou skládat. Je lehké pozorovat že tato omezení nevedla k většímu výkonnostnímu zlepšení oproti ostatním knihovnám z této kategorie.

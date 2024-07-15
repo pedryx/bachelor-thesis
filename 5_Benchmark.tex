@@ -88,7 +88,28 @@ Analýzu měření jsme provedli v sekci~\ref{benchmark-analysis}. Poté v sekci
 
 Předtím něž si prezentujeme výsledky měření, tak si shrňme jak jej provádíme. Prvně si vytvoříme novou instanci hry (instanci třídy \texttt{Game}) s danou ECS knihovnou (s danou instancí třídy dědicí od \texttt{ECSFactory}). Poté odsimulujeme přípravný počet iterací (provedeme \texttt{setupIterationCount} iterací \textit{game loop} naší hry). Následně odsimulujeme měřený počet iterací (\texttt{benchmarkIterationCount}) a přitom budeme měřit čas. To několikrát zopakujeme (přesněji námi zvolený framework to za nás několikrát zopakuje) a získáme průměrný čas jak rychle hra zvládne odsimulovat měřený počet iterací (\texttt{benchmarkIterationCount}). Test provádíme pro každou měřenou ECS knihovny (ty jsme si rozebrali v minulé sekci).
 
-Nyní si prezentujeme výsledky našeho měření:
+Měření budeme spouštět vícekrát s různými velikostmi herního světa. Velikost herního světa je definována v \texttt{GameWorld.Size}. Tento statický field obsahuje výšku a šířku herního světa. V sekci~\ref{benchmark-implementation} jsme si popsali jednotlivé parametry našeho měření, následující tabulka udává jejich nastavení:
+
+\begin{table}[!htb]
+    \centering\footnotesize\sf
+    \begin{tabular}{c c c c}
+        \toprule
+        název parametru & nastavená hodnota \\
+        \midrule
+        \texttt{seed} & 0 \\
+        \texttt{deltaTime} & 1 / 60 \\
+        \texttt{setupIterationCount} & 30 * 60 \\
+        \texttt{benchmarkIterationCount} & 60 * 60 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Nastavení parametrů našeho měření.}
+    \label{tab:benchmark-parameters}
+\end{table}
+
+Parametr \texttt{deltaTime} je nastaven na 1/60s a to odpovídá 60 FPS (snímkům za sekundu). Poté parametr \texttt{setupIterationCount} odpovídá zhruba 30 sekundám simulace a parametr \texttt{benchmarkIterationCount} je přibližně 1 minuta simulace.
+
+\subsection{První měření}
+První měření bylo spuštěno s velikostí světa 8192x8192. Tento svět obsahoval \xxx{X} entit. Výsledky tohoto měření:
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -107,23 +128,94 @@ Nyní si prezentujeme výsledky našeho měření:
         Entitas & 4.732 s & 0.0244 s & 0.0228 s \\
         \bottomrule
     \end{tabular}
-    \caption{Výsledky měření pro jednotlivé ECS knihovny.}
-    \label{tab:benchmark-results}
+    \caption{Výsledky prvního měření pro jednotlivé ECS knihovny.}
+    \label{tab:first-benchmark-results}
 \end{table}
 
-Tabulka zachycuje výsledné časy našeho měření. V první sloupci jsou názvy jednotlivých ECS knihoven. Ve druhém sloupci jsou naměřené časy. Ve třetím sloupci je možná chyba a ve čtvrtém standardní odchylka. Jednotlivé řádky jsou seřazené podle naměřených časů.
+Tabulka zachycuje výsledné časy prvního měření. V první sloupci jsou názvy jednotlivých ECS knihoven. Ve druhém sloupci jsou naměřené časy. Ve třetím sloupci je možná chyba a ve čtvrtém standardní odchylka. Jednotlivé řádky jsou seřazené podle naměřených časů.
 
-Na obrázku~\ref{fig:benchmark-results} je možné vidět graf znázorňující výsledky z tabulky~\ref{tab:benchmark-results}. Tento graf je obarvený podle kategorií, které jsme si stanovili v sekci~\ref{hypothesis}. Knihovny, které spadají do kategorie 1, jsou obarveny zeleně, následně knihovny, které patří do kategorie 2, jsou obarveny žlutě a knihovny které, jsou součástí kategorie 3, jsou obarveny červeně.
+Na obrázku~\ref{tab:first-benchmark-results} je možné vidět graf znázorňující výsledky z tabulky~\ref{tab:first-benchmark-results}. Tento graf je obarvený podle kategorií, které jsme si stanovili v sekci~\ref{hypothesis}. Knihovny, které spadají do kategorie 1, jsou obarveny zeleně, následně knihovny, které patří do kategorie 2, jsou obarveny žlutě a knihovny které, jsou součástí kategorie 3, jsou obarveny červeně.
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=1.0\linewidth]{plots/benchmark_results.pdf}
-    \caption{Grafy vyobrazující výsledky měření zachycené v tabulce~\ref{tab:benchmark-results}. Graf je obarvený podle kategorií ze sekce~\ref{hypothesis}.}
-    \label{fig:benchmark-results}
+    \includegraphics[width=1.0\linewidth]{plots/first_benchmark_results.pdf}
+    \caption{Grafy vyobrazující výsledky prvního měření zachycené v tabulce~\ref{tab:first-benchmark-results}. Graf je obarvený podle kategorií ze sekce~\ref{hypothesis}.}
+    \label{fig:first-benchmark-results}
 \end{figure}
 
-V sekci~\ref{hypothesis} jsme si stanovili hypotézu, podle které mají nejlépe vyjít knihovny z kategorie 1 (viz zelená barva). Poté se mají umístit knihovny z kategorie 2 (viz žlutá barva). A na závěr se mají umístit knihovny z kategorie 3 (viz červená barva). Při nahlédnutí do tabulky~\ref{tab:benchmark-results} nebo grafu z obrázku~\ref{fig:benchmark-results} je lehké pozorovat, že tomu tak opravdu je. Ovšem je nutné podotknout, že knihovny \textit{Arch} a \textit{RelEcs} mají velmi podobný výsledek a pokud nahlédneme na chybu z tabulky~\ref{tab:benchmark-results} tak je možné pozorovat, že časy jsou téměř identické. Vyplývá z toho to, že požadavek na to, aby jednotlivé komponenty byli struktury, nemusí nutně vést k velkému výkonnostnímu zlepšení a použití \textit{arch type} může přinést lepší výkon i v případě, že budou komponenty reprezentovány jako třídy.
+V sekci~\ref{hypothesis} jsme si stanovili hypotézu, podle které mají nejlépe vyjít knihovny z kategorie 1 (viz zelená barva). Poté se mají umístit knihovny z kategorie 2 (viz žlutá barva). A na závěr se mají umístit knihovny z kategorie 3 (viz červená barva). Při nahlédnutí do tabulky~\ref{tab:first-benchmark-results} nebo grafu z obrázku~\ref{fig:first-benchmark-results} je lehké pozorovat, že tomu tak opravdu je. Ovšem je nutné podotknout, že knihovny \textit{Arch} a \textit{RelEcs} mají velmi podobný výsledek a pokud nahlédneme na chybu z tabulky~\ref{tab:first-benchmark-results} tak je možné pozorovat, že časy jsou téměř identické. Vyplývá z toho to, že pro tento počet entit požadavek na to, aby jednotlivé komponenty byli struktury, nemusí nutně vést k velkému výkonnostnímu zlepšení.
 
+\newpage
+
+\subsection{Druhé měření}
+Druhé měření bylo spouštěno s velikostí světa 16384x16384. Tento svět obsahoval \xxx{X} entit. Výsledky tohoto měření:
+
+\begin{table}[!htb]
+    \centering\footnotesize\sf
+    \begin{tabular}{c c c c}
+        \toprule
+        knihovna & Průměrný čas & Chyba & StdDev \\
+        \midrule
+        HypEcs & 7.789 s & 0.1542 s & 0.3044 s \\
+        DefaultEcs & 7.958 s & 0.1585 s & 0.3129 s \\
+        LeoECS & 8.234 s & 0.1647 s & 0.3011 s \\
+        LeoEcsLite & 8.471 s & 0.1670 s & 0.3177 s \\
+        Svelto.ECS & 8.589 s & 0.1711 s & 0.3571 s \\
+        Arch & 8.938 s & 0.1775 s & 0.4253 s \\
+        RelEcs & 13.862 s & 0.2707 s & 0.3424 s \\
+        MonoGameExtended.Entities & 20.442 s & 0.2375 s & 0.2222 s \\
+        Entitas & 25.908 s & 0.5035 s & 0.6183 s \\
+        \bottomrule
+    \end{tabular}
+    \caption{Výsledky druhého měření pro jednotlivé ECS knihovny.}
+    \label{tab:second-benchmark-results}
+\end{table}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=1.0\linewidth]{plots/second_benchmark_results.pdf}
+    \caption{Grafy vyobrazující výsledky druhého měření zachycené v tabulce~\ref{tab:second-benchmark-results}. Graf je obarvený podle kategorií ze sekce~\ref{hypothesis}.}
+    \label{fig:second-benchmark-results}
+\end{figure}
+
+Z tabulky~\ref{tab:second-benchmark-results} i grafu~\ref{fig:second-benchmark-results} je možné vypozorovat významnější rozdíl mezi knihovnami první kategorie (zelená barva) a knihovnou druhé kategorie (žlutá barva). Za tento rozdíl mohou převážně \textit{cache misses} způsobené tím, že knihovna \textit{RelEcs} používá třídy namísto struktur pro reprezentaci komponent (viz sekce~\ref{hypothesis}). Lze pozorovat, že hypotéza zde byla také splněna.
+
+\subsection{Třetí měření}
+Třetí měření bylo spouštěno s velikostí světa 32768x32768. Tento svět obsahoval \xxx{X} entit. Výsledky tohoto měření:
+
+\begin{table}[!htb]
+    \centering\footnotesize\sf
+    \begin{tabular}{c c c c}
+        \toprule
+        knihovna & Průměrný čas & Chyba & StdDev \\
+        \midrule
+        HypEcs & 7.789 s & 0.1542 s & 0.3044 s \\
+        DefaultEcs & 7.958 s & 0.1585 s & 0.3129 s \\
+        LeoECS & 8.234 s & 0.1647 s & 0.3011 s \\
+        LeoEcsLite & 8.471 s & 0.1670 s & 0.3177 s \\
+        Svelto.ECS & 8.589 s & 0.1711 s & 0.3571 s \\
+        Arch & 8.938 s & 0.1775 s & 0.4253 s \\
+        RelEcs & 13.862 s & 0.2707 s & 0.3424 s \\
+        MonoGameExtended.Entities & 20.442 s & 0.2375 s & 0.2222 s \\
+        Entitas & 25.908 s & 0.5035 s & 0.6183 s \\
+        \bottomrule
+    \end{tabular}
+    \caption{Výsledky třetího měření pro jednotlivé ECS knihovny.}
+    \label{tab:third-benchmark-results}
+\end{table}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=1.0\linewidth]{plots/second_benchmark_results.pdf}
+    \caption{Grafy vyobrazující výsledky třetího měření zachycené v tabulce~\ref{tab:third-benchmark-results}. Graf je obarvený podle kategorií ze sekce~\ref{hypothesis}.}
+    \label{fig:third-benchmark-results}
+\end{figure}
+
+\subsection{Zajímavé knihovny}
 Zajímavou knihovnou je knihovna \textit{Svelto.ECS}, která vyžaduje, aby bylo během kompilace známo, z kterých komponent se jednotlivé entity budou skládat. Je lehké pozorovat že tato omezení nevedla k většímu výkonnostnímu zlepšení oproti ostatním knihovnám z této kategorie.
+
+Knihovny \textit{HypEcs} a \textit{RelEcs} jsou od stejného autora. Autor těchto knihoven udělal nejprve \textit{RelEcs} a poté \textit{HypEcs}. \textit{HypEcs} se mu podařilo udělat rychlejší zejména, protože použil struktury místo třídy pro reprezentaci komponent.
+
+Knihovny \textit{LeoECS} a \textit{LeoEcsLite} jsou od stejného autora. Obě tyto knihovny mají podobný výkon, ovšem při nahlédnutí do výsledků měření projektu \textit{Ecs.Csharp.benchmark}~\ref{EcsCsharpBenchmark} (konkrétně commitu \textit{db67d1d}~\cite{EcsCsharpBenchmarkCommit}), je možné pozorovat, že tyto dvě knihovny se umístili velmi špatně. Hlavním důvodem je to, že autor projektu \textit{Ecs.Csharp.benchmark} použil Nugget balíčky pro tyto knihovny, které byli vytvořeny jiným autorem. Autor projektu \textit{Ecs.Csharp.benchmark} dokonce tvrdí, že tyto balíčky byli sestaveny v debug konfiguraci.
 
 ECS knihovna \textit{Entitas} je na platformě GitHub~\cite{GitHub} nejpopulárnější (má nejvíce hvězdiček) ECS knihovnou pro C\#. I přesto, že v našem měření vyšla nejhůře, její výkon je pořád dost dobrý. K její popularitě také přispívá větší podpora pro herní engine \textit{Unity}~\cite{Unity}.

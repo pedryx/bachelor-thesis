@@ -38,21 +38,13 @@ V kapitole~\ref{chap:benchmark} jsme si nejprve stanovili hypotézu. Poté jsme 
 I přesto, že jsme splnili stanovené cíle, tak některé věci v našem řešení jsme mohli udělat lépe. Nyní si je rozebereme:
 
 \begin{enumerate}
-    \item \textbf{Občasné chození vesničanů přes vodu:} Generování náhodného terénu bylo nastaveno tak, aby terén pokud možno neobsahoval žádný ostrov. I přesto, že pravděpodobnost na vytvoření ostrovu je nízká, tak občas k jeho vytvoření dojde. V případě, že se na tomto ostrově objeví jelen a některý z vesničanů se vydá jej ulovit, tak pro jeho ulovení přejde přes vodu.
-
-    % oduvodnit jak ho odstranit
-    % odpoved na proc jsme ho neodrstranili
-    % co s tim, jak se k tomu stavime, co bychom museli zkoumat/prozkoumat
-    % napr naznacit ze ten problem neni trivialni
-    % co by priblizne znamenalo ten problem odstranit
-
     \item \textbf{Komplexnější generování terénu:} I přesto, že autor považuje složitost hry za adekvátní, tak použití shaderů pro vygenerování terénu bylo pravděpodobně zbytečně komplexní. Pro účely této hry by postačovala jednodušší technika, která by například pouze předgenerovala náhodný terén.
 
-    \item \textbf{Zdlouhavý proces přidávání nové ECS knihovny:} Hra je nezávislá na konkrétní ECS knihovně a lze jí tedy spouštět s různými ECS knihovnami. Proto aby bylo možné s danou ECS knihovnou spustit je nutné implementovat odpovídající třídy. Ovšem implementace těchto tříd může trvat delší dobu.
+    \item \textbf{Občasné chození vesničanů přes vodu:} Generování náhodného terénu bylo nastaveno tak, aby terén pokud možno neobsahoval žádný ostrov. I přesto, že pravděpodobnost na vytvoření ostrovu je nízká, tak občas k jeho vytvoření dojde. V případě, že se na tomto ostrově objeví jelen a některý z vesničanů se vydá jej ulovit, tak pro jeho ulovení přejde přes vodu.
+    
+    Tento nedostatek by se dal vyřešit dvěma způsoby. První způsob je úprava algoritmus pro generování terénu. Ovšem tento způsob je nežádoucí, jelikož by zvedl složitost tohoto algoritmu. Druhý způsob by bylo zavedení detekce ostrovů. Bylo by nutné prozkoumat jak ostrovy detekovat aniž bychom výrazně zhoršili načítání nebo výkon hry. Jelikož hru používáme primárně pro měření ECS knihoven a nenastává příliš často, není pro nás nějak zásadní.
 
-    % tady take, napr ono to moc jinak nejde nebo neco takoveho
-    % nejak se k tomu postavit
-    % nejak to nevadi nebo neco bychom s tim chteli udelat do budoucna
+    \item \textbf{Zdlouhavý proces přidávání nové ECS knihovny:} Hra je nezávislá na konkrétní ECS knihovně a lze jí tedy spouštět s různými ECS knihovnami. Proto aby bylo možné s danou ECS knihovnou spustit je nutné implementovat odpovídající třídy. Ovšem implementace těchto tříd může trvat delší dobu. Pro vyřešení by bylo nutné prozkoumat jiné návrhy abstrakční vrstvy, které zachovávají stejné klíčové vlastnosti jako ten momentální. Naštěstí ECS knihovny nepřidáváme příliš často, proto tento problém nepokládáme za zásadní.
 \end{enumerate}
 
 \section{Možná budoucí vylepšení}

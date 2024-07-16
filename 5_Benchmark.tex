@@ -86,7 +86,7 @@ V minulé sekci jsme si definovali kategorie do kterých jednotlivé ECS knihovn
 \label{sec:benchmark-results}
 Analýzu měření jsme provedli v sekci~\ref{benchmark-analysis}. Poté v sekci~\ref{benchmark-implementation} jsme si rozebrali implementaci měření. V této sekci se budeme věnovat výsledkům tohoto měření.
 
-Předtím něž si prezentujeme výsledky měření, tak si shrňme jak jej provádíme. Prvně si vytvoříme novou instanci hry (instanci třídy \texttt{Game}) s danou ECS knihovnou (s danou instancí třídy dědicí od \texttt{ECSFactory}). Poté odsimulujeme přípravný počet iterací (provedeme \texttt{setupIterationCount} iterací \textit{game loop} naší hry). Následně odsimulujeme měřený počet iterací (\texttt{benchmarkIterationCount}) a přitom budeme měřit čas. To několikrát zopakujeme (přesněji námi zvolený framework to za nás několikrát zopakuje) a získáme průměrný čas jak rychle hra zvládne odsimulovat měřený počet iterací (\texttt{benchmarkIterationCount}). Test provádíme pro každou měřenou ECS knihovny (ty jsme si rozebrali v minulé sekci).
+Předtím něž si prezentujeme výsledky měření, tak si shrňme jak jej provádíme. Prvně si vytvoříme novou instanci hry (instanci třídy \texttt{Game}) s danou ECS knihovnou (s danou instancí třídy dědicí od \texttt{ECSFactory}). Poté odsimulujeme přípravný počet iterací (provedeme \texttt{setupIterationCount} iterací \textit{game loop} naší hry). Následně odsimulujeme měřený počet iterací (\texttt{benchmarkIterationCount}) a přitom budeme měřit čas. To několikrát zopakujeme (přesněji námi zvolený framework to za nás několikrát zopakuje) a získáme průměrný čas jak rychle hra zvládne odsimulovat měřený počet iterací (\texttt{benchmarkIterationCount}). Test provádíme pro každou měřenou ECS knihovnu (ty jsme si rozebrali v minulé sekci).
 
 Měření budeme spouštět vícekrát s různými velikostmi herního světa. Velikost herního světa je definována v \texttt{GameWorld.Size}. Tento statický field obsahuje výšku a šířku herního světa. V sekci~\ref{benchmark-implementation} jsme si popsali jednotlivé parametry našeho měření, následující tabulka udává jejich nastavení:
 
@@ -106,10 +106,10 @@ Měření budeme spouštět vícekrát s různými velikostmi herního světa. V
     \label{tab:benchmark-parameters}
 \end{table}
 
-Parametr \texttt{deltaTime} je nastaven na 1/60s a to odpovídá 60 FPS (snímkům za sekundu). Poté parametr \texttt{setupIterationCount} odpovídá zhruba 30 sekundám simulace a parametr \texttt{benchmarkIterationCount} je přibližně 1 minuta simulace. Měření byla prováděna po počítači s procesorem AMD Ryzen 3 1200 Quad-Core, grafickou kartou NVIDIA GeForce GTX 1650 a 16GB RAM.
+Parametr \texttt{deltaTime} je nastaven na 1/60 s a to odpovídá 60 FPS (snímkům za sekundu). Poté parametr \texttt{setupIterationCount} odpovídá zhruba 30 sekundám simulace a parametr \texttt{benchmarkIterationCount} je přibližně 1 minuta simulace. Měření byla prováděna na počítači s procesorem AMD Ryzen 3 1200 Quad-Core, pamětí 16GB RAM a grafickou kartou NVIDIA GeForce GTX 1650 s pamětí 4 GB VRAM.
 
 \subsection{První měření}
-První měření bylo spuštěno s velikostí světa 8192x8192. Výsledky tohoto měření:
+První měření bylo spuštěno s velikostí světa 8192x8192. Výsledky tohoto měření jsou shrnuty v tabulce~\ref{tab:first-benchmark-results}, která zachycuje výsledné časy prvního měření. V první sloupci jsou názvy jednotlivých ECS knihoven. Ve druhém sloupci jsou naměřené časy. Ve třetím sloupci je možná chyba a ve čtvrtém standardní odchylka. Jednotlivé řádky jsou seřazené podle naměřených časů.
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -132,9 +132,7 @@ První měření bylo spuštěno s velikostí světa 8192x8192. Výsledky tohoto
     \label{tab:first-benchmark-results}
 \end{table}
 
-Tabulka zachycuje výsledné časy prvního měření. V první sloupci jsou názvy jednotlivých ECS knihoven. Ve druhém sloupci jsou naměřené časy. Ve třetím sloupci je možná chyba a ve čtvrtém standardní odchylka. Jednotlivé řádky jsou seřazené podle naměřených časů.
-
-Na obrázku~\ref{tab:first-benchmark-results} je možné vidět graf znázorňující výsledky z tabulky~\ref{tab:first-benchmark-results}. Tento graf je obarvený podle kategorií, které jsme si stanovili v sekci~\ref{hypothesis}. Knihovny, které spadají do kategorie 1, jsou obarveny zeleně, následně knihovny, které patří do kategorie 2, jsou obarveny žlutě a knihovny které, jsou součástí kategorie 3, jsou obarveny červeně.
+Z tabulky~\ref{tab:first-benchmark-results} jsme sestavili graf, který je možné vidět na obrázku~\ref{fig:first-benchmark-results}. Tento graf je obarvený podle kategorií, které jsme si stanovili v sekci~\ref{hypothesis}. Knihovny, které spadají do kategorie 1, jsou obarveny zeleně, následně knihovny, které patří do kategorie 2, jsou obarveny žlutě a knihovny které, jsou součástí kategorie 3, jsou obarveny červeně.
 
 \begin{figure}[!htb]
     \centering
@@ -145,10 +143,8 @@ Na obrázku~\ref{tab:first-benchmark-results} je možné vidět graf znázorňuj
 
 V sekci~\ref{hypothesis} jsme si stanovili hypotézu, podle které mají nejlépe vyjít knihovny z kategorie 1 (viz zelená barva). Poté se mají umístit knihovny z kategorie 2 (viz žlutá barva). A na závěr se mají umístit knihovny z kategorie 3 (viz červená barva). Při nahlédnutí do tabulky~\ref{tab:first-benchmark-results} nebo grafu z obrázku~\ref{fig:first-benchmark-results} je lehké pozorovat, že tomu tak opravdu je. Ovšem je nutné podotknout, že knihovny \textit{Arch} a \textit{RelEcs} mají velmi podobný výsledek a pokud nahlédneme na chybu z tabulky~\ref{tab:first-benchmark-results} tak je možné pozorovat, že časy jsou téměř identické. Vyplývá z toho to, že pro tento počet entit požadavek na to, aby jednotlivé komponenty byli struktury, nemusí nutně vést k velkému výkonnostnímu zlepšení.
 
-\newpage
-
 \subsection{Druhé měření}
-Druhé měření bylo spouštěno s velikostí světa 16384x16384. Výsledky tohoto měření:
+Druhé měření bylo spouštěno s velikostí světa 16384x16384. Výsledky tohoto měření je možné vidět v tabulce~\ref{tab:second-benchmark-results} a grafu znázorněném na obrázku~\ref{fig:second-benchmark-results}.
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -178,10 +174,10 @@ Druhé měření bylo spouštěno s velikostí světa 16384x16384. Výsledky toh
     \label{fig:second-benchmark-results}
 \end{figure}
 
-Z tabulky~\ref{tab:second-benchmark-results} i grafu~\ref{fig:second-benchmark-results} je možné vypozorovat významnější rozdíl mezi knihovnami první kategorie (zelená barva) a knihovnou druhé kategorie (žlutá barva). Za tento rozdíl mohou převážně \textit{cache misses} způsobené tím, že knihovna \textit{RelEcs} používá třídy namísto struktur pro reprezentaci komponent (viz sekce~\ref{hypothesis}). Lze pozorovat, že hypotéza zde byla také splněna.
+Z tabulky~\ref{tab:second-benchmark-results} i grafu~\ref{fig:second-benchmark-results} je možné vypozorovat významnější rozdíl mezi knihovnami první kategorie (zelená barva) a knihovnou druhé kategorie (žlutá barva). Předpokládáme, že tento rozdíl je způsobený větším počtem \textit{cache misses}, který se pro větší počet entit více projevuje a je způsoben tím, že knihovna \textit{RelEcs} používá třídy namísto struktur pro reprezentaci komponent (viz sekce~\ref{hypothesis}). Lze pozorovat, že hypotéza zde byla také splněna.
 
 \subsection{Třetí měření}
-Třetí měření bylo spouštěno s velikostí světa 32768x32768. Výsledky tohoto měření:
+Třetí měření bylo spouštěno s velikostí světa 32768x32768. Výsledky tohoto měření je možné vidět v tabulce~\ref{tab:third-benchmark-results} a grafu znázorněném na obrázku~\ref{fig:third-benchmark-results}.
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -211,15 +207,21 @@ Třetí měření bylo spouštěno s velikostí světa 32768x32768. Výsledky to
     \label{fig:third-benchmark-results}
 \end{figure}
 
-Z tabulky~\ref{tab:third-benchmark-results} i grafu~\ref{fig:third-benchmark-results} lze pozorovat, že výsledky jednotlivých kategorií jsou opět, podobně jako v případě prvního měření, blíže u sebe. Může za to pravděpodobně to, že hra momentální tráví spoustu času ve složitých datových strukturách jako jsou \textit{behavior stromy} a \textit{kd-stromy}, tím pádem knihovny první kategorie (zelená barva) nezískávají tolik výkonu na dobrém využití \textit{cache}. Je možné pozorovat, že hypotéza je stále splněna.
+Z tabulky~\ref{tab:third-benchmark-results} i grafu~\ref{fig:third-benchmark-results} lze pozorovat, že výsledky jednotlivých kategorií jsou opět, podobně jako v případě prvního měření, blíže u sebe. Předpokládáme, že hra pro tuto velikost světa tráví spoustu času ve složitějších datových strukturách jako jsou \textit{behavior stromy} a \textit{kd-stromy}, tím pádem knihovny první kategorie (zelená barva) nezískávají tolik výkonu na dobrém využití \textit{cache}. Je možné pozorovat, že hypotéza je stále splněna.
 
-\newpage
+\subsection{Velikosti světa}
+Nyní si rozebereme co použité velikosti světů vlastně znamenají. Pro lepší pochopení kontextu autor práce provedl test na realtime strategické hře \textit{Age of Mythology}. Byla spuštěn scénář s prázdnou mapou (bez překážek). Pro frakci byl zvolen bůh Zeus a velikost mapy byla zvolena normální. Vesničan (jednotka villager) z jednoho okraje mapy ke druhému došel za zhruba 60 sekund.
+
+V naší hře se vesničané pohybují rychlostí 120 jednotek za sekundu. Velikost mapy pro první měření je 8192x8192. Vesničan by tedy tento svět zleva doprava přešel za zhruba 68 sekund. Lze tedy tuto velikost světa do jisté míry srovnat s normální velikostí světa ve hře \textit{Age of Mythology}. Velikost mapy pro druhé měření je 16384x16384 a vesničan by tento svět přešel zleva doprava za zhruba 137 sekund. Lze tedy do jisté miry tuto velikost světa považovat za nadstandardní. Velikost mapy pro třetí měření je 32768x32768 a vesničan by tento svět přešel zleva doprava za zhruba 273 sekund. Lze tedy tuto velikost světa do jisté miry považovat za velmi velkou.
+
+\subsection{Závěr měření}
+Ve výsledcích pro všechny tři měření je možné pozorovat, že rozdíl mezi ECS knihovnami první kategorie (zelená barva) a ECS knihovnami třetí kategorie (červená barva) není tak velký. Z toho důvodu při výběru ECS knihovny stojí za zvážení ECS knihovny ze třetí kategorie (červená barva).
 
 \subsection{Zajímavé knihovny}
 Zajímavou knihovnou je knihovna \textit{Svelto.ECS}, která vyžaduje, aby bylo během kompilace známo, z kterých komponent se jednotlivé entity budou skládat. Je lehké pozorovat že tato omezení nevedla k většímu výkonnostnímu zlepšení oproti ostatním knihovnám z této kategorie.
 
 Knihovny \textit{HypEcs} a \textit{RelEcs} jsou od stejného autora. Autor těchto knihoven udělal nejprve \textit{RelEcs} a poté \textit{HypEcs}. \textit{HypEcs} se mu podařilo udělat rychlejší zejména, protože použil struktury místo třídy pro reprezentaci komponent.
 
-Knihovny \textit{LeoECS} a \textit{LeoEcsLite} jsou od stejného autora. Obě tyto knihovny mají podobný výkon, ovšem při nahlédnutí do výsledků měření projektu \textit{Ecs.Csharp.benchmark}~\ref{EcsCsharpBenchmark} (konkrétně commitu \textit{db67d1d}~\cite{EcsCsharpBenchmarkCommit}), je možné pozorovat, že tyto dvě knihovny se umístili velmi špatně. Hlavním důvodem je to, že autor projektu \textit{Ecs.Csharp.benchmark} použil Nugget balíčky pro tyto knihovny, které byli vytvořeny jiným autorem. Autor projektu \textit{Ecs.Csharp.benchmark} dokonce tvrdí, že tyto balíčky byli sestaveny v debug konfiguraci.
+Knihovny \textit{LeoECS} a \textit{LeoEcsLite} jsou od stejného autora. Obě tyto knihovny mají podobný výkon, ovšem při nahlédnutí do výsledků měření projektu \textit{Ecs.Csharp.benchmark}~\cite{EcsCsharpBenchmark} (konkrétně commitu \textit{db67d1d}~\cite{EcsCsharpBenchmarkCommit}), je možné pozorovat, že tyto dvě knihovny se umístili velmi špatně. Hlavním důvodem je to, že autor projektu \textit{Ecs.Csharp.benchmark} použil Nugget balíčky pro tyto knihovny, které byli vytvořeny jiným autorem. Autor projektu \textit{Ecs.Csharp.benchmark} dokonce tvrdí, že tyto balíčky byli sestaveny v debug konfiguraci.
 
 ECS knihovna \textit{Entitas} je na platformě GitHub~\cite{GitHub} nejpopulárnější (má nejvíce hvězdiček) ECS knihovnou pro C\#. I přesto, že v našem měření vyšla nejhůře, její výkon je pořád dost dobrý. K její popularitě také přispívá větší podpora pro herní engine \textit{Unity}~\cite{Unity}.

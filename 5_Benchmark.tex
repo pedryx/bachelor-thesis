@@ -3,7 +3,7 @@
 Náš projekt se skládá ze dvou částí a to hry a poté měření, které využívá vytvořenou hru pro měření výkonu jednotlivých ECS knihoven. Analýzu tohoto měření jsme provedli v sekci~\ref{benchmark-analysis} a jeho implementaci jsme popsali v sekci~\ref{benchmark-implementation}. V této kapitole si nejprve ukážeme jak lze měření spustit, následně si stanovíme hypotézu, poté si přiblížíme ECS knihovny, které budeme měřit a na závěr si prezentujeme výsledky tohoto měření.
 
 \section{Spouštění měření}
-Mezi přílohami projektu~\ref{chap:attachments} lze najít adresář \texttt{src} obsahující zdrojové soubory a sestavený projekt měření. Pomocí aplikace \texttt{src\textbackslash WorldSimulator.BenchMarks\textbackslash bin\textbackslash Release\textbackslash net7.0\textbackslash WorldSimulator.Benchmarks.exe} lze spustit měření. Pro úpravu parametrů měření je potřeba upravit a znovu sestavit zdrojový kód. Fieldy relevantní k měření je možné nalézt v tabulce~\ref{tab:benchmark-relevant-fields}. Pro každý field je v této tabulce zobrazen jeho název a poté jeho popis. První čtyři z těchto fieldů se nacházejí ve třídě \texttt{WorldSimulator.BenchMarks.ECSBenchmarks}. Poslední z nich se nachází ve třídě \texttt{WorldSimulator.Level.World}.
+Mezi přílohami projektu lze najít adresář \texttt{src} obsahující zdrojové soubory a sestavený projekt měření. Pomocí aplikace \texttt{src\textbackslash WorldSimulator.BenchMarks\textbackslash bin\textbackslash Release\textbackslash net7.0\textbackslash WorldSimulator.Benchmarks.exe} lze spustit měření. Pro úpravu parametrů měření je potřeba upravit a znovu sestavit zdrojový kód. Fieldy relevantní k měření je možné nalézt v tabulce~\ref{tab:benchmark-relevant-fields}. Pro každý field je v této tabulce zobrazen jeho název a poté jeho popis. První čtyři z těchto fieldů se nacházejí ve třídě \texttt{WorldSimulator.BenchMarks.ECSBenchmarks}. Poslední z nich se nachází ve třídě \texttt{WorldSimulator.Level.World}.
 
 \begin{table}[!htb]
     \centering\footnotesize\sf
@@ -235,15 +235,17 @@ Třetí měření bylo spouštěno s velikostí světa 32768x32768. Výsledky to
 Z tabulky~\ref{tab:third-benchmark-results} i grafu~\ref{fig:third-benchmark-results} lze pozorovat, že výsledky jednotlivých kategorií jsou opět, podobně jako v případě prvního měření, blíže u sebe. Předpokládáme, že hra pro tuto velikost světa tráví spoustu času ve složitějších datových strukturách jako jsou \textit{stromy chování} a \textit{kd-stromy}, tím pádem knihovny první kategorie (zelená barva) nezískávají tolik výkonu na dobrém využití \textit{cache}. Je možné pozorovat, že hypotéza je stále splněna.
 
 \subsection{Velikosti světa}
-Nyní si rozebereme co použité velikosti světů vlastně znamenají. Pro lepší pochopení kontextu autor práce provedl test na realtime strategické hře \textit{Age of Mythology}. Byla spuštěn scénář s prázdnou mapou (bez překážek). Pro frakci byl zvolen bůh Zeus a velikost mapy byla zvolena normální. Vesničan (jednotka villager) z jednoho okraje mapy ke druhému došel za zhruba 60 sekund.
+Nyní si rozebereme co použité velikosti světů vlastně znamenají. Pro lepší pochopení kontextu autor práce provedl test na realtime strategické hře \textit{Age of Mythology}. Byl spuštěn scénář s prázdnou mapou (bez překážek). Pro frakci byl zvolen bůh Zeus a velikost mapy byla zvolena normální. Vesničan (jednotka villager) z jednoho okraje mapy ke druhému došel za zhruba 60 sekund.
 
 V naší hře se vesničané pohybují rychlostí 120 jednotek za sekundu. Velikost mapy pro první měření je 8192x8192. Vesničan by tedy tento svět zleva doprava přešel za zhruba 68 sekund. Lze tedy tuto velikost světa do jisté míry srovnat s normální velikostí světa ve hře \textit{Age of Mythology}. Velikost mapy pro druhé měření je 16384x16384 a vesničan by tento svět přešel zleva doprava za zhruba 137 sekund. Lze tedy do jisté miry tuto velikost světa považovat za nadstandardní. Velikost mapy pro třetí měření je 32768x32768 a vesničan by tento svět přešel zleva doprava za zhruba 273 sekund. Lze tedy tuto velikost světa do jisté miry považovat za velmi velkou.
 
 \subsection{Závěr měření}
-Ve výsledcích pro všechny tři měření je možné pozorovat, že rozdíl mezi ECS knihovnami kategorie 1 (zelená barva) a ECS knihovnami kategorie 3 (červená barva) není tak velký. Z toho důvodu při výběru ECS knihovny stojí za zvážení ECS knihovny ze třetí kategorie (červená barva).
+Ve výsledcích pro všechny tři měření je možné pozorovat, že rozdíl mezi ECS knihovnami kategorie 1 (zelená barva) a ECS knihovnami kategorie 3 (červená barva) není tak velký. Pokud by si tedy uživatel vybíral mezi ECS knihovnami a přišlo by mu mu, že je pro něj architektura či způsob využívání, některé z knihoven kategorie 3 (červená barva) přínosnější nebo přehlednější oproti ostatním ECS knihovnám, stali by knihovny kategorie 3 (červená barva) také za zvážení.
 
-\subsection{Zajímavé knihovny}
-Zajímavou knihovnou je knihovna \textit{Svelto.ECS}, která vyžaduje, aby bylo během kompilace známo, z kterých komponent se jednotlivé entity budou skládat. Je lehké pozorovat že tato omezení nevedla k většímu výkonnostnímu zlepšení oproti ostatním knihovnám z této kategorie.
+\subsection{Závěrečná pozorování k vybraným ECS knihovnám}
+V průběhu práce autor práce narazil na několik postřehů ohledně měřených ECS knihoven. V této sekci na tyto postřehy nahlédneme.
+
+Jedním zajímavým pozorováním je, že knihovna \textit{Svelto.ECS} vyžaduje, aby bylo během kompilace známo, z kterých komponent se jednotlivé entity budou skládat. Při nahlédnutí do výsledků měření je možné pozorovat, že tato omezení nevedla k většímu výkonnostnímu zlepšení oproti ostatním knihovnám z této kategorie.
 
 Knihovny \textit{HypEcs} a \textit{RelEcs} jsou od stejného autora. Autor těchto knihoven udělal nejprve \textit{RelEcs} a poté \textit{HypEcs}. \textit{HypEcs} se mu podařilo udělat rychlejší zejména, protože použil struktury místo třídy pro reprezentaci komponent.
 

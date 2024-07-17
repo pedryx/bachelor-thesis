@@ -232,7 +232,7 @@ Třetí měření bylo spouštěno s velikostí světa 32768x32768. Výsledky to
     \label{fig:third-benchmark-results}
 \end{figure}
 
-Z tabulky~\ref{tab:third-benchmark-results} i grafu~\ref{fig:third-benchmark-results} lze pozorovat, že výsledky jednotlivých kategorií jsou opět, podobně jako v případě prvního měření, blíže u sebe. Předpokládáme, že hra pro tuto velikost světa tráví spoustu času ve složitějších datových strukturách jako jsou \textit{behavior stromy} a \textit{kd-stromy}, tím pádem knihovny první kategorie (zelená barva) nezískávají tolik výkonu na dobrém využití \textit{cache}. Je možné pozorovat, že hypotéza je stále splněna.
+Z tabulky~\ref{tab:third-benchmark-results} i grafu~\ref{fig:third-benchmark-results} lze pozorovat, že výsledky jednotlivých kategorií jsou opět, podobně jako v případě prvního měření, blíže u sebe. Předpokládáme, že hra pro tuto velikost světa tráví spoustu času ve složitějších datových strukturách jako jsou \textit{stromy chování} a \textit{kd-stromy}, tím pádem knihovny první kategorie (zelená barva) nezískávají tolik výkonu na dobrém využití \textit{cache}. Je možné pozorovat, že hypotéza je stále splněna.
 
 \subsection{Velikosti světa}
 Nyní si rozebereme co použité velikosti světů vlastně znamenají. Pro lepší pochopení kontextu autor práce provedl test na realtime strategické hře \textit{Age of Mythology}. Byla spuštěn scénář s prázdnou mapou (bez překážek). Pro frakci byl zvolen bůh Zeus a velikost mapy byla zvolena normální. Vesničan (jednotka villager) z jednoho okraje mapy ke druhému došel za zhruba 60 sekund.
@@ -240,7 +240,7 @@ Nyní si rozebereme co použité velikosti světů vlastně znamenají. Pro lep�
 V naší hře se vesničané pohybují rychlostí 120 jednotek za sekundu. Velikost mapy pro první měření je 8192x8192. Vesničan by tedy tento svět zleva doprava přešel za zhruba 68 sekund. Lze tedy tuto velikost světa do jisté míry srovnat s normální velikostí světa ve hře \textit{Age of Mythology}. Velikost mapy pro druhé měření je 16384x16384 a vesničan by tento svět přešel zleva doprava za zhruba 137 sekund. Lze tedy do jisté miry tuto velikost světa považovat za nadstandardní. Velikost mapy pro třetí měření je 32768x32768 a vesničan by tento svět přešel zleva doprava za zhruba 273 sekund. Lze tedy tuto velikost světa do jisté miry považovat za velmi velkou.
 
 \subsection{Závěr měření}
-Ve výsledcích pro všechny tři měření je možné pozorovat, že rozdíl mezi ECS knihovnami první kategorie (zelená barva) a ECS knihovnami třetí kategorie (červená barva) není tak velký. Z toho důvodu při výběru ECS knihovny stojí za zvážení ECS knihovny ze třetí kategorie (červená barva).
+Ve výsledcích pro všechny tři měření je možné pozorovat, že rozdíl mezi ECS knihovnami kategorie 1 (zelená barva) a ECS knihovnami kategorie 3 (červená barva) není tak velký. Z toho důvodu při výběru ECS knihovny stojí za zvážení ECS knihovny ze třetí kategorie (červená barva).
 
 \subsection{Zajímavé knihovny}
 Zajímavou knihovnou je knihovna \textit{Svelto.ECS}, která vyžaduje, aby bylo během kompilace známo, z kterých komponent se jednotlivé entity budou skládat. Je lehké pozorovat že tato omezení nevedla k většímu výkonnostnímu zlepšení oproti ostatním knihovnám z této kategorie.

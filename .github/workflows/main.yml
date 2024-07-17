@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master, new-structure ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, new-structure ]
+    branches: [ master ]
 
   workflow_dispatch:
 
@@ -35,4 +35,4 @@ jobs:
       - name: Get PDFs
         uses: actions/download-artifact@v3
       - name: Run VeraPDF
-        run: verify Thesis/*.pdf | tee /dev/stderr | grep -qE 'nonCompliant="0"'
+        run: verify Thesis/*.pdf | tee /dev/stderr | grep -qE 'nonCompliant="0" failedJobs="0"'

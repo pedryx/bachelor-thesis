@@ -165,7 +165,7 @@ Způsobů, kterými lze umělou inteligenci aneb chování dané entity popsat n
 
         \item \textbf{\texttt{FindNearestResourceState}:} Stav zodpovědný za nalezení nejbližší suroviny daného typu. Po jejím nalezení by nastal přechod na \texttt{MoveToState} pomocí kterého by vesničan došel k příslušné surovině.
 
-        \item \textbf{\texttt{HarvestResourceState}:} Tento stav by nastavil entitu suroviny, která se má sklidit jako \texttt{Target} do příslušné komponenty. Poté by vyčkal na její sklizení. Po jejím sklizení by nastal přechod na \texttt{MoveState} pomocí kterému by vesničan došel ke svému \texttt{Workplace}.
+        \item \textbf{\texttt{HarvestResourceState}:} Tento stav by nastavil entitu suroviny, která se má sklidit jako \texttt{Target} do příslušné komponenty. Poté by vyčkal na její sklizení. Po jejím sklizení by nastal přechod na \texttt{MoveState} pomocí kterého by vesničan došel ke svému \texttt{Workplace}.
 
         \item \textbf{\texttt{ProcessResourceState}:} Tento stav by pouze přesunul suroviny pro zpracování do příslušné budovy a poté by vyčkal než budou zpracovány, po jejich zpracování by z ní přesunul zpracované předměty do inventáře vesničana a nastal by přechod na \texttt{MoveState}, pomocí kterého by vesničan došel ke skladišti.
 
@@ -237,7 +237,7 @@ Podle výše zmíněného článku mají \textit{stromy chování} dobrou rozši
       .End()
 \end{verbatim}
 
-Je lehké nahlédnout, že rozšiřitelnost a modularita \textit{stromů chování} jsou opravu silné vlastnosti. Proto také \textit{stromy chování} použijeme pro definici chování pro naše vesničany.
+Je lehké nahlédnout, že rozšiřitelnost a modularita \textit{stromů chování} jsou opravdu silné vlastnosti. Proto také \textit{stromy chování} použijeme pro definici chování pro naše vesničany.
 
 
 \section{Generovaný svět}
@@ -298,7 +298,7 @@ Při generovaní tohoto terénu je možné zvolit rozlišení, konkrétně speci
 V ideálním případě bychom chtěli velké rozlišení ale také lepší rychlost. Jeden ze způsobů jak toho dosáhnout je paralelizace, ovšem možnosti paralelizace na CPU jsou oproti GPU omezeny, proto si rozeberme jak by se dal terén generovat na GPU.
 
 \subsubsection{Generování terénu na GPU}
-Terén budeme generovat v reálném čase (vygenerujeme jej v každém snímku znovu) a vždy nám postačí vygenerovat pouze část terénu, která je viditelná hráčem. Tato část bude bude obdélník se stejnými rozměry jako velikost okna naší hry.
+Terén budeme generovat v reálném čase (vygenerujeme jej v každém snímku znovu) a vždy nám postačí vygenerovat pouze část terénu, která je viditelná hráčem. Tato část bude obdélník se stejnými rozměry jako velikost okna naší hry.
 
 Pořídíme si texturu do které budeme generovat terén. Tato textura bude mít stejnou velikost jako okno naší hry. Poté si pořídíme fragment shader, kterým do této textury budeme generovat terén. Tento fragment shader v každém snímku na základě pozice a přiblížení kamery pro každý pixel naší textury provede algoritmus popsaný v sekci~\ref{sec:terrain-gen}.
 
@@ -332,7 +332,7 @@ V sekci~\ref{sec:game-characteristics} jsme si uvedli, že nechceme aby naše hr
 Jako navigační strukturu zvolíme dvourozměrnou mřížku. Tu si budeme reprezentovat jako pole, kde každý prvek tohoto pole ponese informaci o tom v jakém biomu se nachází daný vrchol mřížky. Tuto strukturu zvolíme, protože je jednoduchá na konstrukci. Cesty které díky této mřížce získáme nebudou nejlepší možnou nejkratší cestou (a nebudou ve skutečnosti ani nejkratší), ale budou pro nás dostatečně dobrou aproximací. 
 
 \subsubsection{Tvorba cesty}
-Tvorbu cesty začneme tím, že získáme cestu, která se bude z počátku nevhodná. Poté ji vylepšíme a tím získáme cestu, která již bude vhodná.
+Tvorbu cesty začneme tím, že získáme cestu, která bude z počátku nevhodná. Poté ji vylepšíme a tím získáme cestu, která již bude vhodná.
 
 Pro výpočet vzdálenosti mezi dvěma body v naší mřížce zvolíme Manhattanskou metriku. Pro hledání nejkratších cest použijeme algoritmus A*. První tvar naší cesty získáme tím, že pomocí A* algoritmu nalezneme cestu v naší mřížce. Příklad toho jak by taková cesta mohla vypadat je možné vidět na obrazku~\ref{fig:path_grid}. Je lehké nahlédnout, že se podobá cestě $P2$ z obrázku~\ref{fig:path}, která je pro nás nevhodná.
 

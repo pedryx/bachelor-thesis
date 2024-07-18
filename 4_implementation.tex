@@ -227,8 +227,7 @@ Již zmiňovaný \texttt{DamageSystem} řeší logiku poškození. Z minulé sek
 Některé části z tohoto \textit{BehaviorTree} každého vesničana se starají o generování cest. Například pokud vesničan potřebuje dojít k entitě dané suroviny. Vygenerovaná cesta je poté uložena do \texttt{PathFollow} komponenty. O logiku chození po cestě se stará \texttt{PathFollowSystem}. Je nutné zmínit, že samotný pohyb vždy řeší \texttt{MovementSystem}, \texttt{PathFollowSystem} pouze nastavuje hodnoty v \texttt{Movement} komponentě na základě cesty uložené v \texttt{PathFollow} komponentě.
 
 \subsubsection{Budovy}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Diagram entity budovy je možné vidět na obrázku~\ref{fig:building}. Vyobrazené komponenty má na sobě každá budova. V komponentě \texttt{Village} je uchovávaný odkaz na instanci vesnice do které budova spadá. Budova skladiště má na sobě navíc \texttt{Inventory} komponentu ve které ukládá suroviny, které vesnice vlastní. Hlavní budova oproti diagramu neobsahuje žádné dodatečné komponenty.
+Diagram entity budovy je možné vidět na obrázku~\ref{fig:building}. Vyobrazené komponenty má na sobě každá budova. V komponentě \texttt{Village} je uchováván odkaz na instanci vesnice, do které budova spadá. Budova skladiště má na sobě navíc \texttt{Inventory} komponentu, ve které ukládá suroviny, které vesnice vlastní. Hlavní budova, oproti diagramu, neobsahuje žádné dodatečné komponenty.
 
 \begin{figure}[!htb]
   \centering
@@ -237,7 +236,7 @@ Diagram entity budovy je možné vidět na obrázku~\ref{fig:building}. Vyobraze
   \label{fig:building}
 \end{figure}
 
-Důležitým typem budov jsou budovy pro zpracování surovin. Diagram vyobrazující její komponenty a související systémy je možné vidět na obrázku~\ref{fig:res_building}. Je možné vidět, že oproti entitě z obrázku~\ref{fig:building} má budova pro zpracování surovin navíc komponenty \texttt{Inventory}, \texttt{ResourceProcessor} a \texttt{VillagerSpawner}.
+Důležitým typem budov jsou budovy pro zpracování surovin. Diagram vyobrazující jejich komponenty a související systémy je možné vidět na obrázku~\ref{fig:res_building}. Je možné vidět, že oproti entitě z obrázku~\ref{fig:building} má budova pro zpracování surovin navíc komponenty \texttt{Inventory}, \texttt{ResourceProcessor} a \texttt{VillagerSpawner}.
 
 \begin{figure}[!htb]
   \centering
@@ -246,20 +245,20 @@ Důležitým typem budov jsou budovy pro zpracování surovin. Diagram vyobrazuj
   \label{fig:res_building}
 \end{figure}
 
-\texttt{VillagerSpawningSystem} je zodpovědný za vytváření nových vesničanů. Ke každé budově pro zpracování surovin je přidělen právě jeden vesničan a pokud tento vesničan zemře, tak se spustí odpočet. Po uplynutí tohoto odpočtu dojde k vytvoření nového vesničana. Při jeho vytvoření mu bude zkonstruován a přidělen \textit{strom chování} a příslušná budova mu bude nastavena jako pracovní místo.
+\texttt{VillagerSpawningSystem} je zodpovědný za vytváření nových vesničanů. Ke každé budově pro zpracování surovin je přidělen právě jeden vesničan, a pokud tento vesničan zemře, tak se spustí odpočet. Po uplynutí tohoto odpočtu dojde k vytvoření nového vesničana. Při jeho vytvoření mu bude zkonstruován a přidělen \textit{strom chování} a příslušná budova mu bude nastavena jako pracovní místo.
 
-\texttt{ResourceProcessingSystem} se stará o logiku kolem zpracování surovin. Budovy pro zpracování surovin na sobě mají \texttt{Inventory} komponentu. \texttt{ResourceProcessingSystem} má na sobě nastavený recept a pravidelně nahlíží zda se v inventáři dané suroviny nacházejí požadované suroviny. Pokud ano, tak zahájí zpracování po jehož dokončení přemístí nově vytvořené předměty opět do inventáře. Z něj je může vesničan převzít a odnést do skladiště.
+\texttt{ResourceProcessingSystem} se stará o logiku kolem zpracování surovin. Budovy pro zpracování surovin na sobě mají \texttt{Inventory} komponentu. \texttt{ResourceProcessingSystem} má na sobě nastavený recept a pravidelně nahlíží, zda se v inventáři dané suroviny nacházejí požadované suroviny. Pokud ano, tak zahájí zpracování, po jehož dokončení přemístí nově vytvořené předměty opět do inventáře. Z něj je může vesničan převzít a odnést do skladiště.
 
 \subsubsection{Vesnice}
 Každá vesnice je entita, která obsahuje komponenty \texttt{Location}, \texttt{Village} a \texttt{Owner}. \texttt{VillageBuildingSystem} se stará o stavění budov v dané vesnici. Má v sobě uloženou stavební frontu budov, kde pro každou budovu má také její cenu. Ve \texttt{Village} komponentě jsou uchovávány odkazy na jednotlivé entity budov, které se ve vesnici nacházejí. Jakmile \texttt{VillageBuildingSystem} zjistí, že vesnice má dostatek surovin na další budovu ze stavební fronty, vytvoří pro ni entitu a přidá na vytvořenou entitu odkaz do \texttt{Village} komponenty.
 
-Klíčovou částí při vytváření entity budovy je volba pozice kde se entita má vytvořit. Nechceme aby budovy byli umístěny v biomech kde nelze stavět a také nechceme aby se nacházeli moc blízko nebo moc daleko od ostatních budov. Pro volbu pozice budov je zvolena konstantní minimální a maximální vzdálenost. Tyto vzdálenosti udávají v jakém rozmezí se mohou nové budovy od již postavených budov objevit.
+Klíčovou částí při vytváření entity budovy je volba pozice, kde se entita má vytvořit. Nechceme, aby budovy byly umístěny v biomech, kde nelze stavět, a také nechceme, aby se nacházely moc blízko nebo moc daleko od ostatních budov. Pro volbu pozice budov je zvolena konstantní minimální a maximální vzdálenost. Tyto vzdálenosti udávají, v jakém rozmezí se mohou nové budovy od již postavených budov objevit.
 
-Pro volbu pozice byl použit přímočarý algoritmus. Jako první se vybere náhodná již postavená budova a vezme se její pozice. Poté se kolem této pozice vytvoří prstenec s rozměry podle konstantní minimální a maximální vzdálenosti. V tomto prstenci se poté vybere náhodná pozice. Na závěr se zkontroluje zda je možné na této pozici stavět a pokud ano tak je tato pozice vybrána jako pozice pro novou budovu. Pokud na dané pozici není možné stavět tak se celý algoritmus zopakuje.
+Pro volbu pozice byl použit přímočarý algoritmus. Jako první se vybere náhodná již postavená budova a vezme se její pozice. Poté se kolem této pozice vytvoří prstenec s rozměry podle konstantní minimální a maximální vzdálenosti. V tomto prstenci se poté vybere náhodná pozice. Na závěr se zkontroluje, zda je možné na této pozici stavět, a pokud ano, tak je tato pozice vybrána jako pozice pro novou budovu. Pokud na dané pozici není možné stavět, tak se celý algoritmus zopakuje.
 
 \section{Měření}
 \label{benchmark-implementation}
-Měření je druhým C\# projektem (\texttt{WorldSimulator.Benchmarks.csproj}) našeho C\# solution. S použitím naší hry měří výkon jednotlivých ECS knihoven. V sekci~\ref{benchmark-framework} jsme se rozhodli, že pro toto měření použijeme \textit{BenchmarkDotNet}. Celé měření se dělí na dvě fáze a to přípravy a samotného měření.
+Měření je druhým C\# projektem (\texttt{WorldSimulator.Benchmarks.csproj}) našeho C\# solution. S použitím naší hry měří výkon jednotlivých ECS knihoven. V sekci~\ref{benchmark-framework} jsme se rozhodli, že pro toto měření použijeme \textit{BenchmarkDotNet}. Celé měření se dělí na dvě fáze, a to přípravy a samotného měření.
 
 Pro měření máme definované následující konstanty:
 
@@ -273,11 +272,11 @@ Pro měření máme definované následující konstanty:
   \item \texttt{benchmarkIterationCount}: Udává počet kroků odsimulování hry během fáze měření.
 \end{enumerate}
 
-V C\# projektu (\texttt{WorldSimulator.Benchmarks.csproj}) máme definovaný test reprezentovaný třídou \texttt{ECSBenchmarks}. Tento test obsahuje jediný vstupní parametr a tím je \texttt{ECSFactoryType} typu \texttt{Type}. Tímto parametrem jsou předávány typy dědicí od \texttt{ECSFactory}, které reprezentují jednotlivé ECS knihovny.
+V C\# projektu (\texttt{WorldSimulator.Benchmarks.csproj}) máme definovaný test reprezentovaný třídou \texttt{ECSBenchmarks}. Tento test obsahuje jediný vstupní parametr, a tím je \texttt{ECSFactoryType} typu \texttt{Type}. Tímto parametrem jsou předávány typy dědící od \texttt{ECSFactory}, které reprezentují jednotlivé ECS knihovny.
 
 Během fáze přípravy nejprve zkonstruujeme konkrétní \texttt{ECSFactory}. Poté vytvoříme novou instanci naší hry (třídy \texttt{Game}) a odsimulujeme jeden její snímek za pomocí \texttt{RunOneFrame}, tím zaručíme, že hra bude inicializována. Poté v cyklu voláme metodu \texttt{UpdateOnce}, která vykoná jednu iteraci \textit{game loop} naší hry. Počet opakování tohoto cyklu udává konstanta \texttt{setupIterationCount}.
 
-Během fáze měření používáme tu samou instanci hry vytvořené během fáze přípravy. Na této instanci v cyklu opět zavoláme metodu \texttt{UpdateOnce}. Počet opakování tohoto cyklu je dán konstantou \texttt{benchmarkIterationCount}.
+Během fáze měření používáme tu samou instanci hry vytvořenou během fáze přípravy. Na této instanci v cyklu opět zavoláme metodu \texttt{UpdateOnce}. Počet opakování tohoto cyklu je dán konstantou \texttt{benchmarkIterationCount}.
 
 % \newpage
 % \null

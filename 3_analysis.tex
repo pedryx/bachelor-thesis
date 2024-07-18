@@ -75,7 +75,7 @@ Způsoby z~druhé kategorie vyžadují, aby \textit{systém} byl třída dědíc
     \setcounter{enumi}{6}
     \item \verb|foreach (entity in entities) { /**/ }|
     \item \verb|foreach ((component1, component2) in entities) { /**/ }|
-    \item \verb|for (int i~= 0; i~< entitiesCount; i++)|\\\verb|{ components1[i], components2[i], /**/ }|
+    \item \verb|for (int i = 0; i < entitiesCount; i++)|\\\verb|{ components1[i], components2[i], /**/ }|
 \end{enumerate}
 
 Třetí kategorie nabízí kolekce nebo iterátory, které lze iterovat. Tyto kolekce nebo iterátory lze získat voláním příslušné funkce na \textit{world} nebo \textit{query}. V~případě~7 tato kolekce nebo iterátor obsahuje všechny \textit{entity}, které chceme iterovat. V~případě~8 tato kolekce nebo iterátor obsahuje n-tice žádoucích instancí \textit{komponent} každé iterované \textit{entity}. V~případě~9 je namísto kolekce použita množina polí, které obsahují žádoucí instance \textit{komponent} a~kde jako index do těchto polí lze použít identifikátor příslušné \textit{entity}.
@@ -125,7 +125,7 @@ Kromě výše zmíněného problému je také další problém v~tom, že tříd
 
 Abychom tyto problémy vyřešili, předáme zodpovědnost za konstrukci těchto systémů třídě \verb|ECSFactory|. Ta skrze konstruktor dostane datový typ systému. Tato třída bude obsahovat metodu \verb|CreateSystem|, která přijme instanci konkrétního \verb|EntityProcessor| a pomocí reflexe zkonstruuje konkrétní finální systém. Výše zmíněný příklad by tedy s~tímto řešením vypadal takto: \verb|factory.CreateSystem(new PathFollowSystem())|.
 
-Je také nutné zmínit, že konkrétní implementace abstrakční vrstvy musejí poskytovat vícero tříd dědících od \verb|IECSSystem|, jelikož je nutné definovat systém, které pracují s~jednou komponentou, poté systémy, které pracují s~dvěma komponentami a tak dále. \verb|ECSFactory| tedy v~konstruktoru přijímá více typů systémů a při zavolání \verb|CreateSystem| vybere jeden z~nich na základě počtu generických argumentů na typu \verb|EntityProcessor|.
+Je také nutné zmínit, že konkrétní implementace abstrakční vrstvy musejí poskytovat vícero tříd dědících od \verb|IECSSystem|, jelikož je nutné definovat systém, které pracují s~jednou komponentou, poté systém, který pracuje s~dvěma komponentami a tak dále. \verb|ECSFactory| tedy v~konstruktoru přijímá více typů systémů a při zavolání \verb|CreateSystem| vybere jeden z~nich na základě počtu generických argumentů na typu \verb|EntityProcessor|.
 
 \subsection{Komponenty jako třídy a komponenty jako struktury}
 \label{sec:components-analysis}
@@ -359,7 +359,7 @@ Ovšem problém spočívá v~tom, že k~dispozici máme pouze mřížku, která 
 
 Mohlo by se zdát, že použití této aproximace by vedlo v~příliš nevhodné cesty, ovšem za předpokladu, že se body v~naší mřížce budou nacházet dostatečně blízko sebe, tak bude výsledná cesta dostatečně dobrou aproximací červené cesty z~obrázku~\ref{fig:path_simplified}.
 
-Další problém, který je nutné vyřešit, je, že vesničané a entity, ke kterým se vesničané navigují, se většinou nenacházejí v~žádném z~bodů naší mřížce. Problém vyřešíme tak, že před spuštěním~A* algoritmu si k~vesničanovi a dané entitě nalezneme nejbližší body v~naší mřížce a nalezneme nejkratší cestu mezi těmito body. Poté, předtím než provedeme zjednodušení cesty, přidáme pozici vesničana jako první bod naší cesty a pozici entity, ke které se vesničan naviguje, jako poslední bod naší cesty.
+Další problém, který je nutné vyřešit, je, že vesničané a entity, ke kterým se vesničané navigují, se většinou nenacházejí v~žádném z~bodů naší mřížky. Problém vyřešíme tak, že před spuštěním~A* algoritmu si k~vesničanovi a dané entitě nalezneme nejbližší body v~naší mřížce a nalezneme nejkratší cestu mezi těmito body. Poté, předtím než provedeme zjednodušení cesty, přidáme pozici vesničana jako první bod naší cesty a pozici entity, ke které se vesničan naviguje, jako poslední bod naší cesty.
 
 \newpage
 

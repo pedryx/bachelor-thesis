@@ -1,8 +1,8 @@
 \chapter{Závěr}
-V této kapitole zhodnotíme zda jsme splnili cíle práce. Nejprve se zaměříme na splněné cíle a uvedeme si nedostatky našeho řešení. Na závěr nahlédneme na možná budoucí vylepšení.
+V této kapitole zhodnotíme, zda jsme splnili cíle práce. Nejprve se zaměříme na splněné cíle a uvedeme si nedostatky našeho řešení. Na závěr nahlédneme na možná budoucí vylepšení.
 
 \section{Cíle}
-Nyní si připomeňme jaké jsou cíle této práce:
+Nyní si připomeňme, jaké jsou cíle této práce:
 
 \begin{enumerate}
     \item[1)] Vytvořit hru pomocí ECS, která bude nezávislá na konkrétní ECS knihovně.
@@ -12,7 +12,7 @@ Nyní si připomeňme jaké jsou cíle této práce:
 \subsection{Splnění cíle 1}
 Pro splnění cíle 1 byla vytvořena hra. Specifikaci této hry jsme stanovili v sekci~\ref{sec:game-spec}. Analýzu hry jsme provedli v kapitole~\ref{chap:analysis} a její implementaci jsme rozebrali v sekci~\ref{sec:game-impl}.
 
-V sekci~\ref{sec:game-characteristics} jsme si stanovili požadavky, které od naší hry vyžadujeme. Konkrétně jsme chtěli aby hra splňovala následující požadavky:
+V sekci~\ref{sec:game-characteristics} jsme si stanovili požadavky, které od naší hry vyžadujeme. Konkrétně jsme chtěli, aby hra splňovala následující požadavky:
 
 \begin{enumerate}
     \item[p1)] Nezávislost na konkrétní ECS knihovně.
@@ -23,16 +23,16 @@ V sekci~\ref{sec:game-characteristics} jsme si stanovili požadavky, které od n
 
 Ke splnění požadavku \textit{p1} jsme vytvořili abstrakční vrstvu, kterou hra používá namísto konkrétní ECS knihovny. Analýzu této vrstvy jsme provedli v sekci~\ref{section:abstract-layer-analysis} a implementaci jsme si rozebrali v sekci~\ref{sec:abstract-layer}.
 
-Hlavní důvod požadavku \textit{p2} je zabránit velké ztrátě na výkonu knihovnám založených na \textit{arch typu}. V naší implementaci využíváme odebírání komponent v případě mazaní entity, které provádíme pokud entita zemřela nebo byla sklizena. Pokud nahlédneme do výsledků prezentovaných v sekci~\ref{sec:benchmark-results}, je možné pozorovat, že mazání entity neprovádíme příliš často, jinak by se ECS knihovny založené na \textit{arch typu} umístili hůře.
+Hlavní důvod požadavku \textit{p2} je zabránit velké ztrátě na výkonu knihovnám založených na \textit{arch typu}. V naší implementaci využíváme odebírání komponent v případě mazání entity, které provádíme, pokud entita zemřela nebo byla sklizena. Pokud nahlédneme do výsledků prezentovaných v sekci~\ref{sec:benchmark-results}, je možné pozorovat, že mazání entity neprovádíme příliš často, jinak by se ECS knihovny založené na \textit{arch typu} umístili hůře.
 
-Požadavek \textit{p3} jsme splnili. Naše hra obsahuje velký svět s velkým počtem entit reprezentující surovinu ke sklizení. Krom samotných surovin se v herním světě také nacházejí entity vesnic. Součástí vesnic jsou poté také entity budov a entity vesničanů.
+Požadavek \textit{p3} jsme splnili. Naše hra obsahuje velký svět s velkým počtem entit reprezentujících suroviny ke sklizení. Krom samotných surovin se v herním světě také nacházejí entity vesnic. Součástí vesnic jsou poté také entity budov a entity vesničanů.
 
-Požadavek \textit{p4} jsme vyžadovali ze dvou důvodů. První byl zamezit tomu, aby naše hra nebyla příliš jednoduchá. Chtěli jsme se vyhnout tomu, aby naše měření, na které hru používáme, nebylo jenom dalším jednoduchým testem (viz sekce~\ref{sec:ecs-libs}). Druhým důvodem byla naopak zamezit příliš složité hře, jelikož bychom odváděli pozornost od problému, který řešíme. Složitost naší hry považujeme za adekvátní.
+Požadavek \textit{p4} jsme vyžadovali ze dvou důvodů. První bylo zamezit tomu, aby naše hra nebyla příliš jednoduchá. Chtěli jsme se vyhnout tomu, aby naše měření, na které hru používáme, nebylo jenom dalším jednoduchým testem (viz sekce~\ref{sec:ecs-libs}). Druhým důvodem bylo naopak zamezit příliš složité hře, jelikož bychom odváděli pozornost od problému, který řešíme. Složitost naší hry považujeme za adekvátní.
 
 \subsection{Splnění cíle 2}
 Pro porovnání výkonu jsme si vytvořili měření, které měří výkon naší hry s různými ECS knihovnami. Analýzu tohoto měření jsme provedli v sekci~\ref{benchmark-analysis} a jeho implementaci jsme si rozebrali v sekci~\ref{benchmark-implementation}.
 
-V kapitole~\ref{chap:benchmark} jsme si nejprve stanovili hypotézu. Poté jsme nahlédli na knihovny, které budeme měřit a na konci jsme si prezentovali výsledky našeho měření.
+V kapitole~\ref{chap:benchmark} jsme si nejprve stanovili hypotézu. Poté jsme nahlédli na knihovny, které budeme měřit, a na konci jsme si prezentovali výsledky našeho měření.
 
 \subsection{Nedostatky řešení}
 I přesto, že jsme splnili stanovené cíle, tak některé věci v našem řešení jsme mohli udělat lépe. Nyní si je rozebereme:
@@ -40,38 +40,38 @@ I přesto, že jsme splnili stanovené cíle, tak některé věci v našem řeš
 \begin{enumerate}
     \item \textbf{Komplexnější generování terénu:} I přesto, že autor považuje složitost hry za adekvátní, tak použití shaderů pro vygenerování terénu bylo pravděpodobně zbytečně komplexní. Pro účely této hry by postačovala jednodušší technika, která by například pouze předgenerovala náhodný terén.
 
-    \item \textbf{Občasné chození vesničanů přes vodu:} Generování náhodného terénu bylo nastaveno tak, aby terén pokud možno neobsahoval žádný ostrov. I přesto, že pravděpodobnost na vytvoření ostrovu je nízká, tak občas k jeho vytvoření dojde. V případě, že se na tomto ostrově objeví jelen a některý z vesničanů se vydá jej ulovit, tak pro jeho ulovení přejde přes vodu.
+    \item \textbf{Občasné chození vesničanů přes vodu:} Generování náhodného terénu bylo nastaveno tak, aby terén pokud možno neobsahoval žádný ostrov. I přesto, že pravděpodobnost na vytvoření ostrova je nízká, tak občas k jeho vytvoření dojde. V případě, že se na tomto ostrově objeví jelen a některý z vesničanů se vydá jej ulovit, tak pro jeho ulovení přejde přes vodu.
     
-    Tento nedostatek by se dal vyřešit dvěma způsoby. První způsob je úprava algoritmu pro generování terénu. Ovšem tento způsob je nežádoucí, jelikož by zvedl složitost tohoto algoritmu. Druhý způsob by bylo zavedení detekce ostrovů. Bylo by nutné prozkoumat jak ostrovy detekovat aniž bychom výrazně zhoršili načítání nebo výkon hry. Jelikož hru používáme primárně pro měření ECS knihoven a nenastává příliš často, není pro nás nějak zásadní.
+    Tento nedostatek by se dal vyřešit dvěma způsoby. První způsob je úprava algoritmu pro generování terénu. Ovšem tento způsob je nežádoucí, jelikož by zvedl složitost tohoto algoritmu. Druhý způsob by bylo zavedení detekce ostrovů. Bylo by nutné prozkoumat, jak ostrovy detekovat, aniž bychom výrazně zhoršili načítání nebo výkon hry. Jelikož hru používáme primárně pro měření ECS knihoven a nenastává příliš často, není pro nás nějak zásadní.
 
-    \item \textbf{Zdlouhavý proces přidávání nové ECS knihovny:} Hra je nezávislá na konkrétní ECS knihovně a lze jí tedy spouštět s různými ECS knihovnami. Proto aby bylo možné s danou ECS knihovnou spustit je nutné implementovat odpovídající třídy. Ovšem implementace těchto tříd může trvat delší dobu. Pro vyřešení by bylo nutné prozkoumat jiné návrhy abstrakční vrstvy, které zachovávají stejné klíčové vlastnosti jako ten momentální. Naštěstí ECS knihovny nepřidáváme příliš často, proto tento problém nepokládáme za zásadní.
+    \item \textbf{Zdlouhavý proces přidávání nové ECS knihovny:} Hra je nezávislá na konkrétní ECS knihovně a lze ji tedy spouštět s různými ECS knihovnami. Proto, aby bylo možné s danou ECS knihovnou spustit, je nutné implementovat odpovídající třídy. Ovšem implementace těchto tříd může trvat delší dobu. Pro vyřešení by bylo nutné prozkoumat jiné návrhy abstrakční vrstvy, které zachovávají stejné klíčové vlastnosti jako ta momentální. Naštěstí ECS knihovny nepřidáváme příliš často, proto tento problém nepovažujeme za zásadní.
 \end{enumerate}
 
 \section{Možná budoucí vylepšení}
-Nyní si představíme některá vylepšení, které by do našeho řešení bylo možné implementovat. Prvně nahlédneme na možná vylepšení, které by bylo možné přidat do naší hry. Na závěr prozkoumáme možná vylepšení našeho měření.
+Nyní si představíme některá vylepšení, která by do našeho řešení bylo možné implementovat. Prvně nahlédneme na možná vylepšení, která by bylo možné přidat do naší hry. Na závěr prozkoumáme možná vylepšení našeho měření.
 
 \subsection{Možná vylepšení hry}
 Mezi možná vylepšení hry patří:
 
 \begin{enumerate}
-    \item \textbf{Akční menu pro vytváření a mazání entit:} Hra by mohla obsahovat akční menu skrze které by bylo možné vytvářet a mazat entity v herním světě. Skrze toto menu by hráč mohl například vytvořit novou vesnici a nebo odebrat suroviny kolem již existující vesnice. Přidání tohoto menu by bylo usnadněné, jelikož kód je navržen tak, aby do hry bylo lehké přidávat nové prvky uživatelského rozhraní. 
+    \item \textbf{Akční menu pro vytváření a mazání entit:} Hra by mohla obsahovat akční menu, skrze které by bylo možné vytvářet a mazat entity v herním světě. Skrze toto menu by hráč mohl například vytvořit novou vesnici a nebo odebrat suroviny kolem již existující vesnice. Přidání tohoto menu by bylo usnadněné, jelikož kód je navržen tak, aby do hry bylo lehké přidávat nové prvky uživatelského rozhraní. 
 
-    \item \textbf{Čas a denní cyklus:} Hra by obsahovala denní cyklus podle kterého by se střídal den a noc. Přes noc by byl aktivní efekt tmy. Hráč by také mohl mít schopnost ovládat rychlost času ve hře skrze speciální menu. Tato rychlost by neměla vliv jenom na samotný denní cyklus ale i na fungování celé hry.
+    \item \textbf{Čas a denní cyklus:} Hra by obsahovala denní cyklus, podle kterého by se střídaly den a noc. Přes noc by byl aktivní efekt tmy. Hráč by také mohl mít schopnost ovládat rychlost času ve hře skrze speciální menu. Tato rychlost by neměla vliv jenom na samotný denní cyklus, ale i na fungování celé hry.
 
-    \item \textbf{Interakce mezi vesnicemi:} Jednotlivé vesnice spolu momentálně žádným způsobem neinteragují. Do hry by bylo možné přidat interakce mezi vesnicemi, které by více oživili dění v herním světě. Mezi tyto interakce by mohlo patřit například obchodování a válčení. Hra by také mohla obsahovat akční menu skrze které by hráč mohl tyto interakce vynucovat nebo rušit.
+    \item \textbf{Interakce mezi vesnicemi:} Jednotlivé vesnice spolu momentálně žádným způsobem neinteragují. Do hry by bylo možné přidat interakce mezi vesnicemi, které by více oživily dění v herním světě. Mezi tyto interakce by mohlo patřit například obchodování a válčení. Hra by také mohla obsahovat akční menu, skrze které by hráč mohl tyto interakce vynucovat nebo rušit.
 
-    \item \textbf{Různé náročnosti terénu:} Jednotlivé biomy by mohli mít definovanou náročnost, která by měla vliv na rychlost pohyb entit, které se v něm nacházejí. Například entity by po biomu vysoké hory mohli chodit s poloviční rychlostí.
+    \item \textbf{Různé náročnosti terénu:} Jednotlivé biomy by mohly mít definovanou náročnost, která by měla vliv na rychlost pohybu entit, které se v nich nacházejí. Například entity by v biomu vysoké hory mohly chodit s poloviční rychlostí.
 
     \item \textbf{Více variací textur:} Hra by mohla pro některé entity mít více textur. Při vytváření dané entity by se poté vybrala náhodná z nich. Například vesničané by mohli mít texturu pro muže a ženu nebo strom by mohl mít texturu pro listnatý a jehličnatý.
 
-    \item \textbf{Hlavní menu:} Při zapnutí hry by se uživateli nejprve ukázala obrazovka herního menu. Ta by obsahovala uživatelské rozhraní pomocí kterého by si hráč mohl zvolit některá nastavení jako například velikost herního světa. Tvorba tohoto menu by byla usnadněna, jelikož krom snadné rozšiřitelnosti o prvky uživatelského rozhraní je kód také navržen tak aby bylo snadné přidávat další herní obrazovky.
+    \item \textbf{Hlavní menu:} Při zapnutí hry by se uživateli nejprve ukázala obrazovka hlavního menu. Ta by obsahovala uživatelské rozhraní, pomocí kterého by si hráč mohl zvolit některá nastavení, jako například velikost herního světa. Tvorba tohoto menu by byla usnadněna, jelikož kromě snadné rozšiřitelnosti o prvky uživatelského rozhraní je kód také navržen tak, aby bylo snadné přidávat další herní obrazovky.
 \end{enumerate}
 
 \subsection{Možná vylepšení měření}
 Mezi možná vylepšení související s měřením patří:
 
 \begin{enumerate}
-    \item \textbf{Měření během hraní:} Hra by měřila výkon hry se zvolenou ECS knihovnou během hraní. Bylo by možné měřit výkon například posledních x iterací \textit{game loop}. Pokud bychom do hry také přidali možnost měnit ECS knihovnu za běhu mohli bychom za běhu pozorovat jak se výkon mění s jednotlivými ECS knihovnami.
+    \item \textbf{Měření během hraní:} Hra by měřila výkon hry se zvolenou ECS knihovnou během hraní. Bylo by možné měřit výkon například posledních x iterací \textit{game loop}. Pokud bychom do hry také přidali možnost měnit ECS knihovnu za běhu, mohli bychom za běhu pozorovat, jak se výkon mění s jednotlivými ECS knihovnami.
     
     \item \textbf{Měření jednotlivých systémů:} Kromě měření výkonu celé hry s konkrétní ECS knihovnou bychom mohli také měřit výkon jednotlivých systémů. Mohli bychom poté pozorovat vliv ECS knihovny na rychlost různých systémů. 
 \end{enumerate}

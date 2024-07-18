@@ -1,11 +1,11 @@
 \chapter{Popis implementace}
 V této kapitole si představíme klíčové a zajímavé části implementace. Pro více detailů o~implementaci je možné nahlédnout do kódu, který obsahuje dokumentační komentáře.
 
-Pro celý projekt používáme jedno C\# solution. To obsahuje dva C\# projekty. Prvním je hra (\texttt{WorldSimulator.csproj}) a druhým je měření (\texttt{WorldSimulator.Benchmarks.csproj}), které používá vytvořenou hru pro měření výkonu ECS knihoven. Projekt hry se skládá ze tří částí. První částí jsou implementace ECS knihoven, které implementují abstrakční vrstvu. Nad nimi je samotná abstrakční vrstva, která je druhou částí. Třetí částí je hra samotná, která namísto konkrétní ECS knihovny používá abstrakční vrstvu.
+Pro celý projekt používáme jedno C\# solution. To obsahuje dva C\# projekty. Prvním je hra (\texttt{WorldSimulator.csproj}) a druhým je měření \linebreak (\texttt{WorldSimulator.Benchmarks.csproj}), které používá vytvořenou hru pro měření výkonu ECS knihoven. Projekt hry se skládá ze tří částí. První částí jsou implementace ECS knihoven, které implementují abstrakční vrstvu. Nad nimi je samotná abstrakční vrstva, která je druhou částí. Třetí částí je hra samotná, která namísto konkrétní ECS knihovny používá abstrakční vrstvu.
 
 \section{Abstrakční vrstva}
 \label{sec:abstract-layer}
-Abstrakční vrstva se nachází v~jmenném prostoru \texttt{WorldSimulator.ECS.AbstractECS}. V~jmenném prostoru \texttt{WorldSimulator.ECS} kromě abstrakční vrstvy lze také nalézt jednotlivé její implementace.
+V~jmenném prostoru \texttt{WorldSimulator.ECS.AbstractECS} se nachází abstrakční vrstva. V~jmenném prostoru \texttt{WorldSimulator.ECS} kromě abstrakční vrstvy lze také nalézt jednotlivé její implementace.
 
 \subsection{Systémy}
 V ECS jsou systémy zodpovědné za iterace a zpracování entit. Jelikož každá ECS knihovna iteruje přes entity jiným způsobem, a~zároveň chceme definovat zpracování entit (herní logiku) pouze jednou, bude nutné implementaci rozdělit do několika tříd. Vztah tříd, které souvisejí se systémy, je možné vidět na obrázku~\ref{fig:abstract-layer-systems}.
@@ -19,7 +19,7 @@ V ECS jsou systémy zodpovědné za iterace a zpracování entit. Jelikož každ
 
 \texttt{IECSSystem} je rozhraní, ze kterého dědí každý systém. Každá ECS knihovna poté poskytne svou implementaci systému. Tyto implementace obsahují pouze logiku pro iteraci neboli procházení přes jednotlivé entity. Každá implementace systému bude vlastnit konkrétní \texttt{EntityProcessor} dědicí od \texttt{IEntityProcessor}. Jednotlivé \texttt{EntityProcessor} jsou zodpovědné za zpracování entit. Jednotlivé implementace rozhraní \texttt{IECSSystem} jsou generické typy, které přijímají typ entity procesoru a také typy komponent, které od entit vyžadují jako generické parametry.
 
-Jako příklad si uvedeme třídu \texttt{ArchSystem<TEntityProcessor, TComponent>}. Jedná se o~implementaci systému. Tento systém obsahuje logiku pro iteraci entit z~ECS knihovny \textit{Arch}~\cite{Arch}. Příkladem konkrétního \texttt{EntityProcessor} je například třída \texttt{MovementSystem}, která řeší zpracování entit s~komponentami \texttt{Position} a \texttt{Movement} a obsahuje logiku zodpovědnou za jejich pohyb.
+Třídu \texttt{ArchSystem<TEntityProcessor, TComponent>} si uvedeme jako příklad. Jedná se o~implementaci systému. Tento systém obsahuje logiku pro iteraci entit z~ECS knihovny \textit{Arch}~\cite{Arch}. Příkladem konkrétního \texttt{EntityProcessor} je například třída \texttt{MovementSystem}, která řeší zpracování entit s~komponentami \texttt{Position} a \texttt{Movement} a obsahuje logiku zodpovědnou za jejich pohyb.
 
 Z pohledu hry jednotlivé implementace \texttt{EntityProcessor} představují samotné systémy, jelikož hra nekouká na to, jak jsou entity iterovány, a~zajímá jí jenom samotná herní logika. Proto se kód, který pracuje s~hrou, odkazuje na \texttt{EntityProcessor} jako na systém. Ovšem z~pohledu abstrakční vrstvy je nutné rozlišovat \texttt{System} jako typ, který obsahuje logiku pro iteraci entit, a~\texttt{EntityProcessor} jako typ, který obsahuje logiku pro zpracování entit. Autor si je vědom, že tyto pohledy mohou vést k~matoucí terminologii, ovšem v~kódu jsou již používány na příliš mnoho místech.
 
@@ -155,7 +155,7 @@ Mezi herní data patří informace o~biomech, surovinách a předmětech. Herní
   \label{fig:game-data}
 \end{figure}
 
-\texttt{GlobalInstances<TDerived>} je abstraktní třída, kde generický parametr \texttt{TDerived} může být pouze třída, která je jejím potomkem. \texttt{GlobalInstances<TDerived>} si za pomoci statiky interně ukládá všechny instance \texttt{TDerived} a umožňuje k~nim globální přístup za pomoci jejich identifikátoru.
+\texttt{GlobalInstances<TDerived>} je abstraktní třída, kde generický parametr \texttt{TDerived} může být pouze typ, který je jejím potomkem. Tato třída si za pomoci statiky interně ukládá všechny instance \texttt{TDerived} a umožňuje k~nim globální přístup za pomoci jejich identifikátoru.
 
 Jednotliví potomci třídy \texttt{GlobalInstances<TDerived>} představují jednotlivé typy herních dat, jako je například typ biomu (\texttt{TerrainType}), typ suroviny (\texttt{ResourceType}), nebo typ předmětu (\texttt{ItemType}). Tyto třídy obsahují informace o~daném typu herních dat. Například typ biomu (\texttt{TerrainType}) obsahuje informaci o~tom, zda je možné v~daném biomu stavět, a~také informaci o~tom, zda je možné v~daném biomu chodit.
 
@@ -205,7 +205,7 @@ Entita \textit{jelena} se od ostatních entit surovin liší. Její komponenty a
   \label{fig:deer}
 \end{figure}
 
-\texttt{MovementSystem} se stará o~pohyb entit. Jak \texttt{MovementSystem}, tak \texttt{AnimalBehaviorSystem}, pracují s~\texttt{Movement} komponentou, ale \texttt{AnimalBehaviorSystem} řídí, jak se pohyb bude odehrávat a \texttt{MovementSystem} se stará o~samotný pohyb. \texttt{OrientationUpdateSystem} aktualizuje orientaci entity. V~závislosti na tom, zda se entita pohybuje doleva nebo doprava, tak převrátí texturu dané entity podle osy~y, aby její orientace odpovídala směru, ve kterém se pohybuje.
+\texttt{MovementSystem} se stará o~pohyb entit. Jak \texttt{MovementSystem}, tak \linebreak \texttt{AnimalBehaviorSystem}, pracují s~\texttt{Movement} komponentou, ale \linebreak \texttt{AnimalBehaviorSystem} řídí, jak se pohyb bude odehrávat a \texttt{MovementSystem} se stará o~samotný pohyb. \texttt{OrientationUpdateSystem} aktualizuje orientaci entity. V~závislosti na tom, zda se entita pohybuje doleva nebo doprava, tak převrátí texturu dané entity podle osy~y, aby její orientace odpovídala směru, ve kterém se pohybuje.
 
 \subsection{Vesnice a vesničané}
 Ze sekce~\ref{subsec:villages} víme, že v~herním světě se budou nacházet vesničané a vesnice. Jednotlivé vesnice budou obsahovat budovy. Každá budova, každý vesničan a i~samotná vesnice jsou reprezentovány jako entity. V~této sekci si tyto entity představíme.

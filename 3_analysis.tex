@@ -194,7 +194,7 @@ Builder.Create()
     v~tomto příkladu je kořenový vrchol \texttt{villager job sequence}, který prochází své potomky ze shora dolů. Vrcholy s~prefixem \texttt{move to} nastaví pohyb vesničana na příslušnou pozici a~poté čekají, než k~ní vesničan dojde. Vrchol \texttt{find resource} nalezne nejbližší surovinu daného typu. Vrchol \texttt{harvest resource} nastaví entitu dané suroviny jako \texttt{Target} v~dané komponentě, poté vyčká na její sklizení. Vrchol \texttt{process resource} přesune dané předměty do budovy na zpracování surovin, poté vyčká na jejich zpracování a~poté z~této budovy přesune zpracované předměty do inventáře vesničana. Vrchol \texttt{store items} přesune dané předměty do skladiště.
 \end{enumerate}
 
-V~uvedených způsobech by byl za zpracování AI zodpovědný \texttt{BehaviorSystem}, který by prošel všechny \texttt{Behavior} komponenty. V~obou přístupech by byla v~této komponentě uložena instance buďto \textit{stavového automatu} nebo \textit{stromu chování}. \texttt{BehaviorSystem} by zavolal příslušnou metodu pro zpracovaní na každé takové instanci.
+\texttt{BehaviorSystem}, který by prošel všechny \texttt{Behavior} komponenty, by byl v~uvedených způsobech zodpovědný za zpracování AI. V~obou přístupech by byla v~zmiňované komponentě uložena instance buďto \textit{stavového automatu} nebo \textit{stromu chování}. \texttt{BehaviorSystem} by zavolal příslušnou metodu pro zpracovaní na každé takové instanci.
 
 % porovnani stavovych automatu a stromu chovani
 %    zminit clanek a vytahnout z~nej relevantni body

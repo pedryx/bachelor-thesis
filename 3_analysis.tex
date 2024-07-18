@@ -160,6 +160,9 @@ Způsobů, kterými lze umělou inteligenci aneb chování dané entity popsat n
     V~případě naší hry bychom měli pro každý stav \textit{stavového automatu} třídu nebo strukturu s~metodou \texttt{Update}. Každý vesničan by měl ve své \texttt{Behavior} komponentě uloženou instanci na svůj současný stav. Přechod na jiný stav by byl reprezentován přiřazením instance jiného stavu.
 
     Mezi stavy našich vesničanů by mohlo patřit:
+
+    \newpage
+
     \begin{enumerate}
         \item \textbf{\texttt{MoveToState}:} Tento stav by nastavil příslušná data v~\texttt{Movement} komponentě a poté by čekal, než vesničan dojde na specifikovanou pozici. Poté by nastal přechod na specifikovaný stav.
 
@@ -320,7 +323,7 @@ Fialové cesty jsou nevhodné. Konkrétně cesta~$P1$ je nevhodná, jelikož ved
 
 Červené cesty jsou vhodné. Cesta~$P4$ je nejkratší cestou z~bodu~$A$ do bodu~$B$. Cesta~$P5$ sice není nejkratší cesta, ale je pro nás dostatečně dobrou aproximací a je pro nás dostačující.
 
-% \newpage
+\newpage
 
 \subsubsection{Navigační struktury}
 Pro navigaci v~terénu použijeme datovou strukturu. Tato datová struktura reprezentuje terén způsobem, který umožňuje snadné hledání cest mezi dvěma body. Často k~tomu používají algoritmus pro hledání nejkratších cest. Typickou volbou bývá algoritmus~A*. Datové struktury, které lze pro navigaci použít, nazvěme navigační struktury.
@@ -357,6 +360,8 @@ Ovšem problém spočívá v~tom, že k~dispozici máme pouze mřížku, která 
 Mohlo by se zdát, že použití této aproximace by vedlo v~příliš nevhodné cesty, ovšem za předpokladu, že se body v~naší mřížce budou nacházet dostatečně blízko sebe, tak bude výsledná cesta dostatečně dobrou aproximací červené cesty z~obrázku~\ref{fig:path_simplified}.
 
 Další problém, který je nutné vyřešit, je, že vesničané a entity, ke kterým se vesničané navigují, se většinou nenacházejí v~žádném z~bodů naší mřížce. Problém vyřešíme tak, že před spuštěním~A* algoritmu si k~vesničanovi a dané entitě nalezneme nejbližší body v~naší mřížce a nalezneme nejkratší cestu mezi těmito body. Poté, předtím než provedeme zjednodušení cesty, přidáme pozici vesničana jako první bod naší cesty a pozici entity, ke které se vesničan naviguje, jako poslední bod naší cesty.
+
+\newpage
 
 Situaci je možné vidět na obrázku~\ref{fig:path_end_points}. Vesničan se nachází v~bodu~$A$, který není bodem naší mřížky, a~chce se navigovat k~entitě umístěné na bodu~$B$, který také není bodem naší mřížky. Na začátek a konec cesty po provedení algoritmu oba body přidáme a tím získáme žluté úseky. Přidáním těchto bodů by nám mohly vzniknout nepřirozené artefakty, ovšem ty budou spraveny během zjednodušování cesty.
 

@@ -1,5 +1,5 @@
 \chapter{Hra}
-V této kapitole si specifikujeme, jak bude vypadat naše hra. Nejprve si rozebereme, jaké vlastnosti od ní vyžadujeme, a následně provedeme samotnou specifikaci.
+V této kapitole si specifikujeme, jak bude vypadat naše hra. Nejprve si rozebereme, jaké vlastnosti od ní vyžadujeme, a~následně provedeme samotnou specifikaci.
 
 \section{Herní požadavky}
 Nyní si upřesníme požadavky co chceme od naší hry, následně také zvolíme herní žánr.
@@ -8,14 +8,14 @@ Než budeme pokračovat, připomeňme si prvně, že naší hru chceme použít 
 
 \subsection{Charakteristiky hry}
 \label{sec:game-characteristics}
-Aby nám naše hra napomohla k splnění práce, budeme chtít, aby splňovala následující charakteristiky:
+Aby nám naše hra napomohla k~splnění práce, budeme chtít, aby splňovala následující charakteristiky:
 
 \begin{enumerate}
-    \item \textbf{Nezávislost na konkrétní ECS knihovně:} Nezávislost na konkrétní ECS knihovně pro nás bude důležitá, abychom hru mohli použít pro měření výkonu jednotlivých knihoven. Hra bude namísto konkrétní ECS knihovny pracovat pouze s abstrakční vrstvou. Bude pro nás žádoucí, aby se výkon naší hry běžící s konkrétní ECS knihovnou implementující abstrakční vrstvu, blížil k výkonu hry, která by používala pouze konkrétní ECS knihovnu bez abstrakční vrstvy.
+    \item \textbf{Nezávislost na konkrétní ECS knihovně:} Nezávislost na konkrétní ECS knihovně pro nás bude důležitá, abychom hru mohli použít pro měření výkonu jednotlivých knihoven. Hra bude namísto konkrétní ECS knihovny pracovat pouze s~abstrakční vrstvou. Bude pro nás žádoucí, aby se výkon naší hry běžící s~konkrétní ECS knihovnou implementující abstrakční vrstvu, blížil k~výkonu hry, která by používala pouze konkrétní ECS knihovnu bez abstrakční vrstvy.
 
-    \item \textbf{Hra by neměla využívat velmi častého přidávání a odebírání komponent:} Přidání a odebrání komponenty představuje pro některé ECS knihovny náročnější operaci. Ovšem to jestli hra využívá velmi častého přidávání a odebírání komponent, je závislé z velké části na implementaci. Kdyby naše hra používala velmi častého přidávání a odebírání komponent, došlo by k znevýhodnění některých ECS knihoven, které by jinak na tom mohly být výkonnostně lépe. Ovšem je nutné zmínit, že odebírání komponent v některých případech nelze předejít. Typickým příkladem bývá odebírání entity například v případě její smrti.
+    \item \textbf{Hra by neměla využívat velmi častého přidávání a odebírání komponent:} Přidání a odebrání komponenty představuje pro některé ECS knihovny náročnější operaci. Ovšem to jestli hra využívá velmi častého přidávání a odebírání komponent, je závislé z~velké části na implementaci. Kdyby naše hra používala velmi častého přidávání a odebírání komponent, došlo by k~znevýhodnění některých ECS knihoven, které by jinak na tom mohly být výkonnostně lépe. Ovšem je nutné zmínit, že odebírání komponent v~některých případech nelze předejít. Typickým příkladem bývá odebírání entity například v~případě její smrti.
 
-    Ukažme si na příkladu, proč je velmi časté přidávání a odebírání komponent závislé z velké části na implementaci. Konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pokud by nám velmi časté přidávání a odebírání komponent nevadilo, tak by jeden z typických přístupů byl vytvořit \verb|Starvation| komponentu a přidat ji na každou entitu, která začne hladovět. V případě, že se příslušná entita nasytí jídlem, tak přestane hladovět a dojde k odebrání této komponenty. Pokud bychom chtěli stejnou mechaniku navrhnout bez častého přidávání a odebírání komponent, tak jeden z možných způsobů by byl dát každé entitě, která může hladovět, \texttt{Hunger} komponentu, ve které by byl flag \verb|Starvation|, který by rozhodoval o tom, jestli daná entita hladoví či nikoliv.
+    Ukažme si na příkladu, proč je velmi časté přidávání a odebírání komponent závislé z~velké části na implementaci. Konkrétně bychom chtěli reprezentovat efekt toho, že entita hladoví. Pokud by nám velmi časté přidávání a odebírání komponent nevadilo, tak by jeden z~typických přístupů byl vytvořit \verb|Starvation| komponentu a přidat ji na každou entitu, která začne hladovět. V~případě, že se příslušná entita nasytí jídlem, tak přestane hladovět a dojde k~odebrání této komponenty. Pokud bychom chtěli stejnou mechaniku navrhnout bez častého přidávání a odebírání komponent, tak jeden z~možných způsobů by byl dát každé entitě, která může hladovět, \texttt{Hunger} komponentu, ve které by byl flag \verb|Starvation|, který by rozhodoval o~tom, jestli daná entita hladoví či nikoliv.
     
     \item \textbf{Velký počet entit:} Velký počet entit nám usnadní měření výkonu naší hry. Také nám zaručí, že systémy budou vykonávat netriviální množství práce. Zároveň si tím vyzkoušíme velký výkon, kterým ECS disponuje. Velký počet entit nám také implikuje větší herní svět.
     
@@ -37,9 +37,9 @@ Aby nám naše hra napomohla k splnění práce, budeme chtít, aby splňovala n
 % \xxx{-- Kdyby ano, nektere knihovny by byli zvyhodnene.}
 
 \subsection{Simulace}
-Žánrem naší hry bude simulace, ale řekněme si nejprve, co to vlastně je. Simulace je žánr videoher, který se snaží simulovat agenty v jejich prostředí. U nás agenti budou vesničané a jejich prostředí bude příroda.
+Žánrem naší hry bude simulace, ale řekněme si nejprve, co to vlastně je. Simulace je žánr videoher, který se snaží simulovat agenty v~jejich prostředí. U~nás agenti budou vesničané a jejich prostředí bude příroda.
 
-Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostatním žánrům) vymyslet herní design, který má velký počet entit a netriviálně velký svět. Další velkou výhodou je malí vliv uživatele na průběh hry, to nám umožní lépe provádět měření. Konkrétně v naší hře bude hráč spíše pozorovatel, který sleduje jak simulace probíhá.
+Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostatním žánrům) vymyslet herní design, který má velký počet entit a netriviálně velký svět. Další velkou výhodou je malí vliv uživatele na průběh hry, to nám umožní lépe provádět měření. Konkrétně v~naší hře bude hráč spíše pozorovatel, který sleduje jak simulace probíhá.
 
 % \\
 % \xxx{Proc jsme zvolili simulaci?}
@@ -51,9 +51,9 @@ Proč jsme zvolili právě simulaci? Pro simulaci je jednodušší (oproti ostat
 \section{Herní specifikace}
 \label{sec:game-spec}
 % intro
-Nyní si představíme specifikaci naší hry. Celá hra se dá rozdělit na dva hlavní prvky. Konkrétně svět a vesnice. Specifikujeme si tedy každý z nich.
+Nyní si představíme specifikaci naší hry. Celá hra se dá rozdělit na dva hlavní prvky. Konkrétně svět a vesnice. Specifikujeme si tedy každý z~nich.
 
-Prvně než si začneme specifikovat jednotlivé prvky, je nutné upřesnit, že se jedná o 2D hru. Hráč v této hře zastává roli pozorovatele a celý svět pozoruje skrze kameru pohledem shora. Ovládá pouze pozici a přiblížení této kamery.
+Prvně než si začneme specifikovat jednotlivé prvky, je nutné upřesnit, že se jedná o~2D hru. Hráč v~této hře zastává roli pozorovatele a celý svět pozoruje skrze kameru pohledem shora. Ovládá pouze pozici a přiblížení této kamery.
 
 % svet
 % - nahodne generovany
@@ -64,27 +64,27 @@ Prvně než si začneme specifikovat jednotlivé prvky, je nutné upřesnit, že
 % - - iron
 \subsection{Herní svět}
 \label{sec:game-world}
-Herní svět je náhodně generovaný s pevnou velikostí a skládá se z několika biomů. Každý biom je reprezentován jinou barvou a nacházejí se v něm odlišné suroviny. Zároveň pro každý biom je určeno, zda po něm mohou vesničané chodit nebo stavět. Herní svět obsahuje následující biomy:
+Herní svět je náhodně generovaný s~pevnou velikostí a skládá se z~několika biomů. Každý biom je reprezentován jinou barvou a nacházejí se v~něm odlišné suroviny. Zároveň pro každý biom je určeno, zda po něm mohou vesničané chodit nebo stavět. Herní svět obsahuje následující biomy:
 
 \begin{enumerate}
     \item \textit{Voda} (\verb|Water|): Reprezentuje vodní plochu. Není na ní možné chodit ani stavět.
-    \item \textit{Pláž} (\verb|Beach|): Jedná se o písečné oblasti v okolí \textit{vody}. Je na ní možné chodit i stavět.
-    \item \textit{Louka} (\verb|Plain|): Na \textit{louce} je možné chodit i stavět. Je na ni možné najít \textit{jeleny}.
-    \item \textit{Les} (\verb|Forest|): V \textit{lese} je možné chodit i stavět. Nachází se v něm velké množství \textit{stromů}.
-    \item \textit{Hora} (\verb|Mountain|): Jedná se o kamenitou \textit{horu}. Je možné na ní chodit i stavět. Nachází se na ní \textit{naleziště kamene}.
+    \item \textit{Pláž} (\verb|Beach|): Jedná se o~písečné oblasti v~okolí \textit{vody}. Je na ní možné chodit i~stavět.
+    \item \textit{Louka} (\verb|Plain|): Na \textit{louce} je možné chodit i~stavět. Je na ni možné najít \textit{jeleny}.
+    \item \textit{Les} (\verb|Forest|): v~\textit{lese} je možné chodit i~stavět. Nachází se v~něm velké množství \textit{stromů}.
+    \item \textit{Hora} (\verb|Mountain|): Jedná se o~kamenitou \textit{horu}. Je možné na ní chodit i~stavět. Nachází se na ní \textit{naleziště kamene}.
     \item \textit{Vysoká hora} (\verb|High Mountain|): \textit{Vysoká hora} je vždy obklopena \textit{horou}. Je pokryta sněhovou plochou. Je možné na ní chodit, ale není možné na ní stavět. Nachází se na ní \textit{naleziště železné rudy}.
 \end{enumerate}
 
-Jak již bylo zmíněno, v jednotlivých biomech se mohou nacházet suroviny. Suroviny se rozdělují do několika typů. Typ suroviny udává, jak dlouho trvá ji sklidit, jaký předmět lze získat po jejím sklizení, a počet těchto předmětů, které lze získat po jejím sklizení. Hra obsahuje následující suroviny:
+Jak již bylo zmíněno, v~jednotlivých biomech se mohou nacházet suroviny. Suroviny se rozdělují do několika typů. Typ suroviny udává, jak dlouho trvá ji sklidit, jaký předmět lze získat po jejím sklizení, a~počet těchto předmětů, které lze získat po jejím sklizení. Hra obsahuje následující suroviny:
 
 \begin{enumerate}
-    \item \textit{Strom} (\verb|Tree|): Po pokácení \textit{stromu} lze získat předmět \textit{dřeva}. \textit{Stromy} se nacházejí ve velkém množství v biomu \textit{lesa}.
-    \item \textit{Naleziště kamene} (\verb|Rock|): Sklizením \textit{naleziště kamene} je možné získat předmět \textit{kamene}. \textit{Naleziště kamene} se nacházejí v biomu \textit{hory}.
-    \item \textit{Naleziště železné rudy} (\verb|Deposit|): Po sklizení \textit{naleziště železné rudy} je možné získat předmět \textit{železná ruda}. \textit{Naleziště železné rudy} se objevuje v biomu \textit{vysoká hora}.
+    \item \textit{Strom} (\verb|Tree|): Po pokácení \textit{stromu} lze získat předmět \textit{dřeva}. \textit{Stromy} se nacházejí ve velkém množství v~biomu \textit{lesa}.
+    \item \textit{Naleziště kamene} (\verb|Rock|): Sklizením \textit{naleziště kamene} je možné získat předmět \textit{kamene}. \textit{Naleziště kamene} se nacházejí v~biomu \textit{hory}.
+    \item \textit{Naleziště železné rudy} (\verb|Deposit|): Po sklizení \textit{naleziště železné rudy} je možné získat předmět \textit{železná ruda}. \textit{Naleziště železné rudy} se objevuje v~biomu \textit{vysoká hora}.
     \item \textit{Jelen} (\verb|Deer|): \textit{Jeleni}, na rozdíl od jiných typů surovin, umí chodit. Náhodně se pohybují po biomu \textit{louky}, ve které se také objevují. Po sklizení jelena je možné získat předmět \textit{masa}.
 \end{enumerate}
 
-Předměty získané skrze sklizení suroviny je dále možné zpracovat v příslušné budově. Každý předmět se může zpracovávat jinak dlouho. Hra obsahuje následující předměty:
+Předměty získané skrze sklizení suroviny je dále možné zpracovat v~příslušné budově. Každý předmět se může zpracovávat jinak dlouho. Hra obsahuje následující předměty:
 
 \begin{enumerate}
     \item \textit{Dřevo} (\verb|Wood|): \textit{Dřevo} se dá dále zpracovat na \textit{prkno}.
@@ -92,8 +92,8 @@ Předměty získané skrze sklizení suroviny je dále možné zpracovat v pří
     \item \textit{Železná ruda} (\verb|Ore|): \textit{Železnou rudu} lze vypálit a tím získat \textit{železo}.
     \item \textit{Maso} (\verb|Meat|): \textit{Maso} je možné uvařit a tím lze získat \textit{jídlo}.
     \item \textit{Prkno} (\verb|Plank|): \textit{Prkna} je možné použít pro stavbu budov.
-    \item \textit{Cihla} (\verb|Brick|): \textit{Cihlu} je také možné použít pro stavbu budov. Jedná se o lehce pokročilejší surovinu oproti \textit{prknu}.
-    \item \textit{Železo} (\verb|Iron|): \textit{Železo}, stejně jako \textit{Prkno} a \textit{Cihlu}, lze také použít pro stavbu budov. Jedná se o pokročilou surovinu.
+    \item \textit{Cihla} (\verb|Brick|): \textit{Cihlu} je také možné použít pro stavbu budov. Jedná se o~lehce pokročilejší surovinu oproti \textit{prknu}.
+    \item \textit{Železo} (\verb|Iron|): \textit{Železo}, stejně jako \textit{Prkno} a \textit{Cihlu}, lze také použít pro stavbu budov. Jedná se o~pokročilou surovinu.
     \item \textit{Jídlo} (\verb|Food|): \textit{Jídlo} je předmět, který musí vesničané požívat, aby neumřeli hlady.
 \end{enumerate}
 
@@ -102,9 +102,9 @@ Předměty získané skrze sklizení suroviny je dále možné zpracovat v pří
 % - houses
 \subsection{Vesnice}
 \label{subsec:villages}
-V herním světě se náhodně nacházejí vesnice. V každé se nachází několik budov a vesničané. Každá vesnice má přehled o předmětech, kterými disponuje. Pro všechny vesnice je také pevně stanovena stavební fronta, kde pro každou budovu v této frontě je daná cena. Jakmile vesnice nasbírá dostatek surovin pro další budovu z této fronty, dojde k odečtení těchto surovin a následně se objeví příslušná budova. Budova se nemůže objevit moc blízko ani moc daleko od budov, které se již ve vesnici nacházejí.
+V herním světě se náhodně nacházejí vesnice. V~každé se nachází několik budov a vesničané. Každá vesnice má přehled o~předmětech, kterými disponuje. Pro všechny vesnice je také pevně stanovena stavební fronta, kde pro každou budovu v~této frontě je daná cena. Jakmile vesnice nasbírá dostatek surovin pro další budovu z~této fronty, dojde k~odečtení těchto surovin a následně se objeví příslušná budova. Budova se nemůže objevit moc blízko ani moc daleko od budov, které se již ve vesnici nacházejí.
 
-Každý vesničan má svoje \textit{pracovní místo} (\verb|WorkPlace|). Vesničané vykonávají práci na základě své profese. Profese vesničanovi udává, jaký předmět má pro vesnici obstarávat. Jeho práce spočívá v hledání a sklizení příslušné suroviny, kterou následně odnese do svého \textit{pracovního místa}, kde ji zpracuje a výsledný předmět odnese do \textit{skladiště}. Každý vesničan má právě jednu z následujících profesí:
+Každý vesničan má svoje \textit{pracovní místo} (\verb|WorkPlace|). Vesničané vykonávají práci na základě své profese. Profese vesničanovi udává, jaký předmět má pro vesnici obstarávat. Jeho práce spočívá v~hledání a sklizení příslušné suroviny, kterou následně odnese do svého \textit{pracovního místa}, kde ji zpracuje a~výsledný předmět odnese do \textit{skladiště}. Každý vesničan má právě jednu z~následujících profesí:
 
 \begin{enumerate}
     \item \textit{Dřevorubec} (\verb|Woodcutter|): Obstarává \textit{prkna}.
@@ -113,13 +113,13 @@ Každý vesničan má svoje \textit{pracovní místo} (\verb|WorkPlace|). Vesni�
     \item \textit{Lovec} (\verb|Hunter|): Obstarává \textit{jídlo}.
 \end{enumerate}
 
-Každý vesničan má také hlad. Pokud hlad vesničana bude příliš velký, tak vesničan zemře. Pokud hlad vesničana stoupne nad určitou hodnotu a ve skladišti dané vesnice se bude nacházet \textit{jídlo}, tak vesničan dojde ke skladišti a hlad si sníží snědením jídla.
+Každý vesničan má také hlad. Pokud hlad vesničana bude příliš velký, tak vesničan zemře. Pokud hlad vesničana stoupne nad určitou hodnotu a ve skladišti dané vesnice se bude nacházet \textit{jídlo}, tak vesničan dojde ke skladišti a~hlad si sníží snědením jídla.
 
-Všechny vesnice začínají s \textit{hlavní budovou}, \textit{skladištěm} a \textit{budovou dřevorubce}. Budovy lze rozdělit do dvou kategorií, a to speciální a budovy pro zpracování předmětů. V budovách pro zpracování předmětů je možné přepracovat předměty na jiné předměty a zároveň slouží jako \textit{pracovní místo} pro vesničany. Vždy, když je postavena nová budova pro zpracování předmětů, objeví se nový vesničan, kterému bude přidělena příslušná profese podle této budovy. Speciální budovy slouží k speciálním účelům a patří mezi ně všechny ostatní budovy. V každé vesnici se mohou nacházet následující typy budov:
+Všechny vesnice začínají s~\textit{hlavní budovou}, \textit{skladištěm} a \textit{budovou dřevorubce}. Budovy lze rozdělit do dvou kategorií, a~to speciální a budovy pro zpracování předmětů. V~budovách pro zpracování předmětů je možné přepracovat předměty na jiné předměty a zároveň slouží jako \textit{pracovní místo} pro vesničany. Vždy, když je postavena nová budova pro zpracování předmětů, objeví se nový vesničan, kterému bude přidělena příslušná profese podle této budovy. Speciální budovy slouží k~speciálním účelům a patří mezi ně všechny ostatní budovy. V~každé vesnici se mohou nacházet následující typy budov:
 
 \begin{enumerate}
-    \item \textit{Hlavní budova} (\verb|MainBuilding|): Jedná se o speciální budovu, která reprezentuje danou vesnici. Každá vesnice má právě jednu hlavní budovu. Nemá žádný jiný zvláštní účel.
-    \item \textit{Skladiště} (\verb|Stockpile|): Jedná se o speciální budovu. Každá vesnice začíná s právě jedním skladištěm a nemůže jich mít více. Ve skladišti je možné skladovat jednotlivé předměty, kterými vesnice disponuje.
+    \item \textit{Hlavní budova} (\verb|MainBuilding|): Jedná se o~speciální budovu, která reprezentuje danou vesnici. Každá vesnice má právě jednu hlavní budovu. Nemá žádný jiný zvláštní účel.
+    \item \textit{Skladiště} (\verb|Stockpile|): Jedná se o~speciální budovu. Každá vesnice začíná s~právě jedním skladištěm a nemůže jich mít více. Ve skladišti je možné skladovat jednotlivé předměty, kterými vesnice disponuje.
     \item \textit{Budova dřevorubce} (\verb|WoodcutterHut|): Budova pro zpracování předmětů, konkrétně \textit{prken}. Slouží jako pracovní místo pro \textit{dřevorubce}.
     \item \textit{Budova horníka} (\verb|MinerHut|): Budova pro zpracování předmětů, konkrétně \textit{cihel}. Slouží jako pracovní místo pro \textit{horníka kamene}.
     \item \textit{Kovárna} (\verb|Smithy|): Budova pro zpracování předmětů, konkrétně \textit{železa}. Slouží jako pracovní místo pro \textit{horníka železa}.

@@ -2,14 +2,14 @@
 V této kapitole si nejprve shrneme jak provádíme náš experiment. Následně budeme prezentovat jeho výsledky.
 
 \section{Popis experimentů}
-V sekci~\ref{sec:performance-measurements} bylo řečeno, že měříme průměrný čas trvání jedné iterace \textit{game loop}. Ovšem ve skutečnosti měříme celkové trvání pevného počtu iterací. Výsledek je stejný, akorát je větší o násobek počtu iterací (to nám ale nevadí, jelikož tento počet iterací je stejný pro každou měřenou knihovnu).
+V sekci~\ref{sec:performance-measurements} bylo řečeno, že měříme průměrný čas trvání jedné iterace \textit{game loop}. Ovšem ve skutečnosti měříme celkové trvání pevného počtu iterací. Výsledek je stejný, akorát je větší o~násobek počtu iterací (to nám ale nevadí, jelikož tento počet iterací je stejný pro každou měřenou knihovnu).
 
 Před samotným měřením provádíme přípravu. Během přípravy vytvoříme instanci hry, kterou následně inicializujeme a poté necháme běžet pevný počet iterací. Poté co doběhne příprava tak probíhá samotné měření, při kterém  necháváme hru běžet pevný počet iterací (ne nutně stejný jako při přípravě).
 
-Zvládneme měřit velký počet knihoven, ale vytvářet porovnání budeme pouze z knihoven, které jsou součástí porovnání~\cite{EcsCsharpBenchmark} zmíněného v úvodu. Je nutné upozornit, že do zmíněného porovnání jsou stále přidávány nové knihovny, ale my jsme se zaměřili pouze na knihovny, které byli v porovnání obsažené v tomto commitu~\cite{EcsCsharpBenchmarkCommit}.
+Zvládneme měřit velký počet knihoven, ale vytvářet porovnání budeme pouze z~knihoven, které jsou součástí porovnání~\cite{EcsCsharpBenchmark} zmíněného v~úvodu. Je nutné upozornit, že do zmíněného porovnání jsou stále přidávány nové knihovny, ale my jsme se zaměřili pouze na knihovny, které byli v~porovnání obsažené v~tomto commitu~\cite{EcsCsharpBenchmarkCommit}.
 
 
-Konkrétně budeme měřit výkon u následujících knihoven:
+Konkrétně budeme měřit výkon u~následujících knihoven:
 
 \begin{enumerate}
     \item Arch~\cite{Arch}
@@ -22,14 +22,14 @@ Konkrétně budeme měřit výkon u následujících knihoven:
     \item RelEcs~\cite{RelEcs}
 \end{enumerate}
 
-V sekci~\ref{sec:abstract-layer} jsme si specifikovali, že konkrétní ECS knihovna je reprezentována třídou implementující rozhraní \texttt{IECSFactory}. Instance této třídy je při spuštění hry předána jako generický parametr třídě \texttt{Game}. Tím dojde k výběru konkrétní ECS knihovny.
+V sekci~\ref{sec:abstract-layer} jsme si specifikovali, že konkrétní ECS knihovna je reprezentována třídou implementující rozhraní \texttt{IECSFactory}. Instance této třídy je při spuštění hry předána jako generický parametr třídě \texttt{Game}. Tím dojde k~výběru konkrétní ECS knihovny.
 
-Náš test přijímá jako parametr typ, který je právě třída implementující rozhraní \texttt{IECSFactory}. Náš test tedy postupně spouštíme z třídami, které reprezentují jednotlivé ECS knihovny.
+Náš test přijímá jako parametr typ, který je právě třída implementující rozhraní \texttt{IECSFactory}. Náš test tedy postupně spouštíme z~třídami, které reprezentují jednotlivé ECS knihovny.
 
 \section{Výsledky}
 Následující přehled zobrazuje jednotlivé ECS knihovny a jejich výsledky.
 
-% proc je vic cache miss nez pocet arch type
+% proc je vic cache miss nez pocet arch~type
 
 \section{Analýza výsledků???}
 
@@ -45,7 +45,7 @@ Následující přehled zobrazuje jednotlivé ECS knihovny a jejich výsledky.
 
 
 
-% V této kapitole si prezentujeme experimenty a jejich výsledky.
+% v~této kapitole si prezentujeme experimenty a jejich výsledky.
 
 % Shrneme si jak vlastně provádíme měření.
 
